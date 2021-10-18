@@ -3,13 +3,9 @@
 const float Game::kPlayerSpeed = 100;
 const sf::Time Game::kTimePerFrame = sf::seconds(1.f / 60.f);
 
-Game::Game():m_window(sf::VideoMode(640, 480), "Starting"), m_texture(), m_player(), m_font(), m_statistics_text(), m_statistics_updatetime(), m_statistics_numframes(0),  m_is_moving_up(false), m_is_moving_down(false), m_is_moving_left(false), m_is_moving_right(false)
+Game::Game(TextureHolder& game_textures):m_window(sf::VideoMode(640, 480), "Starting"), m_textures(game_textures), m_texture(), m_player(), m_font(), m_statistics_text(), m_statistics_updatetime(), m_statistics_numframes(0),  m_is_moving_up(false), m_is_moving_down(false), m_is_moving_left(false), m_is_moving_right(false)
 {
-	if(!m_texture.loadFromFile("Media/Textures/eagle.png"))
-	{
-		//Deal with texture load failure
-	}
-	m_player.setTexture(m_texture);
+	m_player.setTexture(m_textures.Get(Textures::kAircraft));
 	m_player.setPosition(100.f, 100.f);
 	m_font.loadFromFile("Media/Fonts/Sansation.ttf");
 	m_statistics_text.setFont(m_font);
