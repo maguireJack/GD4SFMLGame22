@@ -1,11 +1,12 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "TextureHolder.hpp"
+#include "ResourceHolder.hpp"
 
 class Game
 {
 public:
-	Game(TextureHolder& game_textures);
+	Game(ResourceHolder<sf::Texture, Textures>& game_textures);
 	void Run();
 
 private:
@@ -29,7 +30,7 @@ private:
 	sf::Time m_statistics_updatetime;
 
 	std::size_t m_statistics_numframes;
-	TextureHolder& m_textures;
+	ResourceHolder<sf::Texture, Textures>& m_textures;
 	bool m_is_moving_up;
 	bool m_is_moving_down;
 	bool m_is_moving_left;
