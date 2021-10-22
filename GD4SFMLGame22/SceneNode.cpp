@@ -63,6 +63,10 @@ void SceneNode::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	//Apply transform of the current node
 	states.transform *= getTransform();
+
+	//Draw the node and children with changed transform
+	DrawCurrent(target, states);
+	DrawChildren(target, states);
 }
 
 void SceneNode::DrawCurrent(sf::RenderTarget&, sf::RenderStates states) const

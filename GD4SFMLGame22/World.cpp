@@ -1,6 +1,7 @@
 #include "World.hpp"
 
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <iostream>
 
 World::World(sf::RenderWindow& window)
 	: m_window(window)
@@ -15,7 +16,7 @@ World::World(sf::RenderWindow& window)
 {
 	LoadTextures();
 	BuildScene();
-
+	std::cout << m_camera.getSize().x << m_camera.getSize().y << std::endl;
 	m_camera.setCenter(m_spawn_position);
 }
 
@@ -24,10 +25,11 @@ void World::Update(sf::Time dt)
 	//Scroll the world
 	m_camera.move(0, m_scrollspeed * dt.asSeconds());
 	sf::Vector2f position = m_player_aircraft->getPosition();
+	std::cout << "X: " <<position.x << "Y: " << position.y << std::endl;
 	sf::Vector2f velocity = m_player_aircraft->GetVelocity();
 
 	//If the player touche the x borders, flip velocity
-	if(position.x <= m_world_bounds.left + m_world_bounds.width -150.f)
+	if(position.x <= m_world_bounds.left +150.f || position.x >= m_world_bounds.left + m_world_bounds.width -150.f)
 	{
 		velocity.x = -velocity.x;
 		m_player_aircraft->SetVelocity(velocity);

@@ -20,8 +20,9 @@ private:
 	void UpdateStatistics(sf::Time elapsed_time);
 
 private:
-	World m_world;
 	sf::RenderWindow m_window;
+	World m_world;
+	
 	sf::Font m_font;
 	sf::Text m_statistics_text;
 	sf::Time m_statistics_updatetime;
