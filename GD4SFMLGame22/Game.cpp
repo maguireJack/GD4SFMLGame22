@@ -1,12 +1,15 @@
 #include "Game.hpp"
 
-const float Game::kPlayerSpeed = 100;
 const sf::Time Game::kTimePerFrame = sf::seconds(1.f / 60.f);
 
-Game::Game(ResourceHolder<sf::Texture, Textures>& game_textures):m_window(sf::VideoMode(640, 480), "Starting"), m_textures(game_textures), m_texture(), m_player(), m_font(), m_statistics_text(), m_statistics_updatetime(), m_statistics_numframes(0),  m_is_moving_up(false), m_is_moving_down(false), m_is_moving_left(false), m_is_moving_right(false)
+Game::Game()
+	:m_world(m_window)
+	,m_window(sf::VideoMode(640, 480), "Starting"),
+	m_font(),
+	m_statistics_text(),
+	m_statistics_updatetime(),
+	m_statistics_numframes(0)
 {
-	m_player.setTexture(m_textures.Get(Textures::kAircraft));
-	m_player.setPosition(100.f, 100.f);
 	m_font.loadFromFile("Media/Fonts/Sansation.ttf");
 	m_statistics_text.setFont(m_font);
 	m_statistics_text.setPosition(5.f, 5.f);
@@ -55,28 +58,7 @@ void Game::ProcessEvents()
 
 void Game::Update(sf::Time delta_time)
 {
-	sf::Vector2f movement(0.f, 0.f);
-	if(m_is_moving_up)
-	{
-		movement.y -= 1.f;
-	}
-	if (m_is_moving_down)
-	{
-		movement.y += 1.f;
-	}
-	if (m_is_moving_left)
-	{
-		movement.x -= 1.f;
-	}
-	if (m_is_moving_right)
-	{
-		movement.x += 1.f;
-	}
-
-	//TODO normalise movement vector
-	sf::Vector2f normalised_movement = Normalise(movement);
-
-	m_player.move(normalised_movement * delta_time.asSeconds() * kPlayerSpeed);
+	m_world.Update(delta_time);
 }
 
 sf::Vector2f Game::Normalise(const sf::Vector2f input_vector)
@@ -98,29 +80,15 @@ float Game::Length(const sf::Vector2f& input_vector)
 void Game::Render()
 {
 	m_window.clear();
-	m_window.draw(m_player);
+	m_world.Draw();
+
+	m_window.setView(m_window.getDefaultView());
 	m_window.draw(m_statistics_text);
 	m_window.display();
 }
 
 void Game::HandlePlayerInput(sf::Keyboard::Key key, bool is_pressed)
 {
-	if(key == sf::Keyboard::W)
-	{
-		m_is_moving_up = is_pressed;
-	}
-	else if (key == sf::Keyboard::S)
-	{
-		m_is_moving_down = is_pressed;
-	}
-	else if (key == sf::Keyboard::A)
-	{
-		m_is_moving_left = is_pressed;
-	}
-	else if (key == sf::Keyboard::D)
-	{
-		m_is_moving_right = is_pressed;
-	}
 }
 
 void Game::UpdateStatistics(sf::Time elapsed_time)

@@ -1,12 +1,12 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "TextureHolder.hpp"
 #include "ResourceHolder.hpp"
+#include "World.hpp"
 
 class Game
 {
 public:
-	Game(ResourceHolder<sf::Texture, Textures>& game_textures);
+	Game();
 	void Run();
 
 private:
@@ -20,19 +20,12 @@ private:
 	void UpdateStatistics(sf::Time elapsed_time);
 
 private:
-	static const float kPlayerSpeed;
-	static const sf::Time kTimePerFrame;
+	World m_world;
 	sf::RenderWindow m_window;
-	sf::Texture m_texture;
-	sf::Sprite m_player;
 	sf::Font m_font;
 	sf::Text m_statistics_text;
 	sf::Time m_statistics_updatetime;
 
 	std::size_t m_statistics_numframes;
-	ResourceHolder<sf::Texture, Textures>& m_textures;
-	bool m_is_moving_up;
-	bool m_is_moving_down;
-	bool m_is_moving_left;
-	bool m_is_moving_right;
+	static const sf::Time kTimePerFrame;
 };
