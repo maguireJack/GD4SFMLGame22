@@ -7,6 +7,8 @@
 #include <vector>
 #include <memory>
 
+#include "Command.hpp"
+
 class SceneNode : public sf::Transformable, public sf::Drawable, private sf::NonCopyable
 {
 public:
@@ -21,6 +23,9 @@ public:
 
 	sf::Vector2f GetWorldPosition() const;
 	sf::Transform GetWorldTransform() const;
+
+	void OnCommand(const Command& command, sf::Time dt);
+	virtual unsigned int GetCategory() const;
 
 private:
 	virtual void UpdateCurrent(sf::Time dt);

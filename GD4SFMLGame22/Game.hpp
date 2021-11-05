@@ -1,5 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+
+#include "Player.hpp"
 #include "ResourceHolder.hpp"
 #include "World.hpp"
 
@@ -11,7 +13,7 @@ public:
 
 private:
 	void HandlePlayerInput(sf::Keyboard::Key key, bool is_pressed);
-	void ProcessEvents();
+	void ProcessInput();
 	void Update(sf::Time delta_time);
 	float Length(const sf::Vector2f& vector2);
 	sf::Vector2f Normalise(const sf::Vector2f input_vector);
@@ -22,6 +24,7 @@ private:
 private:
 	sf::RenderWindow m_window;
 	World m_world;
+	Player m_player;
 	
 	sf::Font m_font;
 	sf::Text m_statistics_text;

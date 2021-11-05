@@ -29,7 +29,7 @@ void Game::Run()
 		while (time_since_last_update > kTimePerFrame)
 		{
 			time_since_last_update -= kTimePerFrame;
-			ProcessEvents();
+			ProcessInput();
 			Update(kTimePerFrame);
 		}
 		UpdateStatistics(elapsedTime);
@@ -37,24 +37,20 @@ void Game::Run()
 	}
 }
 
-void Game::ProcessEvents()
+void Game::ProcessInput()
 {
+	CommandQueue& commands = m_world.getCommandQueue();
+
 	sf::Event event;
 	while (m_window.pollEvent(event))
 	{
-		switch (event.type)
+		m_player.HandleEvent(event, commands);
+		if (event.type == sf::Event::Closed)
 		{
-			case sf::Event::KeyPressed:
-				HandlePlayerInput(event.key.code, true);
-				break;
-			case sf::Event::KeyReleased:
-				HandlePlayerInput(event.key.code, false);
-				break;
-			case sf::Event::Closed:
-				m_window.close();
-				break;
+			m_window.close();
 		}
 	}
+	m_player.HandleRealtimeInput(commands);
 }
 
 void Game::Update(sf::Time delta_time)

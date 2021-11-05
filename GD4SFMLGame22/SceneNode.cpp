@@ -81,3 +81,23 @@ void SceneNode::DrawChildren(sf::RenderTarget& target, sf::RenderStates states) 
 		child->draw(target, states);
 	}
 }
+
+void SceneNode::OnCommand(const Command& command, sf::Time dt)
+{
+	//Is this command for me?
+	if(command.category & GetCategory())
+	{
+		command.action(*this, dt);
+	}
+
+	//Pass command on to children
+	for(Ptr& child : m_children)
+	{
+		child->OnCommand(command, dt);
+	}
+}
+
+unsigned SceneNode::GetCategory() const
+{
+	return Category::kScene;
+}

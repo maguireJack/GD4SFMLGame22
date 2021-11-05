@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <iostream>
+#include <limits>
 
 World::World(sf::RenderWindow& window)
 	: m_window(window)
@@ -9,7 +10,7 @@ World::World(sf::RenderWindow& window)
 	, m_textures()
 	, m_scenegraph()
 	, m_scene_layers()
-	, m_world_bounds(0.f, 0.f, m_camera.getSize().x, 2000.f)
+	, m_world_bounds(0.f, 0.f, m_camera.getSize().x, 8000)
 	, m_spawn_position(m_camera.getSize().x/2.f, m_world_bounds.height - m_camera.getSize().y /2.f)
 	, m_scrollspeed(-50.f)
 	, m_player_aircraft(nullptr)
@@ -24,19 +25,19 @@ void World::Update(sf::Time dt)
 {
 	//Scroll the world
 	m_camera.move(0, m_scrollspeed * dt.asSeconds());
-	sf::Vector2f position = m_player_aircraft->getPosition();
-	std::cout << "X: " <<position.x << "Y: " << position.y << std::endl;
-	sf::Vector2f velocity = m_player_aircraft->GetVelocity();
 
-	//If the player touche the x borders, flip velocity
-	if(position.x <= m_world_bounds.left +150.f || position.x >= m_world_bounds.left + m_world_bounds.width -150.f)
+	m_player_aircraft->SetVelocity(0.f, 0.f);
+
+	//Forward commands to the scenegraph until the command queue is empty
+	while(!m_command_queue.IsEmpty())
 	{
-		velocity.x = -velocity.x;
-		m_player_aircraft->SetVelocity(velocity);
+		m_scenegraph.OnCommand(m_command_queue.Pop(), dt);
 	}
+	AdaptPlayerVelocity();
 
 	//Apply movement
 	m_scenegraph.Update(dt);
+	AdaptPlayerPosition();
 }
 
 void World::Draw()
@@ -88,5 +89,36 @@ void World::BuildScene()
 	std::unique_ptr<Aircraft> rightEscort(new Aircraft(AircraftType::kRaptor, m_textures));
 	rightEscort->setPosition(80.f, 50.f);
 	m_player_aircraft->AttachChild(std::move(rightEscort));
+}
+
+CommandQueue& World::getCommandQueue()
+{
+	return m_command_queue;
+}
+
+void World::AdaptPlayerPosition()
+{
+	//Keep the player on the screen
+	sf::FloatRect view_bounds(m_camera.getCenter() - m_camera.getSize() / 2.f, m_camera.getSize());
+	const float border_distance = 40.f;
+	sf::Vector2f position = m_player_aircraft->GetWorldPosition();
+	position.x = std::max(position.x, view_bounds.left + border_distance);
+	position.x = std::min(position.x, view_bounds.left + view_bounds.width - border_distance);
+	position.y = std::max(position.y, view_bounds.top + border_distance);
+	position.y = std::min(position.y, view_bounds.top + view_bounds.height - border_distance);
+	m_player_aircraft->setPosition(position);
+
+}
+
+void World::AdaptPlayerVelocity()
+{
+	sf::Vector2f velocity = m_player_aircraft->GetVelocity();
+	//if moving diagonally then reduce velocity
+	if (velocity.x != 0.f && velocity.y != 0.f)
+	{
+		m_player_aircraft->SetVelocity(velocity / std::sqrt(2.f));
+	}
+	//Add scrolling velocity
+	m_player_aircraft->Accelerate(0.f, m_scrollspeed);
 }
 

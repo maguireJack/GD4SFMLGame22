@@ -12,6 +12,8 @@
 
 #include <array>
 
+#include "CommandQueue.hpp"
+
 //Foward
 namespace sf
 {
@@ -25,10 +27,14 @@ public:
 	explicit World(sf::RenderWindow& window);
 	void Update(sf::Time dt);
 	void Draw();
+	CommandQueue& getCommandQueue();
 
 private:
 	void LoadTextures();
 	void BuildScene();
+	void AdaptPlayerPosition();
+	void AdaptPlayerVelocity();
+	
 
 private:
 	sf::RenderWindow& m_window;
@@ -36,6 +42,7 @@ private:
 	TextureHolder m_textures;
 	SceneNode m_scenegraph;
 	std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)> m_scene_layers;
+	CommandQueue m_command_queue;
 
 	sf::FloatRect m_world_bounds;
 	sf::Vector2f m_spawn_position;
