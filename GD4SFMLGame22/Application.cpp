@@ -1,9 +1,11 @@
 #include "Application.hpp"
 
-class TitleState;
-class MenuState;
-class GameState;
-class PauseState;
+#include "State.hpp"
+#include "StateID.hpp"
+#include "TitleState.hpp"
+#include "GameState.hpp"
+#include "MenuState.hpp"
+#include "PauseState.hpp"
 
 const sf::Time Application::kTimePerFrame = sf::seconds(1.f / 60.f);
 
@@ -12,6 +14,17 @@ Application::Application()
 , m_stack(State::Context(m_window, m_textures, m_fonts, m_player))
 , m_statistics_numframes(0)
 {
+	m_window.setKeyRepeatEnabled(false);
+
+	m_fonts.Load(Fonts::Main, "Media/Fonts/Sansation.ttf");
+	m_textures.Load(Textures::kTitleScreen, "Media/Textures/TitleScreen.png");
+
+	m_statistics_text.setFont(m_fonts.Get(Fonts::Main));
+	m_statistics_text.setPosition(5.f, 5.f);
+	m_statistics_text.setCharacterSize(10u);
+
+	RegisterStates();
+	m_stack.PushState(StateID::kTitle);
 }
 
 void Application::Run()
