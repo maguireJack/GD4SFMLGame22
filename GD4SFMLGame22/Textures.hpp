@@ -3,5 +3,6 @@ enum class Textures
 {
 	kEagle,
 	kRaptor,
-	kDesert
+	kDesert,
+	kTitleScreen
 };
