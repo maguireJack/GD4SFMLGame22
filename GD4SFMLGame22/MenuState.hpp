@@ -1,5 +1,6 @@
 #pragma once
 #include "State.hpp"
+#include "Container.hpp"
 
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Text.hpp>
@@ -11,18 +12,9 @@ public:
 	virtual void Draw();
 	virtual bool Update(sf::Time dt);
 	virtual bool HandleEvent(const sf::Event& event);
-	void UpdateOptionText();
-
-private:
-	enum class Options
-	{
-		Play,
-		Exit
-	};
 
 private:
 	sf::Sprite m_background_sprite;
-	std::vector<sf::Text> m_options;
-	std::size_t m_option_index;
+	GUI::Container m_gui_container;
 };
 

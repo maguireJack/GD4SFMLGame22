@@ -4,5 +4,8 @@ enum class Textures
 	kEagle,
 	kRaptor,
 	kDesert,
-	kTitleScreen
+	kTitleScreen,
+	kButtonNormal,
+	kButtonSelected,
+	kButtonPressed
 };
