@@ -95,7 +95,7 @@ namespace GUI
 	void Button::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	{
 		states.transform *= getTransform();
-		target.draw(m_sprite);
-		target.draw(m_text);
+		target.draw(m_sprite, states);
+		target.draw(m_text, states);
 	}
 }
