@@ -152,6 +152,7 @@
     <ClCompile Include="CommandQueue.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="Container.cpp" />
+    <ClCompile Include="DataTables.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameState.cpp" />
@@ -165,6 +166,7 @@
     <ClCompile Include="SpriteNode.cpp" />
     <ClCompile Include="State.cpp" />
     <ClCompile Include="StateStack.cpp" />
+    <ClCompile Include="TextNode.cpp" />
     <ClCompile Include="TitleState.cpp" />
     <ClCompile Include="Utility.cpp" />
     <ClCompile Include="World.cpp" />
@@ -179,6 +181,7 @@
     <ClInclude Include="CommandQueue.hpp" />
     <ClInclude Include="Component.hpp" />
     <ClInclude Include="Container.hpp" />
+    <ClInclude Include="DataTables.hpp" />
     <ClInclude Include="Entity.hpp" />
     <ClInclude Include="Fonts.hpp" />
     <ClInclude Include="Game.hpp" />
@@ -187,8 +190,10 @@
     <ClInclude Include="Layers.hpp" />
     <ClInclude Include="MenuState.hpp" />
     <ClInclude Include="PauseState.hpp" />
+    <ClInclude Include="PickupType.hpp" />
     <ClInclude Include="Player.hpp" />
     <ClInclude Include="PlayerAction.hpp" />
+    <ClInclude Include="ProjectileType.hpp" />
     <ClInclude Include="ResourceHolder.hpp" />
     <ClInclude Include="ResourceIdentifiers.hpp" />
     <ClInclude Include="SceneNode.hpp" />
@@ -197,6 +202,7 @@
     <ClInclude Include="State.hpp" />
     <ClInclude Include="StateID.hpp" />
     <ClInclude Include="StateStack.hpp" />
+    <ClInclude Include="TextNode.hpp" />
     <ClInclude Include="Textures.hpp" />
     <ClInclude Include="TitleState.hpp" />
     <ClInclude Include="Utility.hpp" />

@@ -1,8 +1,13 @@
+#define _USE_MATH_DEFINES
 #include "Utility.hpp"
 
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Text.hpp>
+
+
 #include <cmath>
+
+
 
 //TODO should we just implement for base class - sf::Transformable?
 void Utility::CentreOrigin(sf::Sprite& sprite)
@@ -128,6 +133,11 @@ std::string Utility::toString(sf::Keyboard::Key key)
 	}
 
 	return "";
+}
+
+double Utility::ToRadians(int degrees)
+{
+	return (degrees * M_PI) / 180;
 }
 
 
