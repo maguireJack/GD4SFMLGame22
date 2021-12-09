@@ -4,10 +4,11 @@
 #include <iostream>
 #include <limits>
 
-World::World(sf::RenderWindow& window)
+World::World(sf::RenderWindow& window, FontHolder& font)
 	: m_window(window)
 	, m_camera(window.getDefaultView())
 	, m_textures()
+	, m_fonts(font)
 	, m_scenegraph()
 	, m_scene_layers()
 	, m_world_bounds(0.f, 0.f, m_camera.getSize().x, 8000)
@@ -75,18 +76,18 @@ void World::BuildScene()
 	m_scene_layers[static_cast<int>(Layers::kBackground)]->AttachChild(std::move(background_sprite));
 
 	//Add player's aircraft
-	std::unique_ptr<Aircraft> leader(new Aircraft(AircraftType::kEagle, m_textures));
+	std::unique_ptr<Aircraft> leader(new Aircraft(AircraftType::kEagle, m_textures, m_fonts));
 	m_player_aircraft = leader.get();
 	m_player_aircraft->setPosition(m_spawn_position);
 	m_player_aircraft->SetVelocity(40.f, m_scrollspeed);
 	m_scene_layers[static_cast<int>(Layers::kAir)]->AttachChild(std::move(leader));
 
 	//Add two escorts
-	std::unique_ptr<Aircraft> leftEscort(new Aircraft(AircraftType::kRaptor, m_textures));
+	std::unique_ptr<Aircraft> leftEscort(new Aircraft(AircraftType::kRaptor, m_textures, m_fonts));
 	leftEscort->setPosition(-80.f, 50.f);
 	m_player_aircraft->AttachChild(std::move(leftEscort));
 
-	std::unique_ptr<Aircraft> rightEscort(new Aircraft(AircraftType::kRaptor, m_textures));
+	std::unique_ptr<Aircraft> rightEscort(new Aircraft(AircraftType::kRaptor, m_textures, m_fonts));
 	rightEscort->setPosition(80.f, 50.f);
 	m_player_aircraft->AttachChild(std::move(rightEscort));
 }
@@ -120,5 +121,60 @@ void World::AdaptPlayerVelocity()
 	}
 	//Add scrolling velocity
 	m_player_aircraft->Accelerate(0.f, m_scrollspeed);
+}
+
+sf::FloatRect World::GetViewBounds() const
+{
+	return sf::FloatRect(m_camera.getCenter() - m_camera.getSize() / 2.f, m_camera.getSize());
+}
+
+sf::FloatRect World::GetBattlefieldBounds() const
+{
+	//Return camera bounds + a small area at the top where enemies spawn offscreen
+	sf::FloatRect bounds = GetViewBounds();
+	bounds.top -= 100.f;
+	bounds.height += 100.f;
+
+	return bounds;
+}
+
+void World::SpawnEnemies()
+{
+	//Spawn an enemy when they are relevant - they are relevant when they enter the battlefield bounds
+	while(!m_enemy_spawn_points.empty() && m_enemy_spawn_points.back().m_y > GetBattlefieldBounds().top)
+	{
+		SpawnPoint spawn = m_enemy_spawn_points.back();
+		std::unique_ptr<Aircraft> enemy(new Aircraft(spawn.m_type, m_textures, m_fonts));
+		enemy->setPosition(spawn.m_x, spawn.m_y);
+		enemy->setRotation(180.f);
+		m_scene_layers[static_cast<int>(Layers::kAir)]->AttachChild(std::move(enemy));
+
+		m_enemy_spawn_points.pop_back();
+		
+	}
+}
+
+void World::AddEnemy(AircraftType type, float relX, float relY)
+{
+	SpawnPoint spawn(type, m_spawn_position.x + relX, m_spawn_position.y - relY);
+	m_enemy_spawn_points.emplace_back(spawn);
+}
+
+void World::AddEnemies()
+{
+	//Add all enemies
+	AddEnemy(AircraftType::kRaptor, 0.f, 500.f);
+	AddEnemy(AircraftType::kRaptor, 0.f, 1000.f);
+	AddEnemy(AircraftType::kRaptor, 100.f, 1100.f);
+	AddEnemy(AircraftType::kRaptor, -100.f, 1100.f);
+	AddEnemy(AircraftType::kAvenger, -70.f, 1400.f);
+	AddEnemy(AircraftType::kAvenger, 70.f, 1400.f);
+	AddEnemy(AircraftType::kAvenger, 70.f, 1600.f);
+
+	//Sort according to y value so that lower enemies are checked first
+	std::sort(m_enemy_spawn_points.begin(), m_enemy_spawn_points.end(), [](SpawnPoint lhs, SpawnPoint rhs)
+	{
+		return lhs.m_y < rhs.m_y;
+	});
 }
 

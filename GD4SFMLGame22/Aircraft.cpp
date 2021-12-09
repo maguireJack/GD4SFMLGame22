@@ -3,6 +3,7 @@
 
 #include <SFML/Graphics/RenderTarget.hpp>
 
+#include "Projectile.hpp"
 #include "ResourceHolder.hpp"
 #include "Utility.hpp"
 
@@ -25,9 +26,12 @@ Textures ToTextureID(AircraftType type)
 }
 
 Aircraft::Aircraft(AircraftType type, const TextureHolder& textures, const FontHolder& fonts)
-: Entity(Table[static_cast<int>(type)].m_hitpoints)
-, m_type(type)
-, m_sprite(textures.Get(ToTextureID(type)))
+	: Entity(Table[static_cast<int>(type)].m_hitpoints)
+	, m_type(type)
+	, m_sprite(textures.Get(ToTextureID(type)))
+	, m_is_firing(false)
+	, m_is_launching_missile(false)
+, m_fire_countdown(sf::Time::Zero)
 , m_fire_rate(1)
 , m_spread_level(1)
 , m_missile_ammo(2)
@@ -114,8 +118,10 @@ void Aircraft::UpdateTexts()
 
 }
 
-void Aircraft::UpdateCurrent(sf::Time dt)
+void Aircraft::UpdateCurrent(sf::Time dt, CommandQueue& commands)
 {
+	//Check if bullets or missiles are fired
+	CheckProjectileLaunch(dt, commands);
 	UpdateTexts();
 }
 
@@ -141,5 +147,103 @@ void Aircraft::UpdateMovementPattern(sf::Time dt)
 		m_travelled_distance += GetMaxSpeed() * dt.asSeconds();
 
 	}
+
+
+}
+
+float Aircraft::GetMaxSpeed() const
+{
+	return Table[static_cast<int>(m_type)].m_speed;
+}
+
+void Aircraft::Fire()
+{
+	//Only ships with a non-zero fire interval fire
+	if(Table[static_cast<int>(m_type)].m_fire_interval != sf::Time::Zero)
+	{
+		m_is_firing = true;
+	}
+}
+
+void Aircraft::LaunchMissile()
+{
+	if(m_missile_ammo > 0)
+	{
+		m_is_launching_missile = true;
+		--m_missile_ammo;
+	}
+}
+
+void Aircraft::CheckProjectileLaunch(sf::Time dt, CommandQueue& commands)
+{
+	//Enemies try and fire as often as possible
+	if(!IsAllied())
+	{
+		Fire();
+	}
+
+	//Rate the bullets - default to 2 times a second
+	if(m_is_firing && m_fire_countdown <= sf::Time::Zero)
+	{
+		//Countdown expired, can fire again
+		commands.Push(m_fire_command);
+		m_fire_countdown += Table[static_cast<int>(m_type)].m_fire_interval / (m_fire_rate + 1.f);
+		m_is_firing = false;
+	}
+	else if(m_fire_countdown > sf::Time::Zero)
+	{
+		//Wait, can't fire yet
+		m_fire_countdown -= dt;
+		m_is_firing = false;
+	}
+	//Missile launch
+	if(m_is_launching_missile)
+	{
+		commands.Push(m_missile_command);
+		m_is_launching_missile = false;
+	}
+
+}
+
+bool Aircraft::IsAllied() const
+{
+	return m_type == AircraftType::kEagle;
+}
+
+
+//TODO Do enemies need a different offset as they are flying down the screen?
+void Aircraft::CreateBullets(SceneNode& node, const TextureHolder& textures) const
+{
+	ProjectileType type = IsAllied() ? ProjectileType::kAlliedBullet : ProjectileType::kEnemyBullet;
+	switch(m_spread_level)
+	{
+		case 1:
+			CreateProjectile(node, type, 0.0f, 0.5f, textures);
+			break;
+		case 2:
+			CreateProjectile(node, type, -0.5f, 0.5f, textures);
+			CreateProjectile(node, type, 0.5f, 0.5f, textures);
+			break;
+		case 3:
+			CreateProjectile(node, type, -0.5f, 0.5f, textures);
+			CreateProjectile(node, type, 0.0f, 0.5f, textures);
+			CreateProjectile(node, type, 0.5f, 0.5f, textures);
+			break;
+
+	}
+
+}
+
+void Aircraft::CreateProjectile(SceneNode& node, ProjectileType type, float x_offset, float y_offset,
+	const TextureHolder& textures) const
+{
+	std::unique_ptr<Projectile> projectile(new Projectile(type, textures));
+	sf::Vector2f offset(x_offset * m_sprite.getGlobalBounds().width, y_offset * m_sprite.getGlobalBounds().height);
+	sf::Vector2f velocity(0, projectile->GetMaxSpeed());
+
+	float sign = IsAllied() ? -1.f : +1.f;
+	projectile->setPosition(GetWorldPosition() + offset * sign);
+	projectile->SetVelocity(velocity * sign);
+	node.AttachChild(std::move(projectile));
 }
 
