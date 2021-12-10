@@ -42,6 +42,8 @@ private:
 	void AddEnemy(AircraftType type, float relX, float relY);
 	void AddEnemies();
 	void GuideMissiles();
+	void HandleCollisions();
+	void DestroyEntitiesOutsideView();
 
 private:
 	struct SpawnPoint

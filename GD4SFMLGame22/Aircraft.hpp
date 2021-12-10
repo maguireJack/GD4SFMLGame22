@@ -27,6 +27,9 @@ public:
 	void CreateBullets(SceneNode& node, const TextureHolder& textures) const;
 	void CreateProjectile(SceneNode& node, ProjectileType type, float x_offset, float y_offset, const TextureHolder& textures) const;
 
+	sf::FloatRect GetBoundingRect() const override;
+	bool IsMarkedForRemoval() const;
+
 
 private:
 	virtual void DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
@@ -47,6 +50,8 @@ private:
 	bool m_is_launching_missile;
 
 	sf::Time m_fire_countdown;
+
+	bool m_is_marked_for_removal;
 
 
 	unsigned int m_fire_rate;

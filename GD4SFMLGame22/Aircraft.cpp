@@ -265,3 +265,13 @@ void Aircraft::CreateProjectile(SceneNode& node, ProjectileType type, float x_of
 	node.AttachChild(std::move(projectile));
 }
 
+sf::FloatRect Aircraft::GetBoundingRect() const
+{
+	return GetWorldTransform().transformRect(m_sprite.getGlobalBounds());
+}
+
+bool Aircraft::IsMarkedForRemoval() const
+{
+	return m_is_marked_for_removal;
+}
+

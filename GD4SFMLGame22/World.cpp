@@ -4,6 +4,7 @@
 #include <iostream>
 #include <limits>
 
+#include "Pickup.hpp"
 #include "Projectile.hpp"
 #include "Utility.hpp"
 
@@ -31,7 +32,7 @@ void World::Update(sf::Time dt)
 	m_camera.move(0, m_scrollspeed * dt.asSeconds());
 
 	m_player_aircraft->SetVelocity(0.f, 0.f);
-
+	DestroyEntitiesOutsideView();
 	GuideMissiles();
 
 	//Forward commands to the scenegraph until the command queue is empty
@@ -40,6 +41,10 @@ void World::Update(sf::Time dt)
 		m_scenegraph.OnCommand(m_command_queue.Pop(), dt);
 	}
 	AdaptPlayerVelocity();
+
+	HandleCollisions();
+	//Remove all destroyed entities
+	m_scenegraph.RemoveWrecks();
 
 	SpawnEnemies();
 
@@ -234,4 +239,76 @@ void World::GuideMissiles()
 	m_command_queue.Push(enemyCollector);
 	m_command_queue.Push(missileGuider);
 	m_active_enemies.clear();
+}
+
+bool MatchesCategories(SceneNode::Pair& colliders, Category::Type type1, Category::Type type2)
+{
+	unsigned int category1 = colliders.first->GetCategory();
+	unsigned int category2 = colliders.second->GetCategory();
+
+	if(type1 & category1 && type2 & category2)
+	{
+		return true;
+	}
+	else if(type1 & category2 && type2 & category1)
+	{
+		std::swap(colliders.first, colliders.second);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+void World::HandleCollisions()
+{
+	std::set<SceneNode::Pair> collision_pairs;
+	m_scenegraph.CheckSceneCollision(m_scenegraph, collision_pairs);
+	for(SceneNode::Pair pair : collision_pairs)
+	{
+		if(MatchesCategories(pair, Category::Type::kPlayerAircraft, Category::Type::kEnemyAircraft))
+		{
+			auto& player = static_cast<Aircraft&>(*pair.first);
+			auto& enemy = static_cast<Aircraft&>(*pair.second);
+			//Collision
+			player.Damage(enemy.GetHitPoints());
+			enemy.Destroy();
+		}
+
+		else if (MatchesCategories(pair, Category::Type::kPlayerAircraft, Category::Type::kPickup))
+		{
+			auto& player = static_cast<Aircraft&>(*pair.first);
+			auto& pickup = static_cast<Pickup&>(*pair.second);
+			//Apply the pickup effect
+			pickup.Apply(player);
+			pickup.Destroy();
+		}
+
+		else if (MatchesCategories(pair, Category::Type::kPlayerAircraft, Category::Type::kEnemyProjectile) || MatchesCategories(pair, Category::Type::kEnemyAircraft, Category::Type::kAlliedProjectile))
+		{
+			auto& aircraft = static_cast<Aircraft&>(*pair.first);
+			auto& projectile = static_cast<Projectile&>(*pair.second);
+			//Apply the projectile damage to the plane
+			aircraft.Damage(projectile.GetDamage());
+			projectile.Destroy();
+		}
+
+
+	}
+}
+
+void World::DestroyEntitiesOutsideView()
+{
+	Command command;
+	command.category = Category::Type::kAircraft | Category::Type::kProjectile;
+	command.action = DerivedAction<Entity>([this](Entity& e, sf::Time)
+	{
+		//Does the object intersect with the battlefield
+		if (!GetBattlefieldBounds().intersects(e.GetBoundingRect()))
+		{
+			e.Destroy();
+		}
+	});
+	m_command_queue.Push(command);
 }

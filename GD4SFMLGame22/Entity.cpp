@@ -48,7 +48,7 @@ void Entity::Repair(unsigned int points)
 	m_hitpoints += points;
 }
 
-void Entity::Damage(unsigned points)
+void Entity::Damage(unsigned int points)
 {
 	assert(points > 0);
 	m_hitpoints -= points;
