@@ -8,6 +8,7 @@
 #include <memory>
 
 #include "Command.hpp"
+#include "CommandQueue.hpp"
 
 class SceneNode : public sf::Transformable, public sf::Drawable, private sf::NonCopyable
 {
@@ -15,11 +16,11 @@ public:
 	typedef  std::unique_ptr<SceneNode> Ptr;
 
 public:
-	SceneNode();
+	explicit SceneNode(Category::Type category = Category::kNone);
 	void AttachChild(Ptr child);
 	Ptr DetachChild(const SceneNode& node);
 
-	void Update(sf::Time dt);
+	void Update(sf::Time dt, CommandQueue& commands);
 
 	sf::Vector2f GetWorldPosition() const;
 	sf::Transform GetWorldTransform() const;
@@ -28,8 +29,8 @@ public:
 	virtual unsigned int GetCategory() const;
 
 private:
-	virtual void UpdateCurrent(sf::Time dt);
-	void UpdateChildren(sf::Time dt);
+	virtual void UpdateCurrent(sf::Time dt, CommandQueue& commands);
+	void UpdateChildren(sf::Time dt, CommandQueue& commands);
 
 	//Note draw is from sf::Drawable hence the name, lower case d
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
@@ -39,4 +40,6 @@ private:
 private:
 	std::vector<Ptr> m_children;
 	SceneNode* m_parent;
+	Category::Type m_default_category;
 };
+float distance(const SceneNode& lhs, const SceneNode& rhs);

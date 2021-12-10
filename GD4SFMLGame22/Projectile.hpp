@@ -19,8 +19,8 @@ public:
 	int GetDamage() const;
 
 private:
-	void UpdateCurrent(sf::Time dt) override;
-	void DrawCurrent(sf::RenderTarget&, sf::RenderStates states) const override;
+	virtual void UpdateCurrent(sf::Time dt, CommandQueue& commands) override;
+	virtual void DrawCurrent(sf::RenderTarget&, sf::RenderStates states) const override;
 
 private:
 	ProjectileType m_type;

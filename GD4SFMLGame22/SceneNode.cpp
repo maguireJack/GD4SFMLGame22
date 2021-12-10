@@ -2,8 +2,11 @@
 
 #include <algorithm>
 #include <cassert>
+#include <iostream>
 
-SceneNode::SceneNode():m_children(), m_parent(nullptr)
+#include "Utility.hpp"
+
+SceneNode::SceneNode(Category::Type category):m_children(), m_parent(nullptr), m_default_category(category)
 {
 }
 
@@ -25,10 +28,10 @@ SceneNode::Ptr SceneNode::DetachChild(const SceneNode& node)
 	return result;
 }
 
-void SceneNode::Update(sf::Time dt)
+void SceneNode::Update(sf::Time dt, CommandQueue& commands)
 {
-	UpdateCurrent(dt);
-	UpdateChildren(dt);
+	UpdateCurrent(dt, commands);
+	UpdateChildren(dt, commands);
 }
 
 sf::Vector2f SceneNode::GetWorldPosition() const
@@ -46,16 +49,16 @@ sf::Transform SceneNode::GetWorldTransform() const
 	return transform;
 }
 
-void SceneNode::UpdateCurrent(sf::Time dt)
+void SceneNode::UpdateCurrent(sf::Time dt, CommandQueue& commands)
 {
 	//Do nothing by default
 }
 
-void SceneNode::UpdateChildren(sf::Time dt)
+void SceneNode::UpdateChildren(sf::Time dt, CommandQueue& commands)
 {
 	for(Ptr& child : m_children)
 	{
-		child->Update(dt);
+		child->Update(dt, commands);
 	}
 }
 
@@ -97,7 +100,12 @@ void SceneNode::OnCommand(const Command& command, sf::Time dt)
 	}
 }
 
-unsigned SceneNode::GetCategory() const
+unsigned int SceneNode::GetCategory() const
 {
-	return Category::kScene;
+	return static_cast<int>(m_default_category);
+}
+
+float distance(const SceneNode& lhs, const SceneNode& rhs)
+{
+	return Utility::Length(lhs.GetWorldPosition() - rhs.GetWorldPosition());
 }

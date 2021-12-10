@@ -13,7 +13,7 @@ namespace
 }
 
 Projectile::Projectile(ProjectileType type, const TextureHolder& textures)
-: Entity(0)
+: Entity(1)
 , m_type(type)
 , m_sprite(textures.Get(Table[static_cast<int>(type)].m_texture))
 {
@@ -31,9 +31,12 @@ bool Projectile::IsGuided() const
 	return m_type == ProjectileType::kMissile;
 }
 
-unsigned Projectile::GetCategory() const
+unsigned int Projectile::GetCategory() const
 {
-	return Entity::GetCategory();
+	if (m_type == ProjectileType::kEnemyBullet)
+		return static_cast<int>(Category::kEnemyProjectile);
+	else
+		return static_cast<int>(Category::kAlliedProjectile);
 }
 
 //Axis aligned bounding box
@@ -52,7 +55,7 @@ int Projectile::GetDamage() const
 	return Table[static_cast<int>(m_type)].m_damage;
 }
 
-void Projectile::UpdateCurrent(sf::Time dt)
+void Projectile::UpdateCurrent(sf::Time dt, CommandQueue& commands)
 {
 	if(IsGuided())
 	{
@@ -64,7 +67,7 @@ void Projectile::UpdateCurrent(sf::Time dt)
 		setRotation(Utility::ToDegrees(angle) + 90.f);
 		SetVelocity(new_velocity);
 	}
-	Entity::UpdateCurrent(dt);
+	Entity::UpdateCurrent(dt, commands);
 }
 
 void Projectile::DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) const

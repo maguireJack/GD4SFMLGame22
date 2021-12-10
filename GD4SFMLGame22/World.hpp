@@ -41,6 +41,7 @@ private:
 	void SpawnEnemies();
 	void AddEnemy(AircraftType type, float relX, float relY);
 	void AddEnemies();
+	void GuideMissiles();
 
 private:
 	struct SpawnPoint
@@ -69,5 +70,6 @@ private:
 	float m_scrollspeed;
 	Aircraft* m_player_aircraft;
 	std::vector<SpawnPoint> m_enemy_spawn_points;
+	std::vector<Aircraft*>	m_active_enemies;
 };
 

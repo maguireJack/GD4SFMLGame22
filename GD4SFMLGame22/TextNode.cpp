@@ -5,7 +5,7 @@
 #include "ResourceHolder.hpp"
 #include "Utility.hpp"
 
-TextNode::TextNode(const FontHolder& fonts, std::string& text)
+TextNode::TextNode(const FontHolder& fonts, const std::string& text)
 	: m_text(text, fonts.Get(Fonts::Main), 20)
 {
 }

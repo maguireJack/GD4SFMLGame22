@@ -4,6 +4,9 @@
 #include <iostream>
 #include <limits>
 
+#include "Projectile.hpp"
+#include "Utility.hpp"
+
 World::World(sf::RenderWindow& window, FontHolder& font)
 	: m_window(window)
 	, m_camera(window.getDefaultView())
@@ -11,7 +14,7 @@ World::World(sf::RenderWindow& window, FontHolder& font)
 	, m_fonts(font)
 	, m_scenegraph()
 	, m_scene_layers()
-	, m_world_bounds(0.f, 0.f, m_camera.getSize().x, 8000)
+	, m_world_bounds(0.f, 0.f, m_camera.getSize().x, 2000)
 	, m_spawn_position(m_camera.getSize().x/2.f, m_world_bounds.height - m_camera.getSize().y /2.f)
 	, m_scrollspeed(-50.f)
 	, m_player_aircraft(nullptr)
@@ -29,6 +32,8 @@ void World::Update(sf::Time dt)
 
 	m_player_aircraft->SetVelocity(0.f, 0.f);
 
+	GuideMissiles();
+
 	//Forward commands to the scenegraph until the command queue is empty
 	while(!m_command_queue.IsEmpty())
 	{
@@ -36,8 +41,10 @@ void World::Update(sf::Time dt)
 	}
 	AdaptPlayerVelocity();
 
+	SpawnEnemies();
+
 	//Apply movement
-	m_scenegraph.Update(dt);
+	m_scenegraph.Update(dt, m_command_queue);
 	AdaptPlayerPosition();
 }
 
@@ -51,7 +58,11 @@ void World::LoadTextures()
 {
 	m_textures.Load(Textures::kEagle, "Media/Textures/Eagle.png");
 	m_textures.Load(Textures::kRaptor, "Media/Textures/Raptor.png");
+	m_textures.Load(Textures::kAvenger, "Media/Textures/Avenger.png");
 	m_textures.Load(Textures::kDesert, "Media/Textures/Desert.png");
+
+	m_textures.Load(Textures::kBullet, "Media/Textures/Bullet.png");
+	m_textures.Load(Textures::kMissile, "Media/Textures/Missile.png");
 }
 
 void World::BuildScene()
@@ -59,7 +70,8 @@ void World::BuildScene()
 	//Initialize the different layers
 	for (std::size_t i = 0; i < static_cast<int>(Layers::kLayerCount); ++i)
 	{
-		SceneNode::Ptr layer(new SceneNode());
+		Category::Type category = (i == static_cast<int>(Layers::kAir)) ? Category::Type::kScene : Category::Type::kNone;
+		SceneNode::Ptr layer(new SceneNode(category));
 		m_scene_layers[i] = layer.get();
 		m_scenegraph.AttachChild(std::move(layer));
 	}
@@ -79,17 +91,18 @@ void World::BuildScene()
 	std::unique_ptr<Aircraft> leader(new Aircraft(AircraftType::kEagle, m_textures, m_fonts));
 	m_player_aircraft = leader.get();
 	m_player_aircraft->setPosition(m_spawn_position);
-	m_player_aircraft->SetVelocity(40.f, m_scrollspeed);
 	m_scene_layers[static_cast<int>(Layers::kAir)]->AttachChild(std::move(leader));
 
-	//Add two escorts
-	std::unique_ptr<Aircraft> leftEscort(new Aircraft(AircraftType::kRaptor, m_textures, m_fonts));
-	leftEscort->setPosition(-80.f, 50.f);
-	m_player_aircraft->AttachChild(std::move(leftEscort));
+	// //Add two escorts
+	// std::unique_ptr<Aircraft> leftEscort(new Aircraft(AircraftType::kRaptor, m_textures, m_fonts));
+	// leftEscort->setPosition(-80.f, 50.f);
+	// m_player_aircraft->AttachChild(std::move(leftEscort));
+	//
+	// std::unique_ptr<Aircraft> rightEscort(new Aircraft(AircraftType::kRaptor, m_textures, m_fonts));
+	// rightEscort->setPosition(80.f, 50.f);
+	// m_player_aircraft->AttachChild(std::move(rightEscort));
 
-	std::unique_ptr<Aircraft> rightEscort(new Aircraft(AircraftType::kRaptor, m_textures, m_fonts));
-	rightEscort->setPosition(80.f, 50.f);
-	m_player_aircraft->AttachChild(std::move(rightEscort));
+	AddEnemies();
 }
 
 CommandQueue& World::getCommandQueue()
@@ -178,3 +191,47 @@ void World::AddEnemies()
 	});
 }
 
+void World::GuideMissiles()
+{
+	// Setup command that stores all enemies in mActiveEnemies
+	Command enemyCollector;
+	enemyCollector.category = Category::kEnemyAircraft;
+	enemyCollector.action = DerivedAction<Aircraft>([this](Aircraft& enemy, sf::Time)
+	{
+		if (!enemy.IsDestroyed())
+			m_active_enemies.push_back(&enemy);
+	});
+
+	// Setup command that guides all missiles to the enemy which is currently closest to the player
+	Command missileGuider;
+	missileGuider.category = Category::kAlliedProjectile;
+	missileGuider.action = DerivedAction<Projectile>([this](Projectile& missile, sf::Time)
+	{
+		// Ignore unguided bullets
+		if (!missile.IsGuided())
+			return;
+
+		float minDistance = std::numeric_limits<float>::max();
+		Aircraft* closestEnemy = nullptr;
+
+		// Find closest enemy
+		for(Aircraft * enemy :  m_active_enemies)
+		{
+			float enemyDistance = distance(missile, *enemy);
+
+			if (enemyDistance < minDistance)
+			{
+				closestEnemy = enemy;
+				minDistance = enemyDistance;
+			}
+		}
+
+		if (closestEnemy)
+			missile.GuideTowards(closestEnemy->GetWorldPosition());
+	});
+
+	// Push commands, reset active enemies
+	m_command_queue.Push(enemyCollector);
+	m_command_queue.Push(missileGuider);
+	m_active_enemies.clear();
+}

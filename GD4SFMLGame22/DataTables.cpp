@@ -4,7 +4,7 @@
 #include "PickupType.hpp"
 #include "ProjectileType.hpp"
 
-std::vector<AircraftData> initializeAircraftData()
+std::vector<AircraftData> InitializeAircraftData()
 {
 	std::vector<AircraftData> data(static_cast<int>(AircraftType::kAircraftCount));
 
@@ -35,7 +35,7 @@ std::vector<AircraftData> initializeAircraftData()
 	return data;
 }
 
-std::vector<ProjectileData> initializeProjectileData()
+std::vector<ProjectileData> InitializeProjectileData()
 {
 	std::vector<ProjectileData> data(static_cast<int>(ProjectileType::kProjectileCount));
 
@@ -52,6 +52,7 @@ std::vector<ProjectileData> initializeProjectileData()
 	data[static_cast<int>(ProjectileType::kMissile)].m_texture = Textures::kMissile;
 	return data;
 }
+
 
 std::vector<PickupData> InitializePickupData()
 {

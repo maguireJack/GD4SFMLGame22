@@ -1,4 +1,5 @@
 #pragma once
+#include "CommandQueue.hpp"
 #include "SceneNode.hpp"
 
 class Entity : public SceneNode
