@@ -3,9 +3,7 @@
 #include "ResourceIdentifiers.hpp"
 #include "SceneNode.hpp"
 #include "SpriteNode.hpp"
-#include "Aircraft.hpp"
 #include "Layers.hpp"
-#include "AircraftType.hpp"
 
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/Graphics/View.hpp>
@@ -39,7 +37,6 @@ private:
 	sf::FloatRect GetViewBounds() const;
 	sf::FloatRect GetBattlefieldBounds() const;
 	void SpawnEnemies();
-	void AddEnemy(AircraftType type, float relX, float relY);
 	void AddEnemies();
 	void GuideMissiles();
 	void HandleCollisions();
@@ -48,13 +45,7 @@ private:
 private:
 	struct SpawnPoint
 	{
-		SpawnPoint(AircraftType type, float x, float y) : m_type(type), m_x(x), m_y(y)
-		{
-			
-		}
-		AircraftType m_type;
-		float m_x;
-		float m_y;
+		
 	};
 	
 
@@ -70,8 +61,6 @@ private:
 	sf::FloatRect m_world_bounds;
 	sf::Vector2f m_spawn_position;
 	float m_scrollspeed;
-	Aircraft* m_player_aircraft;
 	std::vector<SpawnPoint> m_enemy_spawn_points;
-	std::vector<Aircraft*>	m_active_enemies;
 };
 

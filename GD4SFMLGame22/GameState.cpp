@@ -7,6 +7,7 @@ GameState::GameState(StateStack& stack, Context context)
 , m_world(*context.window, *context.fonts)
 , m_player(*context.player)
 {
+
 }
 
 void GameState::Draw()

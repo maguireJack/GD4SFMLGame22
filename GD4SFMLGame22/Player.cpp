@@ -1,21 +1,7 @@
 #include "Player.hpp"
-#include "Aircraft.hpp"
 #include <algorithm>
 
-struct AircraftMover
-{
-	AircraftMover(float vx, float vy) : velocity(vx, vy)
-	{
-		
-	}
 
-	void operator()(Aircraft& aircraft, sf::Time) const
-	{
-		aircraft.Accelerate(velocity * aircraft.GetMaxSpeed());
-	}
-
-	sf::Vector2f velocity;
-};
 
 Player::Player()
 {
@@ -93,24 +79,7 @@ sf::Keyboard::Key Player::GetAssignedKey(PlayerAction action) const
 
 void Player::InitialiseActions()
 {
-	const float player_speed = 200.f;
-
-	m_action_binding[PlayerAction::kMoveLeft].action = DerivedAction<Aircraft>(AircraftMover(-1, 0.f));
-	m_action_binding[PlayerAction::kMoveRight].action = DerivedAction<Aircraft>(AircraftMover(+1, 0.f));
-	m_action_binding[PlayerAction::kMoveUp].action = DerivedAction<Aircraft>(AircraftMover(0.f, -1));
-	m_action_binding[PlayerAction::kMoveDown].action = DerivedAction<Aircraft>(AircraftMover(0, 1));
-
-	m_action_binding[PlayerAction::kFire].action = DerivedAction<Aircraft>([](Aircraft& a, sf::Time
-		)
-	{
-		a.Fire();
-	});
-
-	m_action_binding[PlayerAction::kLaunchMissile].action = DerivedAction<Aircraft>([](Aircraft& a, sf::Time
-		)
-	{
-		a.LaunchMissile();
-	});
+	
 }
 
 bool Player::IsRealtimeAction(PlayerAction action)
