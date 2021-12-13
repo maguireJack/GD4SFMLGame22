@@ -41,9 +41,18 @@ MenuState::MenuState(StateStack& stack, Context context)
 		RequestStackPush(StateID::kLevelEditor);
 	});
 
+	auto exit_button = std::make_shared<GUI::Button>(*context.fonts, *context.textures);
+	exit_button->setPosition(100, 400);
+	exit_button->SetText("Exit");
+	exit_button->SetCallback([this]()
+	{
+		RequestStackPop();
+	});
+
 	m_gui_container.Pack(play_button);
 	m_gui_container.Pack(settings_button);
 	m_gui_container.Pack(level_editor_button);
+	m_gui_container.Pack(exit_button);
 }
 
 void MenuState::Draw()

@@ -2,11 +2,21 @@
 enum class Textures
 {
 	kBruno,
-	kBackground1,
-	kBackground2,
-	kBackground3,
-	kBackground4,
-	kBackground5,
+
+	kJungle1,
+	kJungle2,
+	kJungle3,
+	kJungle4,
+	kJungle5,
+
+	kSky1,
+	kSky2,
+	kSky3,
+	kSky4,
+	kSky5,
+
+	kTempTile,
+
 	kTitleScreen,
 	kButtonNormal,
 	kButtonSelected,

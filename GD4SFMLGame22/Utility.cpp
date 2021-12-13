@@ -156,3 +156,8 @@ float Utility::ToDegrees(float angle_in_radians)
 {
 	return angle_in_radians * (180/M_PI);
 }
+
+sf::IntRect Utility::GetIntRect(sf::Texture& texture)
+{
+	return sf::IntRect(0, 0, texture.getSize().x, texture.getSize().y);
+}

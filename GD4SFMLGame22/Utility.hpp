@@ -1,11 +1,13 @@
 #pragma once
 #include <string>
+#include <SFML/Graphics/Rect.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Keyboard.hpp>
 
 
 namespace sf
 {
+	class Texture;
 	class Sprite;
 	class Text;
 }
@@ -20,5 +22,6 @@ public:
 	static sf::Vector2f UnitVector(sf::Vector2f vector);
 	static float Length(sf::Vector2f vector);
 	static float ToDegrees(float angle);
+	static sf::IntRect GetIntRect(sf::Texture& texture);
 };
 
