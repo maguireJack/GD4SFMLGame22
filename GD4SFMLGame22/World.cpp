@@ -3,6 +3,7 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <iostream>
 #include <limits>
+#include <SFML/Window/Mouse.hpp>
 
 
 #include "GridNode.hpp"
@@ -17,7 +18,7 @@ World::World(sf::RenderWindow& window, FontHolder& font)
 	, m_scenegraph()
 	, m_scene_layers()
 	, m_world_bounds(0.f, 0.f, 384, 432)
-	, m_spawn_position(384 / 2, 216 / 2)
+	, m_spawn_position(384/2, 216 + 216/2)
 	, m_scrollspeed(-50.f)
 {
 	LoadTextures();
@@ -144,7 +145,7 @@ void World::BuildScene()
 	test->setPosition(sf::Vector2f(16 * 5, 16 * 5));
 	m_scene_layers[static_cast<int>(Layers::kAir)]->AttachChild(std::move(test));
 
-	std::unique_ptr<GridNode> grid(new GridNode(24, 27, 16, 0.2f));
+	std::unique_ptr<GridNode> grid(new GridNode(m_window, m_camera, 24, 27, 16, 0.2f));
 	grid->setPosition(m_world_bounds.left, m_world_bounds.top);
 	m_scene_layers[static_cast<int>(Layers::kAir)]->AttachChild(std::move(grid));
 
