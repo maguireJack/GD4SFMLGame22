@@ -9,6 +9,7 @@ public:
 
 private:
 	virtual void DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
+	void Update(sf::Time dt, CommandQueue& commands);
 
 private:
 	int m_horizontal_cells;

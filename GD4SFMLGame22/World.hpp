@@ -38,7 +38,7 @@ private:
 	sf::FloatRect GetBattlefieldBounds() const;
 	void SpawnEnemies();
 	void AddEnemies();
-	void GuideMissiles();
+	void SelectTiles();
 	void HandleCollisions();
 	void DestroyEntitiesOutsideView();
 
@@ -47,6 +47,9 @@ private:
 	{
 		
 	};
+
+public:
+	std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)>& GetSceneLayers();
 	
 
 private:

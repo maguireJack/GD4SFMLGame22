@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Window/Mouse.hpp>
 
 GridNode::GridNode(int horizontal_cells, int vertical_cells, float cell_size, float line_width)
 	: m_horizontal_cells(horizontal_cells)
@@ -13,7 +14,10 @@ GridNode::GridNode(int horizontal_cells, int vertical_cells, float cell_size, fl
 
 void GridNode::DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 {
-	
+
+	float mouseX = sf::Mouse::getPosition().x;
+	float mouseY = sf::Mouse::getPosition().y;
+
 	sf::RectangleShape horizontal_line(sf::Vector2f(m_cell_size * m_horizontal_cells, m_line_width));
 	sf::RectangleShape vertical_line(sf::Vector2f(m_line_width, m_cell_size * m_vertical_cells));
 
@@ -31,4 +35,7 @@ void GridNode::DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) co
 		vertical_line.setPosition(sf::Vector2f(i * m_cell_size, 0));
 		target.draw(vertical_line, states);
 	}
+
+
+
 }

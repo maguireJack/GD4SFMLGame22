@@ -6,6 +6,7 @@
 
 
 #include "GridNode.hpp"
+#include "Tile.hpp"
 #include "Utility.hpp"
 
 World::World(sf::RenderWindow& window, FontHolder& font)
@@ -16,7 +17,7 @@ World::World(sf::RenderWindow& window, FontHolder& font)
 	, m_scenegraph()
 	, m_scene_layers()
 	, m_world_bounds(0.f, 0.f, 384, 432)
-	, m_spawn_position(384/2, 0)
+	, m_spawn_position(384 / 2, 216 / 2)
 	, m_scrollspeed(-50.f)
 {
 	LoadTextures();
@@ -135,13 +136,19 @@ void World::BuildScene()
 	std::unique_ptr<SpriteNode> sky_sprite5(new SpriteNode(sky5, Utility::GetIntRect(sky5), m_world_bounds.left, m_world_bounds.top));
 	m_scene_layers[static_cast<int>(Layers::kBackground5)]->AttachChild(std::move(sky_sprite5));
 
-	std::unique_ptr<SpriteNode> temp_tile_sprite(new SpriteNode(temp_tile, sf::IntRect(0, 0, temp_tile.getSize().x, temp_tile.getSize().y)));
+	/*std::unique_ptr<SpriteNode> temp_tile_sprite(new SpriteNode(temp_tile, sf::IntRect(0, 0, temp_tile.getSize().x, temp_tile.getSize().y)));
 	temp_tile_sprite->setPosition(100, 316);
-	m_scene_layers[static_cast<int>(Layers::kAir)]->AttachChild(std::move(temp_tile_sprite));
+	m_scene_layers[static_cast<int>(Layers::kAir)]->AttachChild(std::move(temp_tile_sprite));*/
+
+	std::unique_ptr<Tile> test(new Tile(PlatformType::kStatic, m_textures));
+	test->setPosition(sf::Vector2f(16 * 5, 16 * 5));
+	m_scene_layers[static_cast<int>(Layers::kAir)]->AttachChild(std::move(test));
 
 	std::unique_ptr<GridNode> grid(new GridNode(24, 27, 16, 0.2f));
 	grid->setPosition(m_world_bounds.left, m_world_bounds.top);
 	m_scene_layers[static_cast<int>(Layers::kAir)]->AttachChild(std::move(grid));
+
+	
 
 	////Add player's aircraft
 	//std::unique_ptr<Aircraft> leader(new Aircraft(AircraftType::kEagle, m_textures, m_fonts));
@@ -164,6 +171,12 @@ CommandQueue& World::getCommandQueue()
 {
 	return m_command_queue;
 }
+
+std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)>& World::GetSceneLayers()
+{
+	return m_scene_layers;
+}
+
 
 void World::AdaptPlayerPosition()
 {
@@ -246,8 +259,20 @@ void World::SpawnEnemies()
 //	});
 //}
 
-void World::GuideMissiles()
+void World::SelectTiles()
 {
+
+	Command selectTile;
+	selectTile.category = Category::kPlatform;
+	selectTile.action = DerivedAction<Tile>([this](Tile& tile, sf::Time)
+	{
+		if (tile.IsSelected() == false)
+		{
+			
+		}
+	});
+
+
 	//// Setup command that stores all enemies in mActiveEnemies
 	//Command enemyCollector;
 	//enemyCollector.category = Category::kEnemyAircraft;
