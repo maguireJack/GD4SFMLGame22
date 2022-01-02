@@ -7,7 +7,6 @@ GameState::GameState(StateStack& stack, Context context)
 , m_world(*context.window, *context.fonts)
 , m_player(*context.player)
 {
-
 }
 
 void GameState::Draw()
@@ -18,14 +17,15 @@ void GameState::Draw()
 bool GameState::Update(sf::Time dt)
 {
 	m_world.Update(dt);
-	CommandQueue& commands = m_world.getCommandQueue();
+	CommandQueue& commands = m_world.GetCommandQueue();
+
 	m_player.HandleRealtimeInput(commands);
 	return true;
 }
 
 bool GameState::HandleEvent(const sf::Event& event)
 {
-	CommandQueue& commands = m_world.getCommandQueue();
+	CommandQueue& commands = m_world.GetCommandQueue();
 	m_player.HandleEvent(event, commands);
 
 	//Escape should bring up the Pause Menu

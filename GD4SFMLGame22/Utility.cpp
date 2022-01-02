@@ -7,6 +7,18 @@
 
 
 #include <cmath>
+#include <random>
+
+namespace
+{
+	std::default_random_engine CreateRandomEngine()
+	{
+		auto seed = static_cast<unsigned long>(std::time(nullptr));
+		return std::default_random_engine(seed);
+	}
+
+	auto RandomEngine = CreateRandomEngine();
+}
 
 
 
@@ -160,4 +172,10 @@ float Utility::ToDegrees(float angle_in_radians)
 sf::IntRect Utility::GetIntRect(sf::Texture& texture)
 {
 	return sf::IntRect(0, 0, texture.getSize().x, texture.getSize().y);
+}
+
+int Utility::RandomInt(int exclusive_max)
+{
+	std::uniform_int_distribution<> distr(0, exclusive_max - 1);
+	return distr(RandomEngine);
 }

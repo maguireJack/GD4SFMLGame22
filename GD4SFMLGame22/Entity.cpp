@@ -1,7 +1,8 @@
 #include "Entity.hpp"
 
-Entity::Entity(int hitpoints)
+Entity::Entity(int hitpoints, float max_speed)
 	: m_hitpoints(hitpoints)
+	, m_max_speed(max_speed)
 {
 }
 
@@ -42,13 +43,18 @@ int Entity::GetHitPoints() const
 	return m_hitpoints;
 }
 
+float Entity::GetMaxSpeed() const
+{
+	return m_max_speed;
+}
+
 void Entity::Repair(unsigned int points)
 {
 	assert(points > 0);
 	m_hitpoints += points;
 }
 
-void Entity::Damage(unsigned int points)
+void Entity::Damage(int points)
 {
 	assert(points > 0);
 	m_hitpoints -= points;

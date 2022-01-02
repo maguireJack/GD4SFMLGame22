@@ -1,12 +1,8 @@
 #pragma once
-#include <functional>
 #include <vector>
-#include <SFML/Graphics/Sprite.hpp>
-#include <SFML/System/Time.hpp>
 #include <SFML/System/Vector2.hpp>
 
 #include "ResourceIdentifiers.hpp"
-
 
 struct PlatformData
 {

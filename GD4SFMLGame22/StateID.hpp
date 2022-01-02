@@ -7,5 +7,6 @@ enum class StateID
 	kGame,
 	kLevelEditor,
 	kPause,
-	kSettings
+	kSettings,
+	kGameOver
 };

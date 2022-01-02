@@ -1,10 +1,9 @@
 #include "World.hpp"
 
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Window/Mouse.hpp>
 #include <iostream>
 #include <limits>
-#include <SFML/Window/Mouse.hpp>
-
 
 #include "GridNode.hpp"
 #include "Tile.hpp"
@@ -37,21 +36,20 @@ void World::Update(sf::Time dt)
 	m_scene_layers[static_cast<int>(Layers::kJungle3)]->move(-0.2f,0);
 	m_scene_layers[static_cast<int>(Layers::kJungle4)]->move(-0.3f,0);
 	m_scene_layers[static_cast<int>(Layers::kJungle5)]->move(-0.4f,0);*/
-	//Forward commands to the scenegraph until the command queue is empty
 
+	//Forward commands to the scenegraph until the command queue is empty
 	while(!m_command_queue.IsEmpty())
 	{
 		m_scenegraph.OnCommand(m_command_queue.Pop(), dt);
 	}
-	
+
+	HandleCollisions();
 	//Remove all destroyed entities
 	m_scenegraph.RemoveWrecks();
 
-	
-
 	//Apply movement
 	m_scenegraph.Update(dt, m_command_queue);
-	
+	AdaptPlayerPosition();
 }
 
 void World::Draw()
@@ -121,7 +119,6 @@ void World::BuildScene()
 	std::unique_ptr<SpriteNode> jungle_sprite5(new SpriteNode(jungle5, Utility::GetIntRect(jungle5), m_world_bounds.left, m_world_bounds.top + 216));
 	m_scene_layers[static_cast<int>(Layers::kBackground5)]->AttachChild(std::move(jungle_sprite5));
 
-
 	std::unique_ptr<SpriteNode> sky_sprite1(new SpriteNode(sky1, Utility::GetIntRect(sky1), m_world_bounds.left, m_world_bounds.top));
 	m_scene_layers[static_cast<int>(Layers::kBackground1)]->AttachChild(std::move(sky_sprite1));
 
@@ -149,7 +146,6 @@ void World::BuildScene()
 	grid->setPosition(m_world_bounds.left, m_world_bounds.top);
 	m_scene_layers[static_cast<int>(Layers::kAir)]->AttachChild(std::move(grid));
 
-	
 
 	////Add player's aircraft
 	//std::unique_ptr<Aircraft> leader(new Aircraft(AircraftType::kEagle, m_textures, m_fonts));
@@ -165,26 +161,14 @@ void World::BuildScene()
 	// std::unique_ptr<Aircraft> rightEscort(new Aircraft(AircraftType::kRaptor, m_textures, m_fonts));
 	// rightEscort->setPosition(80.f, 50.f);
 	// m_player_aircraft->AttachChild(std::move(rightEscort));
-
 }
-
-CommandQueue& World::getCommandQueue()
-{
-	return m_command_queue;
-}
-
-std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)>& World::GetSceneLayers()
-{
-	return m_scene_layers;
-}
-
 
 void World::AdaptPlayerPosition()
 {
-	////Keep the player on the screen
-	//sf::FloatRect view_bounds(m_camera.getCenter() - m_camera.getSize() / 2.f, m_camera.getSize());
+	//Keep the player on the screen
+	//sf::FloatRect view_bounds = GetViewBounds();
 	//const float border_distance = 40.f;
-	//sf::Vector2f position = m_player_aircraft->GetWorldPosition();
+	//sf::Vector2f position = m_player_aircraft->getPosition();
 	//position.x = std::max(position.x, view_bounds.left + border_distance);
 	//position.x = std::min(position.x, view_bounds.left + view_bounds.width - border_distance);
 	//position.y = std::max(position.y, view_bounds.top + border_distance);
@@ -193,16 +177,9 @@ void World::AdaptPlayerPosition()
 
 }
 
-void World::AdaptPlayerVelocity()
+CommandQueue& World::GetCommandQueue()
 {
-	//sf::Vector2f velocity = m_player_aircraft->GetVelocity();
-	////if moving diagonally then reduce velocity
-	//if (velocity.x != 0.f && velocity.y != 0.f)
-	//{
-	//	m_player_aircraft->SetVelocity(velocity / std::sqrt(2.f));
-	//}
-	////Add scrolling velocity
-	//m_player_aircraft->Accelerate(0.f, m_scrollspeed);
+	return m_command_queue;
 }
 
 sf::FloatRect World::GetViewBounds() const
@@ -220,108 +197,11 @@ sf::FloatRect World::GetBattlefieldBounds() const
 	return bounds;
 }
 
-void World::SpawnEnemies()
-{
-	////Spawn an enemy when they are relevant - they are relevant when they enter the battlefield bounds
-	//while(!m_enemy_spawn_points.empty() && m_enemy_spawn_points.back().m_y > GetBattlefieldBounds().top)
-	//{
-	//	SpawnPoint spawn = m_enemy_spawn_points.back();
-	//	std::unique_ptr<Aircraft> enemy(new Aircraft(spawn.m_type, m_textures, m_fonts));
-	//	enemy->setPosition(spawn.m_x, spawn.m_y);
-	//	enemy->setRotation(180.f);
-	//	m_scene_layers[static_cast<int>(Layers::kAir)]->AttachChild(std::move(enemy));
-
-	//	m_enemy_spawn_points.pop_back();
-	//	
-	//}
-}
-
-//void World::AddEnemy(AircraftType type, float relX, float relY)
-//{
-//	SpawnPoint spawn(type, m_spawn_position.x + relX, m_spawn_position.y - relY);
-//	m_enemy_spawn_points.emplace_back(spawn);
-//}
-
-//void World::AddEnemies()
-//{
-//	//Add all enemies
-//	AddEnemy(AircraftType::kRaptor, 0.f, 500.f);
-//	AddEnemy(AircraftType::kRaptor, 0.f, 1000.f);
-//	AddEnemy(AircraftType::kRaptor, 100.f, 1100.f);
-//	AddEnemy(AircraftType::kRaptor, -100.f, 1100.f);
-//	AddEnemy(AircraftType::kAvenger, -70.f, 1400.f);
-//	AddEnemy(AircraftType::kAvenger, 70.f, 1400.f);
-//	AddEnemy(AircraftType::kAvenger, 70.f, 1600.f);
-//
-//	//Sort according to y value so that lower enemies are checked first
-//	std::sort(m_enemy_spawn_points.begin(), m_enemy_spawn_points.end(), [](SpawnPoint lhs, SpawnPoint rhs)
-//	{
-//		return lhs.m_y < rhs.m_y;
-//	});
-//}
-
-void World::SelectTiles()
-{
-
-	Command selectTile;
-	selectTile.category = Category::kPlatform;
-	selectTile.action = DerivedAction<Tile>([this](Tile& tile, sf::Time)
-	{
-		if (tile.IsSelected() == false)
-		{
-			
-		}
-	});
-
-
-	//// Setup command that stores all enemies in mActiveEnemies
-	//Command enemyCollector;
-	//enemyCollector.category = Category::kEnemyAircraft;
-	//enemyCollector.action = DerivedAction<Aircraft>([this](Aircraft& enemy, sf::Time)
-	//{
-	//	if (!enemy.IsDestroyed())
-	//		m_active_enemies.push_back(&enemy);
-	//});
-
-	//// Setup command that guides all missiles to the enemy which is currently closest to the player
-	//Command missileGuider;
-	//missileGuider.category = Category::kAlliedProjectile;
-	//missileGuider.action = DerivedAction<Projectile>([this](Projectile& missile, sf::Time)
-	//{
-	//	// Ignore unguided bullets
-	//	if (!missile.IsGuided())
-	//		return;
-
-	//	float minDistance = std::numeric_limits<float>::max();
-	//	Aircraft* closestEnemy = nullptr;
-
-	//	// Find closest enemy
-	//	for(Aircraft * enemy :  m_active_enemies)
-	//	{
-	//		float enemyDistance = distance(missile, *enemy);
-
-	//		if (enemyDistance < minDistance)
-	//		{
-	//			closestEnemy = enemy;
-	//			minDistance = enemyDistance;
-	//		}
-	//	}
-
-	//	if (closestEnemy)
-	//		missile.GuideTowards(closestEnemy->GetWorldPosition());
-	//});
-
-	//// Push commands, reset active enemies
-	//m_command_queue.Push(enemyCollector);
-	//m_command_queue.Push(missileGuider);
-	//m_active_enemies.clear();
-}
-
 bool MatchesCategories(SceneNode::Pair& colliders, Category::Type type1, Category::Type type2)
 {
 	unsigned int category1 = colliders.first->GetCategory();
 	unsigned int category2 = colliders.second->GetCategory();
-
+	std::cout << category1 << category2 << std::endl;
 	if(type1 & category1 && type2 & category2)
 	{
 		return true;
@@ -337,6 +217,7 @@ bool MatchesCategories(SceneNode::Pair& colliders, Category::Type type1, Categor
 	}
 }
 
+// Should let each entity class decide how collision is handled
 void World::HandleCollisions()
 {
 	//std::set<SceneNode::Pair> collision_pairs;
@@ -370,21 +251,21 @@ void World::HandleCollisions()
 	//		projectile.Destroy();
 	//	}
 
-
-	//}
+	//  }
 }
 
-//void World::DestroyEntitiesOutsideView()
-//{
-//	Command command;
-//	command.category = Category::Type::kAircraft | Category::Type::kProjectile;
-//	command.action = DerivedAction<Entity>([this](Entity& e, sf::Time)
-//	{
-//		//Does the object intersect with the battlefield
-//		if (!GetBattlefieldBounds().intersects(e.GetBoundingRect()))
-//		{
-//			e.Destroy();
-//		}
-//	});
-//	m_command_queue.Push(command);
-//}
+void World::DestroyEntitiesOutsideView()
+{
+	//Command command;
+	//command.category = Category::Type::kEnemyAircraft | Category::Type::kProjectile;
+	//command.action = DerivedAction<Entity>([this](Entity& e, sf::Time)
+	//{
+	//	//Does the object intersect with the battlefield
+	//	if (!GetBattlefieldBounds().intersects(e.GetBoundingRect()))
+	//	{
+	//		std::cout << "Destroying the entity" << std::endl;
+	//		e.Destroy();
+	//	}
+	//});
+	//m_command_queue.Push(command);
+}

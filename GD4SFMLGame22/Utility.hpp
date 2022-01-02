@@ -23,5 +23,6 @@ public:
 	static float Length(sf::Vector2f vector);
 	static float ToDegrees(float angle);
 	static sf::IntRect GetIntRect(sf::Texture& texture);
+	static int RandomInt(int exclusive_max);
 };
 

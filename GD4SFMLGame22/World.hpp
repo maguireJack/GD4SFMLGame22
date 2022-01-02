@@ -26,18 +26,15 @@ public:
 	explicit World(sf::RenderWindow& window, FontHolder& font);
 	void Update(sf::Time dt);
 	void Draw();
-	CommandQueue& getCommandQueue();
+	CommandQueue& GetCommandQueue();
 
 private:
 	void LoadTextures();
 	void BuildScene();
 	void AdaptPlayerPosition();
-	void AdaptPlayerVelocity();
 
 	sf::FloatRect GetViewBounds() const;
 	sf::FloatRect GetBattlefieldBounds() const;
-	void SpawnEnemies();
-	void AddEnemies();
 	void SelectTiles();
 	void HandleCollisions();
 	void DestroyEntitiesOutsideView();

@@ -1,17 +1,29 @@
 #include "Player.hpp"
 #include <algorithm>
 
+#include "Entity.hpp"
 
+struct EntityMover
+{
+	EntityMover(float vx, float vy) : velocity(vx, vy)
+	{
+	}
 
-Player::Player()
+	void operator()(Entity& entity, sf::Time) const
+	{
+		entity.Accelerate(velocity * entity.GetMaxSpeed());
+	}
+
+	sf::Vector2f velocity;
+};
+
+Player::Player() : m_current_mission_status(MissionStatus::kMissionRunning)
 {
 	//Set initial key bindings
 	m_key_binding[sf::Keyboard::A] = PlayerAction::kMoveLeft;
 	m_key_binding[sf::Keyboard::D] = PlayerAction::kMoveRight;
 	m_key_binding[sf::Keyboard::W] = PlayerAction::kMoveUp;
 	m_key_binding[sf::Keyboard::S] = PlayerAction::kMoveDown;
-	m_key_binding[sf::Keyboard::Space] = PlayerAction::kFire;
-	m_key_binding[sf::Keyboard::M] = PlayerAction::kLaunchMissile;
 
 	//Set initial action bindings
 	InitialiseActions();
@@ -77,9 +89,24 @@ sf::Keyboard::Key Player::GetAssignedKey(PlayerAction action) const
 	return sf::Keyboard::Unknown;
 }
 
+void Player::SetMissionStatus(MissionStatus status)
+{
+	m_current_mission_status = status;
+}
+
+MissionStatus Player::GetMissionStatus() const
+{
+	return m_current_mission_status;
+}
+
 void Player::InitialiseActions()
 {
-	
+	const float player_speed = 200.f;
+
+	m_action_binding[PlayerAction::kMoveLeft].action = DerivedAction<Entity>(EntityMover(-1, 0.f));
+	m_action_binding[PlayerAction::kMoveRight].action = DerivedAction<Entity>(EntityMover(+1, 0.f));
+	m_action_binding[PlayerAction::kMoveUp].action = DerivedAction<Entity>(EntityMover(0.f, -1));
+	m_action_binding[PlayerAction::kMoveDown].action = DerivedAction<Entity>(EntityMover(0, 1));
 }
 
 bool Player::IsRealtimeAction(PlayerAction action)
