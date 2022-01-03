@@ -5,18 +5,14 @@
 #include "PlatformType.hpp"
 #include "ResourceIdentifiers.hpp"
 
-class Tile : public Entity
+class Tile 
 {
 public:
 	Tile(PlatformType platform, const TextureHolder& textures);
 	bool IsSelected() const;
 	bool HasSelected() const;
-	virtual unsigned int GetCategory() const override;
-	virtual sf::FloatRect GetBoundingRect();
-
-private:
-	virtual void UpdateCurrent(sf::Time dt, CommandQueue& commands) override;
-	virtual void DrawCurrent(sf::RenderTarget&, sf::RenderStates states) const override;
+	virtual void UpdateCurrent(sf::Time dt, CommandQueue& commands);
+	virtual void DrawCurrent(sf::RenderTarget&, sf::RenderStates states) const;
 
 private:
 	PlatformType m_platform;

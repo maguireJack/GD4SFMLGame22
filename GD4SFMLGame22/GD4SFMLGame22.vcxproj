@@ -88,12 +88,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\AProgramming\C++\Repos\SFML_Starting\SFML-2.5.1\include;C:\Users\jmagu\Desktop\SFML-2.5.1-windows-vc15-32-bit\SFML-2.5.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Jack\OneDrive - Dundalk Institute of Technology\Desktop\SFML-2.5.1-windows-vc15-32-bit\SFML-2.5.1\include;D:\AProgramming\C++\Repos\SFML_Starting\SFML-2.5.1\include;C:\Users\jmagu\Desktop\SFML-2.5.1-windows-vc15-32-bit\SFML-2.5.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>D:\AProgramming\C++\Repos\SFML_Starting\SFML-2.5.1\lib;C:\Users\jmagu\Desktop\SFML-2.5.1-windows-vc15-32-bit\SFML-2.5.1\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\Jack\OneDrive - Dundalk Institute of Technology\Desktop\SFML-2.5.1-windows-vc15-32-bit\SFML-2.5.1\lib;D:\AProgramming\C++\Repos\SFML_Starting\SFML-2.5.1\lib;C:\Users\jmagu\Desktop\SFML-2.5.1-windows-vc15-32-bit\SFML-2.5.1\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>sfml-system-d.lib;sfml-window-d.lib;sfml-graphics-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -174,6 +174,7 @@
     <ClCompile Include="StateStack.cpp" />
     <ClCompile Include="TextNode.cpp" />
     <ClCompile Include="Tile.cpp" />
+    <ClCompile Include="TileNode.cpp" />
     <ClCompile Include="TitleState.cpp" />
     <ClCompile Include="Utility.cpp" />
     <ClCompile Include="World.cpp" />
@@ -213,6 +214,7 @@
     <ClInclude Include="TextNode.hpp" />
     <ClInclude Include="Textures.hpp" />
     <ClInclude Include="Tile.hpp" />
+    <ClInclude Include="TileNode.hpp" />
     <ClInclude Include="TitleState.hpp" />
     <ClInclude Include="Utility.hpp" />
     <ClInclude Include="World.hpp" />

@@ -15,11 +15,18 @@ Grid::Grid(const sf::RenderWindow& window, const sf::View& camera_view, int hori
 {
 }
 
-// TODO: Use TileData instead
-void Grid::AddTile(std::unique_ptr<Tile>& tile)
+
+void Grid::AddTile(std::shared_ptr<Tile> tile, sf::Vector2f position)
 {
-	//sf::Vector2i cell_position = GetCellPosition(tile->getPosition());
-	//m_tile_map[cell_position] = tile;
+	sf::Vector2i cell_position = GetCellPosition(position);
+	m_tile_map[cell_position] = tile;
+}
+
+void Grid::AddTileNode(std::unique_ptr<TileNode> tile_node)
+{
+	/*sf::Vector2i cell_position = GetCellPosition(tile_node->getPosition());
+	m_tile_map[cell_position] = tile_node->GetTile();
+	*/
 }
 
 void Grid::RemoveTile(Tile* tile)

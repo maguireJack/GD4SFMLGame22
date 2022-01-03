@@ -8,6 +8,7 @@
 #include "GridNode.hpp"
 #include "Tile.hpp"
 #include "Utility.hpp"
+#include "TileNode.hpp"
 
 World::World(sf::RenderWindow& window, FontHolder& font, sf::View& camera, Grid& grid)
 	: m_window(window)
@@ -140,12 +141,16 @@ void World::BuildScene()
 	m_scene_layers[static_cast<int>(Layers::kAir)]->AttachChild(std::move(temp_tile_sprite));*/
 
 	std::unique_ptr<GridNode> grid_node(new GridNode(m_grid));
-	m_scene_layers[static_cast<int>(Layers::kAir)]->AttachChild(std::move(grid_node));
+	m_scene_layers[static_cast<int>(Layers::kGrid)]->AttachChild(std::move(grid_node));
 
-	std::unique_ptr<Tile> test(new Tile(PlatformType::kStatic, m_textures));
-	test->setPosition(sf::Vector2f(16 * 5, 16 * 5));
-	m_grid.AddTile(test);
-	m_scene_layers[static_cast<int>(Layers::kAir)]->AttachChild(std::move(test));
+	std::shared_ptr<Tile> tile (new Tile(PlatformType::kStatic, m_textures));
+	std::unique_ptr<TileNode> tile_node(new TileNode(tile));
+	tile_node->setPosition(16 * 5, 16 * 16);
+
+	m_grid.AddTile(tile, tile_node->getPosition());
+	m_scene_layers[static_cast<int>(Layers::kPlatforms)]->AttachChild(std::move(tile_node));
+	
+
 
 
 	////Add player's aircraft

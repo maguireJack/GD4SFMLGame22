@@ -6,6 +6,8 @@ enum class Layers
 	kBackground3,
 	kBackground4,
 	kBackground5,
+	kPlatforms,
+	kGrid,
 	kAir,
 	kLayerCount
 };
