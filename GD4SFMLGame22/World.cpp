@@ -62,7 +62,7 @@ void World::Draw()
 
 void World::LoadTextures()
 {
-	m_textures.Load(Textures::kBruno, "Media/Textures/idle.png");
+	m_textures.Load(Textures::kBrunoIdle, "Media/Textures/idle.png");
 
 	m_textures.Load(Textures::kJungle1, "Media/Textures/Jungle/plx-1.png");
 	m_textures.Load(Textures::kJungle2, "Media/Textures/Jungle/plx-2.png");
@@ -84,7 +84,10 @@ void World::BuildScene()
 	//Initialize the different layers
 	for (std::size_t i = 0; i < static_cast<int>(Layers::kLayerCount); ++i)
 	{
-		Category::Type category = (i == static_cast<int>(Layers::kAir)) ? Category::Type::kScene : Category::Type::kNone;
+		Category::Type category = i == static_cast<int>(Layers::kAir)
+			? Category::Type::kScene
+			: Category::Type::kNone;
+
 		SceneNode::Ptr layer(new SceneNode(category));
 		m_scene_layers[i] = layer.get();
 		m_scenegraph.AttachChild(std::move(layer));
@@ -143,7 +146,7 @@ void World::BuildScene()
 	std::unique_ptr<GridNode> grid_node(new GridNode(m_grid));
 	m_scene_layers[static_cast<int>(Layers::kGrid)]->AttachChild(std::move(grid_node));
 
-	std::shared_ptr<Tile> tile (new Tile(PlatformType::kStatic, m_textures));
+	std::shared_ptr<Tile> tile(new Tile(PlatformType::kStatic, m_textures));
 	std::unique_ptr<TileNode> tile_node(new TileNode(tile));
 	tile_node->setPosition(16 * 5, 16 * 16);
 
@@ -151,22 +154,11 @@ void World::BuildScene()
 	m_scene_layers[static_cast<int>(Layers::kPlatforms)]->AttachChild(std::move(tile_node));
 	
 
-
-
-	////Add player's aircraft
-	//std::unique_ptr<Aircraft> leader(new Aircraft(AircraftType::kEagle, m_textures, m_fonts));
-	//m_player_aircraft = leader.get();
-	//m_player_aircraft->setPosition(m_spawn_position);
-	//m_scene_layers[static_cast<int>(Layers::kAir)]->AttachChild(std::move(leader));
-
-	// //Add two escorts
-	// std::unique_ptr<Aircraft> leftEscort(new Aircraft(AircraftType::kRaptor, m_textures, m_fonts));
-	// leftEscort->setPosition(-80.f, 50.f);
-	// m_player_aircraft->AttachChild(std::move(leftEscort));
-	//
-	// std::unique_ptr<Aircraft> rightEscort(new Aircraft(AircraftType::kRaptor, m_textures, m_fonts));
-	// rightEscort->setPosition(80.f, 50.f);
-	// m_player_aircraft->AttachChild(std::move(rightEscort));
+	//Add player's character
+	std::unique_ptr<PlatformerCharacter> player(new PlatformerCharacter(PlatformerCharacterType::kBruno, m_textures, m_fonts));
+	m_player = player.get();
+	m_player->setPosition(m_spawn_position);
+	m_scene_layers[static_cast<int>(Layers::kAir)]->AttachChild(std::move(player));
 }
 
 void World::AdaptPlayerPosition()

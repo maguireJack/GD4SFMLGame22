@@ -31,7 +31,7 @@ Player::Player() : m_current_mission_status(MissionStatus::kMissionRunning)
 	//Assign all categories to the player's aircraft
 	for(auto& pair : m_action_binding)
 	{
-		pair.second.category = Category::kPlayerAircraft;
+		pair.second.category = Category::kPlayerCharacter;
 	}
 }
 

@@ -26,4 +26,6 @@ private:
 	int m_hitpoints;
 	float m_max_speed;
 	sf::Vector2f m_velocity;
+
+	bool m_is_marked_for_removal;
 };

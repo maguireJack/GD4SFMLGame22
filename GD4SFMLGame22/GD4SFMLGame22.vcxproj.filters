@@ -88,6 +88,11 @@
     <ClCompile Include="TileNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PlatformerCharacter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimatedSpriteArtist.cpp" />
+    <ClCompile Include="AnimatedSprite.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.hpp">
@@ -202,6 +207,17 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TileNode.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PlatformerCharacter.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PlatformerCharacterType.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimatedSpriteArtist.hpp" />
+    <ClInclude Include="AnimatedSprite.hpp" />
+    <ClInclude Include="PlatformerAnimationState.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

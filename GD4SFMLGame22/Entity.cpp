@@ -35,6 +35,12 @@ void Entity::Accelerate(float vx, float vy)
 
 void Entity::UpdateCurrent(sf::Time dt, CommandQueue& commands)
 {
+	if (IsDestroyed())
+	{
+		m_is_marked_for_removal = true;
+		return;
+	}
+
 	move(m_velocity * dt.asSeconds());
 }
 

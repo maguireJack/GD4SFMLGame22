@@ -1,5 +1,6 @@
 #include "DataTables.hpp"
 
+#include "PlatformerCharacterType.hpp"
 #include "PlatformType.hpp"
 
 std::vector<PlatformData> InitializePlatformData()
@@ -18,6 +19,22 @@ std::vector<PlatformData> InitializePlatformData()
 	data[static_cast<int>(PlatformType::kMoveable)].m_placetime = 2.f;
 	data[static_cast<int>(PlatformType::kMoveable)].m_breaktime = 0.f;
 	data[static_cast<int>(PlatformType::kMoveable)].m_moveDirection = sf::Vector2f(1, 0);
+
+	return data;
+}
+
+std::vector<PlatformerCharacterData> InitializePlatformerCharacterData()
+{
+	std::vector<PlatformerCharacterData> data(static_cast<int>(PlatformerCharacterType::kPlatformerCount));
+	data[static_cast<int>(PlatformerCharacterType::kBruno)].m_jump_height = 10;
+	data[static_cast<int>(PlatformerCharacterType::kBruno)].m_speed = 10;
+	data[static_cast<int>(PlatformerCharacterType::kBruno)].m_health = 100;
+
+	data[static_cast<int>(PlatformerCharacterType::kBruno)].m_animation_data = PlatformerAnimationData{
+		{Textures::kBrunoIdle, 19, 34, 9, 0.8f},
+		{Textures::kBrunoIdle, 19, 34, 9, 1},
+		{Textures::kBrunoIdle, 19, 34, 9, 1}
+	};
 
 	return data;
 }

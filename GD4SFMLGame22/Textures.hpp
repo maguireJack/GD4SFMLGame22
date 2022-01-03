@@ -1,7 +1,8 @@
 #pragma once
 enum class Textures
 {
-	kBruno,
+	kDefault,
+	kBrunoIdle,
 
 	kJungle1,
 	kJungle2,

@@ -1,6 +1,5 @@
 #include "Grid.hpp"
 
-#include <iostream>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Window/Mouse.hpp>
 
@@ -80,7 +79,6 @@ void Grid::DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 void Grid::UpdateCurrent(sf::Time dt, CommandQueue& commands)
 {
 	const sf::Vector2i cell_position = GetCellPosition(sf::Mouse::getPosition(m_window));
-	std::cout << cell_position.x << std::endl;
 
 	if (cell_position != m_selected_cell_position)
 	{

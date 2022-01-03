@@ -13,6 +13,7 @@
 
 #include "CommandQueue.hpp"
 #include "Grid.hpp"
+#include "PlatformerCharacter.hpp"
 
 //Foward
 namespace sf
@@ -63,6 +64,6 @@ private:
 	sf::FloatRect m_world_bounds;
 	sf::Vector2f m_spawn_position;
 	float m_scrollspeed;
-	std::vector<SpawnPoint> m_enemy_spawn_points;
+	PlatformerCharacter* m_player;
 };
 

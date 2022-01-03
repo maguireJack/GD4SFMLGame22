@@ -12,4 +12,34 @@ struct PlatformData
 	float m_placetime;
 };
 
+struct AnimationData
+{
+	Textures m_texture;
+	int m_width_per_frame;
+	int m_height_per_frame;
+	int m_frames;
+	float m_time_per_frame;
+};
+
+struct PlatformerAnimationData
+{
+	AnimationData m_idle;
+	AnimationData m_run;
+	AnimationData m_jump;
+
+	std::vector<AnimationData> ToVector() const
+	{
+		return { m_idle, m_run, m_jump };
+	}
+};
+
+struct PlatformerCharacterData
+{
+	float m_jump_height;
+	float m_speed;
+	int m_health;
+	PlatformerAnimationData m_animation_data;
+};
+
 std::vector<PlatformData> InitializePlatformData();
+std::vector<PlatformerCharacterData> InitializePlatformerCharacterData();
