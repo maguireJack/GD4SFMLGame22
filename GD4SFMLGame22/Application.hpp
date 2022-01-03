@@ -3,6 +3,7 @@
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/System/Time.hpp>
 
+#include "GridNode.hpp"
 #include "Player.hpp"
 #include "ResourceHolder.hpp"
 #include "ResourceIdentifiers.hpp"
@@ -23,7 +24,9 @@ private:
 
 private:
 	sf::RenderWindow m_window;
+	sf::View m_camera;
 	Player m_player;
+	Grid m_grid;
 
 	TextureHolder m_textures;
 	FontHolder m_fonts;

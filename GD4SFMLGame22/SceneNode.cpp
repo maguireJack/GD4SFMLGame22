@@ -8,7 +8,10 @@
 
 #include "Utility.hpp"
 
-SceneNode::SceneNode(Category::Type category):m_children(), m_parent(nullptr), m_default_category(category)
+SceneNode::SceneNode(Category::Type category)
+	: m_children()
+	, m_parent(nullptr)
+	, m_default_category(category)
 {
 }
 

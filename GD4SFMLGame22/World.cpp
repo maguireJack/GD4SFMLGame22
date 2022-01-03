@@ -9,11 +9,12 @@
 #include "Tile.hpp"
 #include "Utility.hpp"
 
-World::World(sf::RenderWindow& window, FontHolder& font)
+World::World(sf::RenderWindow& window, FontHolder& font, sf::View& camera, Grid& grid)
 	: m_window(window)
-	, m_camera(window.getDefaultView())
+	, m_camera(camera)
 	, m_textures()
 	, m_fonts(font)
+	, m_grid(grid)
 	, m_scenegraph()
 	, m_scene_layers()
 	, m_world_bounds(0.f, 0.f, 384, 432)
@@ -138,13 +139,13 @@ void World::BuildScene()
 	temp_tile_sprite->setPosition(100, 316);
 	m_scene_layers[static_cast<int>(Layers::kAir)]->AttachChild(std::move(temp_tile_sprite));*/
 
+	std::unique_ptr<GridNode> grid_node(new GridNode(m_grid));
+	m_scene_layers[static_cast<int>(Layers::kAir)]->AttachChild(std::move(grid_node));
+
 	std::unique_ptr<Tile> test(new Tile(PlatformType::kStatic, m_textures));
 	test->setPosition(sf::Vector2f(16 * 5, 16 * 5));
+	m_grid.AddTile(test);
 	m_scene_layers[static_cast<int>(Layers::kAir)]->AttachChild(std::move(test));
-
-	std::unique_ptr<GridNode> grid(new GridNode(m_window, m_camera, 24, 27, 16, 0.2f));
-	grid->setPosition(m_world_bounds.left, m_world_bounds.top);
-	m_scene_layers[static_cast<int>(Layers::kAir)]->AttachChild(std::move(grid));
 
 
 	////Add player's aircraft

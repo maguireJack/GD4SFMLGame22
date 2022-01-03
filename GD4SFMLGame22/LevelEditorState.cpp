@@ -5,10 +5,11 @@
 
 #include <SFML/Graphics/RenderTarget.hpp>
 
-LevelEditorState::LevelEditorState(StateStack& stack, const Context& context) : GameState(stack, context), m_world(*context.window, *context.fonts)
-, m_player(*context.player)
+LevelEditorState::LevelEditorState(StateStack& stack, const Context& context)
+	: GameState(stack, context)
+	, m_world(*context.window, *context.fonts, *context.camera, *context.grid)
+	, m_player(*context.player)
 {
-	
 }
 
 void LevelEditorState::Draw()

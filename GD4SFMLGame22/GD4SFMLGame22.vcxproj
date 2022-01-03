@@ -159,6 +159,7 @@
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="GameOverState.cpp" />
     <ClCompile Include="GameState.cpp" />
+    <ClCompile Include="Grid.cpp" />
     <ClCompile Include="GridNode.cpp" />
     <ClCompile Include="Label.cpp" />
     <ClCompile Include="LevelEditorState.cpp" />
@@ -190,6 +191,7 @@
     <ClInclude Include="Fonts.hpp" />
     <ClInclude Include="GameOverState.hpp" />
     <ClInclude Include="GameState.hpp" />
+    <ClInclude Include="Grid.hpp" />
     <ClInclude Include="GridNode.hpp" />
     <ClInclude Include="Label.hpp" />
     <ClInclude Include="Layers.hpp" />

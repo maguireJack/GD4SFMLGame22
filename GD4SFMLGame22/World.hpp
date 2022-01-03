@@ -12,6 +12,7 @@
 #include <array>
 
 #include "CommandQueue.hpp"
+#include "Grid.hpp"
 
 //Foward
 namespace sf
@@ -23,7 +24,7 @@ namespace sf
 class World : private sf::NonCopyable
 {
 public:
-	explicit World(sf::RenderWindow& window, FontHolder& font);
+	explicit World(sf::RenderWindow& window, FontHolder& font, sf::View& camera, Grid& grid);
 	void Update(sf::Time dt);
 	void Draw();
 	CommandQueue& GetCommandQueue();
@@ -51,9 +52,10 @@ public:
 
 private:
 	sf::RenderWindow& m_window;
-	sf::View m_camera;
+	sf::View& m_camera;
 	TextureHolder m_textures;
 	FontHolder& m_fonts;
+	Grid& m_grid;
 	SceneNode m_scenegraph;
 	std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)> m_scene_layers;
 	CommandQueue m_command_queue;
