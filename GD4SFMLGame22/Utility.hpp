@@ -3,6 +3,7 @@
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Keyboard.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
 
 
 namespace sf
@@ -24,5 +25,6 @@ public:
 	static float ToDegrees(float angle);
 	static sf::IntRect GetIntRect(sf::Texture& texture);
 	static int RandomInt(int exclusive_max);
+	static sf::Vector2i GetCellPosition(sf::Vector2i position, const sf::RenderWindow& window, const sf::View& camera_view);
 };
 

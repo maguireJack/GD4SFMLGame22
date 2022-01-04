@@ -12,7 +12,6 @@ GridNode::GridNode(Grid& grid)
 
 void GridNode::DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 {
-	
 	m_grid.DrawCurrent(target, states);
 }
 

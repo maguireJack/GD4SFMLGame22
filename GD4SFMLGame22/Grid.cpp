@@ -1,5 +1,6 @@
 #include "Grid.hpp"
-
+#include "Tile.hpp"
+#include <iostream>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Window/Mouse.hpp>
 
@@ -11,21 +12,23 @@ Grid::Grid(const sf::RenderWindow& window, const sf::View& camera_view, int hori
 	, m_cell_size(cell_size)
 	, m_line_width(line_width)
 	, m_selected_cell_position(0, 0)
+	, m_new_cell_position(0,0)
+	, m_selected_tile_node(nullptr)
 {
 }
 
 
-void Grid::AddTile(std::shared_ptr<Tile> tile, sf::Vector2f position)
-{
-	sf::Vector2i cell_position = GetCellPosition(position);
-	m_tile_map[cell_position] = tile;
-}
+//void Grid::AddTile(std::shared_ptr<Tile> tile, sf::Vector2f position)
+//{
+//	sf::Vector2i cell_position = GetCellPosition(position);
+//	m_tile_map[cell_position] = tile;
+//}
 
-void Grid::AddTileNode(std::unique_ptr<TileNode> tile_node)
+void Grid::AddTileNode(TileNode* tile_node)
 {
-	/*sf::Vector2i cell_position = GetCellPosition(tile_node->getPosition());
-	m_tile_map[cell_position] = tile_node->GetTile();
-	*/
+	sf::Vector2i cell_position = GetCellPosition(tile_node->getPosition());
+	m_tile_map[cell_position] = tile_node;
+	
 }
 
 void Grid::RemoveTile(Tile* tile)
@@ -79,11 +82,65 @@ void Grid::DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 void Grid::UpdateCurrent(sf::Time dt, CommandQueue& commands)
 {
 	const sf::Vector2i cell_position = GetCellPosition(sf::Mouse::getPosition(m_window));
-
+	m_new_cell_position = cell_position;
+	/*std::cout << "(" << cell_position.x << ", " << cell_position.y << ")" << std::endl;*/
+	std::cout << "(" << m_selected_cell_position.x << ", " << m_selected_cell_position.y << ")" << std::endl;
 	if (cell_position != m_selected_cell_position)
 	{
 		m_selected_cell_position = cell_position;
+	}
+	if (m_selected_tile_node != nullptr) 
+	{
+		m_selected_tile_node->SetTarget(cell_position);
+	}
+	
+}
 
-		//TODO: Send command that position has changed to update the position of the selected tile
+void Grid::HandleEvent(const sf::Event& event, CommandQueue& commands)
+{
+	if (event.type == sf::Event::MouseButtonPressed)
+	{
+		if (event.mouseButton.button == sf::Mouse::Left) {
+			if (m_tile_map[m_selected_cell_position])
+			{
+				if (m_selected_tile_node == nullptr) {
+					std::cout << "Hovering" << std::endl;
+					if (!m_tile_map[m_selected_cell_position]->GetTile()->IsSelected())
+					{
+						m_tile_map[m_selected_cell_position]->GetTile()->Select();
+						m_selected_tile_node = m_tile_map[m_selected_cell_position];
+						m_tile_map[m_selected_cell_position] = nullptr;
+					}
+				}
+
+			}
+			else if (m_selected_tile_node)
+			{
+				m_selected_tile_node->GetTile()->Deselect();
+				m_selected_tile_node->setPosition(sf::Vector2f(m_new_cell_position * 16));
+				m_tile_map[m_selected_cell_position] = nullptr;
+				m_tile_map.erase(m_selected_cell_position);
+				m_tile_map[m_new_cell_position] = m_selected_tile_node;
+				m_selected_tile_node = nullptr;
+			}
+		}
+		/*else if (event.mouseButton.button == sf::Mouse::Right)
+		{
+			if (m_tile_map[m_selected_cell_position])
+			{
+				if (m_selected_tile_node == nullptr) {
+					std::cout << "Hovering" << std::endl;
+					TileNode copied_tile(m_tile_map[m_selected_cell_position]);
+					
+					if (!copied_tile.GetTile()->IsSelected())
+					{
+						copied_tile.GetTile()->Select();
+						m_selected_tile_node = &copied_tile;
+					}
+				}
+
+			}
+		}
+		*/
 	}
 }

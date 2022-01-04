@@ -25,7 +25,7 @@ World::World(sf::RenderWindow& window, FontHolder& font, sf::View& camera, Grid&
 	LoadTextures();
 	BuildScene();
 	m_camera.setCenter(m_spawn_position);
-	m_camera.setSize(384, 216);
+	m_camera.setSize(768/2, 432/2);
 }
 
 void World::Update(sf::Time dt)
@@ -150,7 +150,8 @@ void World::BuildScene()
 	std::unique_ptr<TileNode> tile_node(new TileNode(tile));
 	tile_node->setPosition(16 * 5, 16 * 16);
 
-	m_grid.AddTile(tile, tile_node->getPosition());
+	//m_grid.AddTile(tile, tile_node->getPosition());
+	m_grid.AddTileNode(tile_node.get());
 	m_scene_layers[static_cast<int>(Layers::kPlatforms)]->AttachChild(std::move(tile_node));
 	
 

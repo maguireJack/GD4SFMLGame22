@@ -179,3 +179,13 @@ int Utility::RandomInt(int exclusive_max)
 	std::uniform_int_distribution<> distr(0, exclusive_max - 1);
 	return distr(RandomEngine);
 }
+
+sf::Vector2i Utility::GetCellPosition(sf::Vector2i position, const sf::RenderWindow& window, const sf::View& camera_view)
+{
+	const sf::Vector2f pixel_position = window.mapPixelToCoords(position, camera_view);
+
+	return {
+		static_cast<int>(pixel_position.x / 16),
+		static_cast<int>(pixel_position.y / 16)
+	};
+}
