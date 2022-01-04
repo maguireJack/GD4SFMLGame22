@@ -22,9 +22,17 @@ AnimatedSprite::AnimatedSprite(const AnimationData& data, const sf::Texture& tex
 	}
 }
 
-void AnimatedSprite::DrawCurrent(sf::RenderTarget& target, sf::RenderStates& states) const
+void AnimatedSprite::DrawCurrent(sf::RenderTarget& target, sf::RenderStates& states, bool flipped) const
 {
-	target.draw(CurrentSprite(), states);
+	sf::Sprite sprite = CurrentSprite();
+
+	if (flipped)
+	{
+		sf::Vector2f scale = sprite.getScale();
+		sprite.setScale(-scale.x, scale.y);
+	}
+
+	target.draw(sprite, states);
 }
 
 void AnimatedSprite::UpdateCurrent(sf::Time dt)

@@ -8,6 +8,7 @@
 AnimatedSpriteArtist::AnimatedSpriteArtist(std::vector<AnimatedSprite> sprite_states)
 	: m_sprite_states(std::move(sprite_states))
 	, m_current_sprite_index(0)
+	, m_flipped(false)
 {
 }
 
@@ -22,7 +23,7 @@ AnimatedSpriteArtist::AnimatedSpriteArtist(const std::vector<AnimationData>& dat
 
 void AnimatedSpriteArtist::DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 {
-	CurrentSpriteState().DrawCurrent(target, states);
+	CurrentSpriteState().DrawCurrent(target, states, m_flipped);
 }
 
 void AnimatedSpriteArtist::UpdateCurrent(sf::Time dt)
@@ -42,10 +43,13 @@ sf::FloatRect AnimatedSpriteArtist::GetBoundingRect() const
 
 void AnimatedSpriteArtist::ChangeState(int index)
 {
-	assert(index > 0 && index < m_sprite_states.size());
+	if (index != m_current_sprite_index)
+	{
+		assert(index >= 0 && index < m_sprite_states.size());
 
-	CurrentSpriteState().Reset();
-	m_current_sprite_index = index;
+		CurrentSpriteState().Reset();
+		m_current_sprite_index = index;
+	}
 }
 
 void AnimatedSpriteArtist::Pause()
@@ -56,6 +60,11 @@ void AnimatedSpriteArtist::Pause()
 void AnimatedSpriteArtist::Play()
 {
 	CurrentSpriteState().Play();
+}
+
+void AnimatedSpriteArtist::Flipped(bool flipped)
+{
+	m_flipped = flipped;
 }
 
 AnimatedSprite& AnimatedSpriteArtist::CurrentSpriteState()

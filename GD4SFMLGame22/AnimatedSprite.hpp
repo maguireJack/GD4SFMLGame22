@@ -15,7 +15,7 @@ class AnimatedSprite
 public:
 	AnimatedSprite(const AnimationData& data, const sf::Texture& texture);
 
-	void DrawCurrent(sf::RenderTarget& target, sf::RenderStates& states) const;
+	void DrawCurrent(sf::RenderTarget& target, sf::RenderStates& states, bool flipped) const;
 	void UpdateCurrent(sf::Time dt);
 
 	sf::Sprite CurrentSprite() const;

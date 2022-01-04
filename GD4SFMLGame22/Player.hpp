@@ -2,6 +2,8 @@
 #include "Command.hpp"
 #include <SFML/Window/Event.hpp>
 #include <map>
+#include <unordered_set>
+
 #include "CommandQueue.hpp"
 #include "MissionStatus.hpp"
 #include "PlayerAction.hpp"
@@ -25,6 +27,8 @@ private:
 private:
 	std::map<sf::Keyboard::Key, PlayerAction> m_key_binding;
 	std::map<PlayerAction, Command> m_action_binding;
+	std::map<PlayerAction, Command> m_on_release_action_binding;
+	std::unordered_set<PlayerAction> m_active_actions;
 	MissionStatus m_current_mission_status;
 };
 

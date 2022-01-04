@@ -3,7 +3,9 @@
 #include <SFML/Graphics/RenderTarget.hpp>
 
 #include "DataTables.hpp"
+#include "PlatformerAnimationState.hpp"
 #include "ResourceHolder.hpp"
+#include "Utility.hpp"
 
 namespace
 {
@@ -12,7 +14,11 @@ namespace
 
 
 PlatformerCharacter::PlatformerCharacter(PlatformerCharacterType type, const TextureHolder& textures, const FontHolder& fonts)
-	: Entity(Table[static_cast<int>(type)].m_health, Table[static_cast<int>(type)].m_speed)
+	: Entity(
+		Table[static_cast<int>(type)].m_health,
+		Table[static_cast<int>(type)].m_acceleration,
+		Table[static_cast<int>(type)].m_max_velocity,
+		Table[static_cast<int>(type)].m_deceleration)
 	, m_type(type)
 	, m_artist(Table[static_cast<int>(type)].m_animation_data.ToVector(), textures)
 	, m_health_display(nullptr)
@@ -49,5 +55,30 @@ void PlatformerCharacter::UpdateCurrent(sf::Time dt, CommandQueue& commands)
 	Entity::UpdateCurrent(dt, commands);
 	m_artist.UpdateCurrent(dt);
 
+	UpdateAnimationState();
 	UpdateTexts();
+}
+
+void PlatformerCharacter::UpdateAnimationState()
+{
+	const sf::Vector2f velocity = GetVelocity();
+
+	if (Utility::Length(velocity) == 0.f)
+	{
+		m_artist.ChangeState(static_cast<int>(PlatformerAnimationState::kIdle));
+	}
+	else
+	{
+		m_artist.ChangeState(static_cast<int>(PlatformerAnimationState::kRun));
+
+		if (velocity.x > 0)
+		{
+			m_artist.Flipped(false);
+		}
+		else if(velocity.x < 0)
+		{
+			m_artist.Flipped(true);
+		}
+		
+	}
 }

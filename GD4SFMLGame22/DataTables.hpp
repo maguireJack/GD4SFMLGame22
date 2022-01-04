@@ -36,7 +36,9 @@ struct PlatformerAnimationData
 struct PlatformerCharacterData
 {
 	float m_jump_height;
-	float m_speed;
+	float m_acceleration;
+	float m_max_velocity;
+	float m_deceleration;
 	int m_health;
 	PlatformerAnimationData m_animation_data;
 };

@@ -3,6 +3,8 @@ enum class Textures
 {
 	kDefault,
 	kBrunoIdle,
+	kBrunoRun,
+	kBrunoJump,
 
 	kJungle1,
 	kJungle2,

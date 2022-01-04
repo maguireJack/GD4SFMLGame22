@@ -21,7 +21,9 @@ public:
 	static std::string toString(sf::Keyboard::Key key);
 	static double ToRadians(int degrees);
 	static sf::Vector2f UnitVector(sf::Vector2f vector);
+	static sf::Vector2f UnitVector(sf::Vector2i vector);
 	static float Length(sf::Vector2f vector);
+	static float Length(sf::Vector2i vector);
 	static float ToDegrees(float angle);
 	static sf::IntRect GetIntRect(sf::Texture& texture);
 	static int RandomInt(int exclusive_max);

@@ -20,6 +20,8 @@ private:
 	void DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) const override;
 	void UpdateCurrent(sf::Time dt, CommandQueue& commands) override;
 
+	void UpdateAnimationState();
+
 private:
 	PlatformerCharacterType m_type;
 	AnimatedSpriteArtist m_artist;

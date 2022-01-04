@@ -17,6 +17,7 @@ public:
 	void ChangeState(int index);
 	void Pause();
 	void Play();
+	void Flipped(bool flipped);
 
 private:
 	AnimatedSprite& CurrentSpriteState();
@@ -24,4 +25,5 @@ private:
 private:
 	std::vector<AnimatedSprite> m_sprite_states;
 	int m_current_sprite_index;
+	bool m_flipped;
 }; 

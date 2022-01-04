@@ -3,18 +3,32 @@
 
 #include "Entity.hpp"
 
-struct EntityMover
+struct EntityDirectionAdder
 {
-	EntityMover(float vx, float vy) : velocity(vx, vy)
+	EntityDirectionAdder(int vx, int vy) : velocity(vx, vy)
 	{
 	}
 
 	void operator()(Entity& entity, sf::Time) const
 	{
-		entity.Accelerate(velocity * entity.GetMaxSpeed());
+		entity.AddDirection(velocity);
 	}
 
-	sf::Vector2f velocity;
+	sf::Vector2i velocity;
+};
+
+struct EntityDirectionRemover
+{
+	EntityDirectionRemover(int vx, int vy) : velocity(vx, vy)
+	{
+	}
+
+	void operator()(Entity& entity, sf::Time) const
+	{
+		entity.RemoveDirection(velocity);
+	}
+
+	sf::Vector2i velocity;
 };
 
 Player::Player() : m_current_mission_status(MissionStatus::kMissionRunning)
@@ -28,8 +42,13 @@ Player::Player() : m_current_mission_status(MissionStatus::kMissionRunning)
 	//Set initial action bindings
 	InitialiseActions();
 
-	//Assign all categories to the player's aircraft
+	//Assign all categories to the player's character
 	for(auto& pair : m_action_binding)
+	{
+		pair.second.category = Category::kPlayerCharacter;
+	}
+
+	for(auto& pair : m_on_release_action_binding)
 	{
 		pair.second.category = Category::kPlayerCharacter;
 	}
@@ -43,6 +62,7 @@ void Player::HandleEvent(const sf::Event& event, CommandQueue& commands)
 		auto found = m_key_binding.find(event.key.code);
 		if(found != m_key_binding.end() && !IsRealtimeAction(found->second))
 		{
+			m_active_actions.emplace(found->second);
 			commands.Push(m_action_binding[found->second]);
 		}
 	}
@@ -53,9 +73,22 @@ void Player::HandleRealtimeInput(CommandQueue& commands)
 	//Check if any keybinding keys are pressed
 	for(auto pair: m_key_binding)
 	{
-		if(sf::Keyboard::isKeyPressed(pair.first) && IsRealtimeAction(pair.second))
+		if(IsRealtimeAction(pair.second))
 		{
-			commands.Push(m_action_binding[pair.second]);
+			if (sf::Keyboard::isKeyPressed(pair.first))
+			{
+				commands.Push(m_action_binding[pair.second]);
+				m_active_actions.emplace(pair.second);
+			}
+			else if(m_active_actions.count(pair.second))
+			{
+				m_active_actions.erase(pair.second);
+
+				if (m_on_release_action_binding.count(pair.second))
+				{
+					commands.Push(m_on_release_action_binding[pair.second]);
+				}
+			}
 		}
 	}
 }
@@ -101,12 +134,15 @@ MissionStatus Player::GetMissionStatus() const
 
 void Player::InitialiseActions()
 {
-	const float player_speed = 200.f;
+	m_action_binding[PlayerAction::kMoveLeft].action = DerivedAction<Entity>(EntityDirectionAdder(-1, 0));
+	m_action_binding[PlayerAction::kMoveRight].action = DerivedAction<Entity>(EntityDirectionAdder(1, 0));
+	m_action_binding[PlayerAction::kMoveUp].action = DerivedAction<Entity>(EntityDirectionAdder(0, -1));
+	m_action_binding[PlayerAction::kMoveDown].action = DerivedAction<Entity>(EntityDirectionAdder(0, 1));
 
-	m_action_binding[PlayerAction::kMoveLeft].action = DerivedAction<Entity>(EntityMover(-1, 0.f));
-	m_action_binding[PlayerAction::kMoveRight].action = DerivedAction<Entity>(EntityMover(+1, 0.f));
-	m_action_binding[PlayerAction::kMoveUp].action = DerivedAction<Entity>(EntityMover(0.f, -1));
-	m_action_binding[PlayerAction::kMoveDown].action = DerivedAction<Entity>(EntityMover(0, 1));
+	m_on_release_action_binding[PlayerAction::kMoveLeft].action = DerivedAction<Entity>(EntityDirectionRemover(-1, 0));
+	m_on_release_action_binding[PlayerAction::kMoveRight].action = DerivedAction<Entity>(EntityDirectionRemover(1, 0));
+	m_on_release_action_binding[PlayerAction::kMoveUp].action = DerivedAction<Entity>(EntityDirectionRemover(0.f, -1));
+	m_on_release_action_binding[PlayerAction::kMoveDown].action = DerivedAction<Entity>(EntityDirectionRemover(0, 1));
 }
 
 bool Player::IsRealtimeAction(PlayerAction action)
@@ -117,7 +153,6 @@ bool Player::IsRealtimeAction(PlayerAction action)
 	case PlayerAction::kMoveRight:
 	case PlayerAction::kMoveUp:
 	case PlayerAction::kMoveDown:
-	case PlayerAction::kFire:
 		return true;
 	default:
 		return false;

@@ -155,13 +155,35 @@ double Utility::ToRadians(int degrees)
 
 sf::Vector2f Utility::UnitVector(sf::Vector2f vector)
 {
-	assert(vector != sf::Vector2f(0.f, 0.f));
+	if (vector == sf::Vector2f(0.f, 0.f))
+	{
+		return {0, 0};
+	}
+
 	return vector / Length(vector);
 }
+
+sf::Vector2f Utility::UnitVector(sf::Vector2i vector)
+{
+	if (vector == sf::Vector2i(0, 0))
+	{
+		return { 0, 0 };
+	}
+
+	const float length = Length(vector);
+
+	return sf::Vector2f(vector.x / length, vector.y / length);
+}
+
 
 float Utility::Length(sf::Vector2f vector)
 {
 	return sqrtf(powf(vector.x, 2) + powf(vector.y, 2));
+}
+
+float Utility::Length(sf::Vector2i vector)
+{
+	return sqrtf(pow(vector.x, 2) + powf(vector.y, 2));
 }
 
 float Utility::ToDegrees(float angle_in_radians)

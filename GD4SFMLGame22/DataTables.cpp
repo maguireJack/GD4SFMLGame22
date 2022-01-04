@@ -27,12 +27,14 @@ std::vector<PlatformerCharacterData> InitializePlatformerCharacterData()
 {
 	std::vector<PlatformerCharacterData> data(static_cast<int>(PlatformerCharacterType::kPlatformerCount));
 	data[static_cast<int>(PlatformerCharacterType::kBruno)].m_jump_height = 10;
-	data[static_cast<int>(PlatformerCharacterType::kBruno)].m_speed = 10;
+	data[static_cast<int>(PlatformerCharacterType::kBruno)].m_acceleration = 1000;
+	data[static_cast<int>(PlatformerCharacterType::kBruno)].m_max_velocity = 60;
+	data[static_cast<int>(PlatformerCharacterType::kBruno)].m_deceleration = 1000;
 	data[static_cast<int>(PlatformerCharacterType::kBruno)].m_health = 100;
 
 	data[static_cast<int>(PlatformerCharacterType::kBruno)].m_animation_data = PlatformerAnimationData{
-		{Textures::kBrunoIdle, 19, 34, 9, 0.8f},
-		{Textures::kBrunoIdle, 19, 34, 9, 1},
+		{Textures::kBrunoIdle, 21, 35, 12, 1},
+		{Textures::kBrunoRun, 23, 34, 8, 1},
 		{Textures::kBrunoIdle, 19, 34, 9, 1}
 	};
 

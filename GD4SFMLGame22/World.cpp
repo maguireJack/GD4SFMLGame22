@@ -62,7 +62,8 @@ void World::Draw()
 
 void World::LoadTextures()
 {
-	m_textures.Load(Textures::kBrunoIdle, "Media/Textures/idle.png");
+	m_textures.Load(Textures::kBrunoIdle, "Media/Textures/Idle.png");
+	m_textures.Load(Textures::kBrunoRun, "Media/Textures/Run.png");
 
 	m_textures.Load(Textures::kJungle1, "Media/Textures/Jungle/plx-1.png");
 	m_textures.Load(Textures::kJungle2, "Media/Textures/Jungle/plx-2.png");
@@ -84,7 +85,7 @@ void World::BuildScene()
 	//Initialize the different layers
 	for (std::size_t i = 0; i < static_cast<int>(Layers::kLayerCount); ++i)
 	{
-		Category::Type category = i == static_cast<int>(Layers::kAir)
+		const Category::Type category = i == static_cast<int>(Layers::kAir)
 			? Category::Type::kScene
 			: Category::Type::kNone;
 
@@ -219,10 +220,10 @@ bool MatchesCategories(SceneNode::Pair& colliders, Category::Type type1, Categor
 // Should let each entity class decide how collision is handled
 void World::HandleCollisions()
 {
-	//std::set<SceneNode::Pair> collision_pairs;
-	//m_scenegraph.CheckSceneCollision(m_scenegraph, collision_pairs);
-	//for(SceneNode::Pair pair : collision_pairs)
-	//{
+	std::set<SceneNode::Pair> collision_pairs;
+	m_scenegraph.CheckSceneCollision(m_scenegraph, collision_pairs);
+	for(SceneNode::Pair pair : collision_pairs)
+	{
 	//	if(MatchesCategories(pair, Category::Type::kPlayerAircraft, Category::Type::kEnemyAircraft))
 	//	{
 	//		auto& player = static_cast<Aircraft&>(*pair.first);
@@ -250,7 +251,7 @@ void World::HandleCollisions()
 	//		projectile.Destroy();
 	//	}
 
-	//  }
+	}
 }
 
 void World::DestroyEntitiesOutsideView()

@@ -225,6 +225,7 @@
     <ClInclude Include="TileNode.hpp" />
     <ClInclude Include="TitleState.hpp" />
     <ClInclude Include="Utility.hpp" />
+    <ClInclude Include="Vector2iHash.hpp" />
     <ClInclude Include="World.hpp" />
   </ItemGroup>
   <ItemGroup>
