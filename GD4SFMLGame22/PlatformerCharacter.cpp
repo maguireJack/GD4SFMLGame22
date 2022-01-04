@@ -1,5 +1,6 @@
 #include "PlatformerCharacter.hpp"
 
+#include <iostream>
 #include <SFML/Graphics/RenderTarget.hpp>
 
 #include "DataTables.hpp"
@@ -13,19 +14,20 @@ namespace
 }
 
 
-PlatformerCharacter::PlatformerCharacter(PlatformerCharacterType type, const TextureHolder& textures, const FontHolder& fonts)
+PlatformerCharacter::PlatformerCharacter(PlatformerCharacterType type, Camera& camera, const TextureHolder& textures, const FontHolder& fonts)
 	: Entity(
 		Table[static_cast<int>(type)].m_health,
 		Table[static_cast<int>(type)].m_acceleration,
 		Table[static_cast<int>(type)].m_max_velocity,
 		Table[static_cast<int>(type)].m_deceleration)
 	, m_type(type)
+	, m_camera(camera)
 	, m_artist(Table[static_cast<int>(type)].m_animation_data.ToVector(), textures)
 	, m_health_display(nullptr)
 {
-	std::unique_ptr<TextNode> healthDisplay(new TextNode(fonts, ""));
-	m_health_display = healthDisplay.get();
-	AttachChild(std::move(healthDisplay));
+	std::unique_ptr<TextNode> health_display(new TextNode(fonts, ""));
+	m_health_display = health_display.get();
+	AttachChild(std::move(health_display));
 }
 
 unsigned PlatformerCharacter::GetCategory() const
@@ -57,6 +59,7 @@ void PlatformerCharacter::UpdateCurrent(sf::Time dt, CommandQueue& commands)
 
 	UpdateAnimationState();
 	UpdateTexts();
+	UpdateCamera(dt);
 }
 
 void PlatformerCharacter::UpdateAnimationState()
@@ -81,4 +84,35 @@ void PlatformerCharacter::UpdateAnimationState()
 		}
 		
 	}
+}
+
+void PlatformerCharacter::UpdateCamera(sf::Time dt) const
+{
+	const sf::FloatRect bounds = m_camera.GetBoundingRect();
+	const float right = bounds.left + bounds.width;
+	const float bottom = bounds.top + bounds.height;
+
+	sf::Vector2f new_position;
+
+	if (getPosition().x > right - 100)
+	{
+		new_position.x += 100;
+	}
+	else if (getPosition().x < bounds.left + 100)
+	{
+		new_position.x -= 100;
+	}
+
+	if (getPosition().y > bottom - 100)
+	{
+		new_position.y += 100;
+	}
+	else if (getPosition().y < bounds.top + 100)
+	{
+		new_position.y -= 100;
+	}
+
+	m_camera.SetPosition(m_camera.getPosition() + new_position * 0.01f);
+
+
 }

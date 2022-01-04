@@ -10,9 +10,9 @@
 #include "Utility.hpp"
 #include "TileNode.hpp"
 
-World::World(sf::RenderWindow& window, FontHolder& font, sf::View& camera, Grid& grid)
+World::World(sf::RenderWindow& window, FontHolder& font, sf::View& view, Grid& grid)
 	: m_window(window)
-	, m_camera(camera)
+	, m_camera(view)
 	, m_textures()
 	, m_fonts(font)
 	, m_grid(grid)
@@ -24,8 +24,8 @@ World::World(sf::RenderWindow& window, FontHolder& font, sf::View& camera, Grid&
 {
 	LoadTextures();
 	BuildScene();
-	m_camera.setCenter(m_spawn_position);
-	m_camera.setSize(768/2, 432/2);
+	m_camera.SetCenter(m_spawn_position);
+	m_camera.SetSize(768/2, 432/2);
 }
 
 void World::Update(sf::Time dt)
@@ -56,7 +56,7 @@ void World::Update(sf::Time dt)
 
 void World::Draw()
 {
-	m_window.setView(m_camera);
+	m_window.setView(m_camera.GetView());
 	m_window.draw(m_scenegraph);
 }
 
@@ -157,7 +157,7 @@ void World::BuildScene()
 	
 
 	//Add player's character
-	std::unique_ptr<PlatformerCharacter> player(new PlatformerCharacter(PlatformerCharacterType::kBruno, m_textures, m_fonts));
+	std::unique_ptr<PlatformerCharacter> player(new PlatformerCharacter(PlatformerCharacterType::kBruno, m_camera, m_textures, m_fonts));
 	m_player = player.get();
 	m_player->setPosition(m_spawn_position);
 	m_scene_layers[static_cast<int>(Layers::kAir)]->AttachChild(std::move(player));
@@ -184,7 +184,7 @@ CommandQueue& World::GetCommandQueue()
 
 sf::FloatRect World::GetViewBounds() const
 {
-	return sf::FloatRect(m_camera.getCenter() - m_camera.getSize() / 2.f, m_camera.getSize());
+	return sf::FloatRect(m_camera.GetCenter() - m_camera.GetSize() / 2.f, m_camera.GetSize());
 }
 
 sf::FloatRect World::GetBattlefieldBounds() const

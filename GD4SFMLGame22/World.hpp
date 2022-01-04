@@ -11,6 +11,7 @@
 
 #include <array>
 
+#include "Camera.hpp"
 #include "CommandQueue.hpp"
 #include "Grid.hpp"
 #include "PlatformerCharacter.hpp"
@@ -25,7 +26,7 @@ namespace sf
 class World : private sf::NonCopyable
 {
 public:
-	explicit World(sf::RenderWindow& window, FontHolder& font, sf::View& camera, Grid& grid);
+	explicit World(sf::RenderWindow& window, FontHolder& font, sf::View& view, Grid& grid);
 	void Update(sf::Time dt);
 	void Draw();
 	CommandQueue& GetCommandQueue();
@@ -53,7 +54,7 @@ public:
 
 private:
 	sf::RenderWindow& m_window;
-	sf::View& m_camera;
+	Camera m_camera;
 	TextureHolder m_textures;
 	FontHolder& m_fonts;
 	Grid& m_grid;

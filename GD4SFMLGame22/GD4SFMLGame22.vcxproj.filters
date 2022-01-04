@@ -97,6 +97,7 @@
     <ClCompile Include="AnimatedSpriteArtist.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Camera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.hpp">
@@ -231,6 +232,7 @@
     <ClInclude Include="Vector2iHash.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Camera.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">
