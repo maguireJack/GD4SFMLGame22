@@ -7,8 +7,8 @@ Entity::Entity(int hitpoints, float acceleration_speed, float max_velocity, floa
 	, m_acceleration_speed(acceleration_speed)
 	, m_max_velocity(max_velocity)
 	, m_deceleration(deceleration)
-	, m_is_marked_for_removal(false) 
 	, m_gravity(gravity)
+	, m_is_marked_for_removal(false)
 {
 }
 

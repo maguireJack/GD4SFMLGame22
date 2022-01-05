@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <SFML/Graphics/RenderWindow.hpp>
 
 #include "Component.hpp"
 
@@ -11,7 +12,7 @@ namespace GUI
 		typedef std::shared_ptr<Container> Ptr;
 
 	public:
-		Container();
+		Container(sf::RenderWindow& window);
 		void Pack(Component::Ptr component);
 		virtual bool IsSelectable() const override;
 		virtual void HandleEvent(const sf::Event& event) override;
@@ -24,6 +25,7 @@ namespace GUI
 		void SelectPrevious();
 
 	private:
+		sf::RenderWindow& m_window;
 		std::vector<Component::Ptr> m_children;
 		int m_selected_child;
 	};

@@ -19,6 +19,7 @@ namespace GUI
 		Component();
 		virtual ~Component() override = default;
 
+		virtual sf::FloatRect GetBoundingRect() const;
 		virtual bool IsSelectable() const = 0;
 		bool IsSelected() const;
 		virtual void Select();

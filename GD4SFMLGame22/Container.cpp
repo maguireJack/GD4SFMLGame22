@@ -1,13 +1,16 @@
 #include "Container.hpp"
 
+#include <iostream>
+#include <ostream>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 
 namespace GUI
 {
-	Container::Container()
-	: m_selected_child(-1)
+	Container::Container(sf::RenderWindow& window)
+		: m_window(window)
+		, m_selected_child(-1)
 	{
 	}
 	//TODO pass by reference as resharper is suggesting?
@@ -30,6 +33,30 @@ namespace GUI
 		if(HasSelection() && m_children[m_selected_child]->IsActive())
 		{
 			m_children[m_selected_child]->HandleEvent(event);
+		}
+		else if (event.type == sf::Event::MouseMoved)
+		{
+			const sf::Vector2i mouse = sf::Mouse::getPosition(m_window);
+
+			for (size_t i = 0; i < m_children.size(); i++)
+			{
+				const auto child = m_children[i];
+				if (child->GetBoundingRect().contains(mouse.x, mouse.y))
+				{
+					Select(i);
+				}
+			}
+		}
+		else if (event.type == sf::Event::MouseButtonReleased)
+		{
+			if (event.mouseButton.button == sf::Mouse::Left)
+			{
+				const sf::Vector2i mouse = sf::Mouse::getPosition(m_window);
+				if (m_children[m_selected_child]->GetBoundingRect().contains(mouse.x, mouse.y))
+				{
+					m_children[m_selected_child]->Activate();
+				}
+			}
 		}
 		else if(event.type == sf::Event::KeyReleased)
 		{

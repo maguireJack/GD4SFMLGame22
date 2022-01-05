@@ -7,6 +7,10 @@ namespace GUI
 	{
 	}
 
+	sf::FloatRect Component::GetBoundingRect() const
+	{
+		return sf::FloatRect();
+	}
 
 	bool Component::IsSelected() const
 	{

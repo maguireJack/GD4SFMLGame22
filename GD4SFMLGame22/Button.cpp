@@ -5,6 +5,7 @@
 
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Window/Event.hpp>
 
 namespace GUI
 {
@@ -35,6 +36,13 @@ namespace GUI
 	void Button::SetToggle(bool flag)
 	{
 		m_is_toggle = flag;
+	}
+
+	sf::FloatRect Button::GetBoundingRect() const
+	{
+		const sf::Transform transform = sf::Transform::Identity * getTransform();
+
+		return transform.transformRect(m_sprite.getGlobalBounds());
 	}
 
 	bool Button::IsSelectable() const
