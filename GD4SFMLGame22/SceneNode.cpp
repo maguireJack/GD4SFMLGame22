@@ -81,7 +81,7 @@ sf::FloatRect SceneNode::GetBoundingRect() const
 
 void SceneNode::HandleCollisions(SceneNode* node)
 {
-	//Do nothing by default
+	
 }
 
 void SceneNode::CheckSceneCollision(SceneNode& scene_graph, std::set<Pair>& collision_pairs)

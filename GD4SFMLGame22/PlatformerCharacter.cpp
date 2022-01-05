@@ -41,8 +41,11 @@ void PlatformerCharacter::HandleCollisions(SceneNode* node)
 	{
 		if (GetBoundingRect().top < node->GetBoundingRect().top)
 		{
+			SetGravity(0);
+			setPosition(getPosition().x, node->GetBoundingRect().top - GetBoundingRect().height/2);
 		}
 	}
+	SetGravity(1000);
 }
 
 sf::FloatRect PlatformerCharacter::GetBoundingRect() const

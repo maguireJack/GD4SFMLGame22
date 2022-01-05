@@ -42,6 +42,11 @@ void Tile::UpdateCurrent(sf::Time dt, CommandQueue& commands)
 
 }
 
+sf::Sprite Tile::GetSprite()
+{
+	return m_sprite;
+}
+
 void Tile::DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	target.draw(m_sprite, states);

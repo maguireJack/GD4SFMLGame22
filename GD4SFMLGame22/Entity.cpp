@@ -2,12 +2,13 @@
 
 #include "Utility.hpp"
 
-Entity::Entity(int hitpoints, float acceleration_speed, float max_velocity, float deceleration)
+Entity::Entity(int hitpoints, float acceleration_speed, float max_velocity, float deceleration, float gravity)
 	: m_hitpoints(hitpoints)
 	, m_acceleration_speed(acceleration_speed)
 	, m_max_velocity(max_velocity)
 	, m_deceleration(deceleration)
-	, m_is_marked_for_removal(false)
+	, m_is_marked_for_removal(false) 
+	, m_gravity(gravity)
 {
 }
 
@@ -15,6 +16,11 @@ void Entity::SetVelocity(sf::Vector2f velocity)
 {
 	m_velocity = velocity;
 	ValidateVelocity();
+}
+
+void Entity::SetGravity(float gravity)
+{
+	m_gravity = gravity;
 }
 
 void Entity::SetVelocity(float vx, float vy)
@@ -52,6 +58,12 @@ void Entity::UpdateCurrent(sf::Time dt, CommandQueue& commands)
 	move(m_velocity * dt.asSeconds());
 	Decelerate(dt);
 	Accelerate(dt);
+	ApplyGravity(dt);
+}
+
+void Entity::ApplyGravity(sf::Time dt) 
+{
+	m_velocity.y += m_gravity * dt.asSeconds();
 }
 
 void Entity::Accelerate(sf::Time dt)

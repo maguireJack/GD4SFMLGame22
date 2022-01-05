@@ -9,6 +9,7 @@
 #include "Tile.hpp"
 #include "Utility.hpp"
 #include "TileNode.hpp"
+#include "Player.hpp"
 
 World::World(sf::RenderWindow& window, FontHolder& font, sf::View& view, Grid& grid)
 	: m_window(window)
@@ -228,14 +229,14 @@ void World::HandleCollisions()
 		pair.first->HandleCollisions(pair.second);
 		pair.second->HandleCollisions(pair.first);
 
-	// if(MatchesCategories(pair, Category::Type::kPlayerAircraft, Category::Type::kEnemyAircraft))
-	//	{
-	//		auto& player = static_cast<Aircraft&>(*pair.first);
-	//		auto& enemy = static_cast<Aircraft&>(*pair.second);
-	//		//Collision
-	//		player.Damage(enemy.GetHitPoints());
-	//		enemy.Destroy();
-	//	}
+		if(MatchesCategories(pair, Category::Type::kPlatform, Category::Type::kPlayerCharacter))
+		{
+				auto& platform = static_cast<TileNode&>(*pair.first);
+				auto& player = static_cast<Entity&>(*pair.second);
+
+				player.HandleCollisions(pair.first);
+			
+		}
 
 	//	else if (MatchesCategories(pair, Category::Type::kPlayerAircraft, Category::Type::kPickup))
 	//	{

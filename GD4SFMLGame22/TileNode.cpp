@@ -10,6 +10,11 @@ TileNode::TileNode(std::shared_ptr<Tile> tile) : m_tile(tile)
 
 }
 
+unsigned int TileNode::GetCategory() const
+{
+	return Category::kPlatform;
+}
+
 TileNode::TileNode(TileNode* tile)
 {
 	m_tile = tile->GetTile();
@@ -28,6 +33,12 @@ void TileNode::UpdateCurrent(sf::Time dt, CommandQueue& commands)
 {
 	
 }
+
+sf::FloatRect TileNode::GetBoundingRect() const 
+{
+	return GetWorldTransform().transformRect(m_tile->GetSprite().getGlobalBounds());
+}
+
 
 std::shared_ptr<Tile> TileNode::GetTile()
 {

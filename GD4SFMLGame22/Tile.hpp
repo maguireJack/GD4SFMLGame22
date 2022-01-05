@@ -12,6 +12,7 @@ public:
 	bool IsSelected();
 	Tile Select();
 	void Deselect();
+	sf::Sprite GetSprite();
 	virtual void UpdateCurrent(sf::Time dt, CommandQueue& commands);
 	virtual void DrawCurrent(sf::RenderTarget&, sf::RenderStates states) const;
 
