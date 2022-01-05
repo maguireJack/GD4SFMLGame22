@@ -222,9 +222,13 @@ void World::HandleCollisions()
 {
 	std::set<SceneNode::Pair> collision_pairs;
 	m_scenegraph.CheckSceneCollision(m_scenegraph, collision_pairs);
+
 	for(SceneNode::Pair pair : collision_pairs)
 	{
-	//	if(MatchesCategories(pair, Category::Type::kPlayerAircraft, Category::Type::kEnemyAircraft))
+		pair.first->HandleCollisions(pair.second);
+		pair.second->HandleCollisions(pair.first);
+
+	// if(MatchesCategories(pair, Category::Type::kPlayerAircraft, Category::Type::kEnemyAircraft))
 	//	{
 	//		auto& player = static_cast<Aircraft&>(*pair.first);
 	//		auto& enemy = static_cast<Aircraft&>(*pair.second);

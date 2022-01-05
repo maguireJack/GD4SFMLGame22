@@ -31,6 +31,7 @@ public:
 	virtual unsigned int GetCategory() const;
 	virtual sf::FloatRect GetBoundingRect() const;
 
+	virtual void HandleCollisions(SceneNode* node);
 	void CheckSceneCollision(SceneNode& scene_graph, std::set<Pair>& collision_pairs);
 	void RemoveWrecks();
 

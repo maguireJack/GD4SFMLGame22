@@ -54,6 +54,52 @@ sf::Transform SceneNode::GetWorldTransform() const
 	return transform;
 }
 
+void SceneNode::OnCommand(const Command& command, sf::Time dt)
+{
+	//Is this command for me?
+	if (command.category & GetCategory())
+	{
+		command.action(*this, dt);
+	}
+
+	//Pass command on to children
+	for (Ptr& child : m_children)
+	{
+		child->OnCommand(command, dt);
+	}
+}
+
+unsigned int SceneNode::GetCategory() const
+{
+	return static_cast<int>(m_default_category);
+}
+
+sf::FloatRect SceneNode::GetBoundingRect() const
+{
+	return sf::FloatRect();
+}
+
+void SceneNode::HandleCollisions(SceneNode* node)
+{
+	//Do nothing by default
+}
+
+void SceneNode::CheckSceneCollision(SceneNode& scene_graph, std::set<Pair>& collision_pairs)
+{
+	CheckNodeCollision(scene_graph, collision_pairs);
+	for (Ptr& child : scene_graph.m_children)
+	{
+		CheckSceneCollision(*child, collision_pairs);
+	}
+}
+
+void SceneNode::RemoveWrecks()
+{
+	auto wreck_field_begin = std::remove_if(m_children.begin(), m_children.end(), std::mem_fn(&SceneNode::IsMarkedForRemoval));
+	m_children.erase(wreck_field_begin, m_children.end());
+	std::for_each(m_children.begin(), m_children.end(), std::mem_fn(&SceneNode::RemoveWrecks));
+}
+
 void SceneNode::UpdateCurrent(sf::Time dt, CommandQueue& commands)
 {
 	//Do nothing by default
@@ -92,36 +138,6 @@ void SceneNode::DrawChildren(sf::RenderTarget& target, sf::RenderStates states) 
 	}
 }
 
-void SceneNode::OnCommand(const Command& command, sf::Time dt)
-{
-	//Is this command for me?
-	if(command.category & GetCategory())
-	{
-		command.action(*this, dt);
-	}
-
-	//Pass command on to children
-	for(Ptr& child : m_children)
-	{
-		child->OnCommand(command, dt);
-	}
-}
-
-unsigned int SceneNode::GetCategory() const
-{
-	return static_cast<int>(m_default_category);
-}
-
-float Distance(const SceneNode& lhs, const SceneNode& rhs)
-{
-	return Utility::Length(lhs.GetWorldPosition() - rhs.GetWorldPosition());
-}
-
-sf::FloatRect SceneNode::GetBoundingRect() const
-{
-	return sf::FloatRect();
-}
-
 void SceneNode::DrawBoundingRect(sf::RenderTarget& target, sf::RenderStates states, sf::FloatRect& rect) const
 {
 	sf::RectangleShape shape;
@@ -133,9 +149,15 @@ void SceneNode::DrawBoundingRect(sf::RenderTarget& target, sf::RenderStates stat
 	target.draw(shape);
 }
 
-bool Collision(const SceneNode& lhs, const SceneNode& rhs)
+bool SceneNode::IsDestroyed() const
 {
-	return lhs.GetBoundingRect().intersects(rhs.GetBoundingRect());
+	//What should the default for a Scenenode be
+	return false;
+}
+
+bool SceneNode::IsMarkedForRemoval() const
+{
+	return IsDestroyed();
 }
 
 void SceneNode::CheckNodeCollision(SceneNode& node, std::set<Pair>& collision_pairs)
@@ -150,29 +172,12 @@ void SceneNode::CheckNodeCollision(SceneNode& node, std::set<Pair>& collision_pa
 	}
 }
 
-void SceneNode::CheckSceneCollision(SceneNode& scene_graph, std::set<Pair>& collision_pairs)
+bool Collision(const SceneNode& lhs, const SceneNode& rhs)
 {
-	CheckNodeCollision(scene_graph, collision_pairs);
-	for(Ptr& child : scene_graph.m_children)
-	{
-		CheckSceneCollision(*child, collision_pairs);
-	}
+	return lhs.GetBoundingRect().intersects(rhs.GetBoundingRect());
 }
 
-bool SceneNode::IsDestroyed() const
+float Distance(const SceneNode& lhs, const SceneNode& rhs)
 {
-	//What should the default for a Scenenode be
-	return false;
-}
-
-bool SceneNode::IsMarkedForRemoval() const
-{
-	return IsDestroyed();
-}
-
-void SceneNode::RemoveWrecks()
-{
-	auto wreck_field_begin = std::remove_if(m_children.begin(), m_children.end(), std::mem_fn(&SceneNode::IsMarkedForRemoval));
-	m_children.erase(wreck_field_begin, m_children.end());
-	std::for_each(m_children.begin(), m_children.end(), std::mem_fn(&SceneNode::RemoveWrecks));
+	return Utility::Length(lhs.GetWorldPosition() - rhs.GetWorldPosition());
 }

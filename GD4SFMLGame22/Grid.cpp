@@ -2,6 +2,7 @@
 #include "Tile.hpp"
 #include <iostream>
 #include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/Window/Event.hpp>
 #include <SFML/Window/Mouse.hpp>
 
 Grid::Grid(const sf::RenderWindow& window, const sf::View& camera_view, int horizontal_cells, int vertical_cells, float cell_size, float line_width)

@@ -35,11 +35,14 @@ unsigned PlatformerCharacter::GetCategory() const
 	return Category::kPlayerCharacter;
 }
 
-void PlatformerCharacter::UpdateTexts() const
+void PlatformerCharacter::HandleCollisions(SceneNode* node)
 {
-	m_health_display->SetString(std::to_string(GetHitPoints()) + "HP");
-	m_health_display->setPosition(0.f, 50.f);
-	m_health_display->setRotation(-getRotation());
+	if (Category::kPlatform & node->GetCategory())
+	{
+		if (GetBoundingRect().top < node->GetBoundingRect().top)
+		{
+		}
+	}
 }
 
 sf::FloatRect PlatformerCharacter::GetBoundingRect() const
@@ -58,8 +61,8 @@ void PlatformerCharacter::UpdateCurrent(sf::Time dt, CommandQueue& commands)
 	m_artist.UpdateCurrent(dt);
 
 	UpdateAnimationState();
-	UpdateTexts();
 	UpdateCamera(dt);
+	UpdateTexts();
 }
 
 void PlatformerCharacter::UpdateAnimationState()
@@ -113,6 +116,11 @@ void PlatformerCharacter::UpdateCamera(sf::Time dt) const
 	}
 
 	m_camera.SetPosition(m_camera.getPosition() + new_position * 0.01f);
+}
 
-
+void PlatformerCharacter::UpdateTexts() const
+{
+	m_health_display->SetString(std::to_string(GetHitPoints()) + "HP");
+	m_health_display->setPosition(0.f, 50.f);
+	m_health_display->setRotation(-getRotation());
 }
