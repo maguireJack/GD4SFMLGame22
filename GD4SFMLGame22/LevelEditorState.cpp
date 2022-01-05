@@ -7,7 +7,7 @@
 
 LevelEditorState::LevelEditorState(StateStack& stack, const Context& context)
 	: GameState(stack, context)
-	, m_world(*context.window, *context.fonts, *context.camera, *context.grid)
+	, m_world(*context.window, *context.fonts, *context.grid)
 	, m_player(*context.player)
 {
 }

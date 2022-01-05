@@ -1,46 +1,58 @@
 #include "TileNode.hpp"
 
-#include "Application.hpp"
-#include "Utility.hpp"
 #include <iostream>
+#include <ostream>
 
+#include "Application.hpp"
+#include "DataTables.hpp"
+#include "Utility.hpp"
 
-TileNode::TileNode(std::shared_ptr<Tile> tile) : m_tile(tile)
+namespace
 {
-
+	const std::vector<PlatformData> Table = InitializePlatformData();
 }
 
-unsigned int TileNode::GetCategory() const
+TileNode::TileNode(PlatformType platform, const TextureHolder& textures)
+	: m_platform(platform)
+	, m_selected(false)
+	, m_sprite(textures.Get(Table[static_cast<int>(platform)].m_textures))
+{
+}
+
+unsigned TileNode::GetCategory() const
 {
 	return Category::kPlatform;
 }
 
-TileNode::TileNode(TileNode* tile)
+sf::FloatRect TileNode::GetBoundingRect() const
 {
-	m_tile = tile->GetTile();
+	return GetWorldTransform().transformRect(m_sprite.getGlobalBounds());
 }
 
-void TileNode::DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
+bool TileNode::IsSelected() const
 {
-	m_tile->DrawCurrent(target, states);
+	return m_selected;
+}
+
+void TileNode::Select()
+{
+	std::cout << "Selected" << std::endl;
+	m_selected = true;
+	m_sprite.setColor(sf::Color(255, 255, 255, 100));
+}
+
+void TileNode::Deselect()
+{
+	std::cout << "Deselected" << std::endl;
+	m_selected = false;
+	m_sprite.setColor(sf::Color(255, 255, 255, 255));
 }
 
 void TileNode::SetTarget(sf::Vector2i position) {
 	this->setPosition(sf::Vector2f(position * 16));
 }
 
-void TileNode::UpdateCurrent(sf::Time dt, CommandQueue& commands)
+void TileNode::DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 {
-	
-}
-
-sf::FloatRect TileNode::GetBoundingRect() const 
-{
-	return GetWorldTransform().transformRect(m_tile->GetSprite().getGlobalBounds());
-}
-
-
-std::shared_ptr<Tile> TileNode::GetTile()
-{
-	return m_tile;
+	target.draw(m_sprite, states);
 }

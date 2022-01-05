@@ -3,30 +3,27 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Mouse.hpp>
 #include <iostream>
-#include <limits>
 
 #include "GridNode.hpp"
-#include "Tile.hpp"
 #include "Utility.hpp"
-#include "TileNode.hpp"
-#include "Player.hpp"
 
-World::World(sf::RenderWindow& window, FontHolder& font, sf::View& view, Grid& grid)
+World::World(sf::RenderWindow& window, FontHolder& font, Grid& grid)
 	: m_window(window)
-	, m_camera(view)
+	, m_camera(window.getDefaultView())
 	, m_textures()
 	, m_fonts(font)
 	, m_grid(grid)
 	, m_scenegraph()
 	, m_scene_layers()
 	, m_world_bounds(0.f, 0.f, 384, 432)
-	, m_spawn_position(384/2, 216 + 216/2)
+	, m_spawn_position(384/2.f, 216.f + 216/2.f)
 	, m_scrollspeed(-50.f)
+	, m_player(nullptr)
 {
 	LoadTextures();
 	BuildScene();
 	m_camera.SetCenter(m_spawn_position);
-	m_camera.SetSize(768/2, 432/2);
+	m_camera.SetSize(768/2.f, 432/2.f);
 }
 
 void World::Update(sf::Time dt)
@@ -145,17 +142,13 @@ void World::BuildScene()
 	temp_tile_sprite->setPosition(100, 316);
 	m_scene_layers[static_cast<int>(Layers::kAir)]->AttachChild(std::move(temp_tile_sprite));*/
 
-	std::unique_ptr<GridNode> grid_node(new GridNode(m_grid));
+	std::unique_ptr<GridNode> grid_node(new GridNode(m_window, m_camera.GetView(), 24, 27, 16, 0.2f));
+	m_grid.SetNode(grid_node.get());
 	m_scene_layers[static_cast<int>(Layers::kGrid)]->AttachChild(std::move(grid_node));
 
-	std::shared_ptr<Tile> tile(new Tile(PlatformType::kStatic, m_textures));
-	std::unique_ptr<TileNode> tile_node(new TileNode(tile));
+	std::unique_ptr<TileNode> tile_node(new TileNode(PlatformType::kStatic, m_textures));
 	tile_node->setPosition(16 * 5, 16 * 16);
-
-	//m_grid.AddTile(tile, tile_node->getPosition());
-	m_grid.AddTileNode(tile_node.get());
-	m_scene_layers[static_cast<int>(Layers::kPlatforms)]->AttachChild(std::move(tile_node));
-	
+	m_grid.Node().AddTileNode(std::move(tile_node));
 
 	//Add player's character
 	std::unique_ptr<PlatformerCharacter> player(new PlatformerCharacter(PlatformerCharacterType::kBruno, m_camera, m_textures, m_fonts));
@@ -229,14 +222,14 @@ void World::HandleCollisions()
 		pair.first->HandleCollisions(pair.second);
 		pair.second->HandleCollisions(pair.first);
 
-		if(MatchesCategories(pair, Category::Type::kPlatform, Category::Type::kPlayerCharacter))
-		{
-				auto& platform = static_cast<TileNode&>(*pair.first);
-				auto& player = static_cast<Entity&>(*pair.second);
-
-				player.HandleCollisions(pair.first);
-			
-		}
+	// if(MatchesCategories(pair, Category::Type::kPlayerAircraft, Category::Type::kEnemyAircraft))
+	//	{
+	//		auto& player = static_cast<Aircraft&>(*pair.first);
+	//		auto& enemy = static_cast<Aircraft&>(*pair.second);
+	//		//Collision
+	//		player.Damage(enemy.GetHitPoints());
+	//		enemy.Destroy();
+	//	}
 
 	//	else if (MatchesCategories(pair, Category::Type::kPlayerAircraft, Category::Type::kPickup))
 	//	{

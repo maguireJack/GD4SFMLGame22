@@ -5,8 +5,8 @@
 class Camera : public sf::Transformable
 {
 public:
-	Camera(sf::View& view);
-	sf::View& GetView() const;
+	Camera(sf::View view);
+	const sf::View& GetView() const;
 
 	void SetCenter(sf::Vector2f position);
 	void SetPosition(sf::Vector2f position);
@@ -18,5 +18,5 @@ public:
 	sf::FloatRect GetBoundingRect() const;
 
 private:
-	sf::View& m_view;
+	sf::View m_view;
 };

@@ -1,12 +1,12 @@
 #include "Camera.hpp"
 
-Camera::Camera(sf::View& view)
+Camera::Camera(sf::View view)
 	: m_view(view)
 {
 	SetCenter(view.getCenter());
 }
 
-sf::View& Camera::GetView() const
+const sf::View& Camera::GetView() const
 {
 	return m_view;
 }

@@ -1,26 +1,34 @@
 #pragma once
 
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Graphics/Sprite.hpp>
 
-#include "Tile.hpp"
+#include "PlatformType.hpp"
+#include "ResourceIdentifiers.hpp"
 #include "SceneNode.hpp"
 
 class TileNode : public SceneNode
 {
 public:
-	TileNode(std::shared_ptr<Tile> tile);
-	TileNode(TileNode* tile);
-	std::shared_ptr<Tile> GetTile();
-	void SetTarget(sf::Vector2i pos);
-	sf::FloatRect GetBoundingRect() const override;
+	TileNode(PlatformType platform, const TextureHolder& textures);
 	unsigned GetCategory() const override;
+	sf::FloatRect GetBoundingRect() const override;
+
+	bool IsSelected() const;
+	void Select();
+	void Deselect();
+	void SetTarget(sf::Vector2i position);
 
 private:
-	virtual void DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
-	virtual void UpdateCurrent(sf::Time dt, CommandQueue& commands) override;
+	void DrawCurrent(sf::RenderTarget&, sf::RenderStates states) const override;
 
 private:
-	std::shared_ptr<Tile> m_tile;
+	PlatformType m_platform;
 	sf::Vector2f m_cell_position;
+	sf::Vector2f m_follow_target;
+	bool m_selected = false;
+	bool m_follow = false;
+	sf::Sprite m_sprite;
+	sf::Vector2f follow_mouse;
 	
 };

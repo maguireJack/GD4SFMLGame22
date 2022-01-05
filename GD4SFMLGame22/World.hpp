@@ -26,7 +26,7 @@ namespace sf
 class World : private sf::NonCopyable
 {
 public:
-	explicit World(sf::RenderWindow& window, FontHolder& font, sf::View& view, Grid& grid);
+	explicit World(sf::RenderWindow& window, FontHolder& font, Grid& grid);
 	void Update(sf::Time dt);
 	void Draw();
 	CommandQueue& GetCommandQueue();

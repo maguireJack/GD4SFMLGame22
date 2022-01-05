@@ -9,7 +9,6 @@
 
 namespace sf
 {
-	class View;
 	class RenderWindow;
 }
 
@@ -24,11 +23,10 @@ public:
 
 	struct Context
 	{
-		Context(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts, sf::View& camera, Player& player, Grid& grid);
+		Context(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts, Player& player, Grid& grid);
 		sf::RenderWindow* window;
 		TextureHolder* textures;
 		FontHolder* fonts;
-		sf::View* camera;
 		Player* player;
 		Grid* grid;
 	};

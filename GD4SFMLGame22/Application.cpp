@@ -14,9 +14,7 @@ const sf::Time Application::kTimePerFrame = sf::seconds(1.f / 60.f);
 
 Application::Application()
 	: m_window(sf::VideoMode(1920, 1080), "States", sf::Style::Close)
-	, m_camera(m_window.getDefaultView())
-	, m_grid(m_window, m_camera, 24, 27, 16, 0.2f)
-	, m_stack(State::Context(m_window, m_textures, m_fonts, m_camera, m_player, m_grid))
+	, m_stack(State::Context(m_window, m_textures, m_fonts, m_player, m_grid))
 	, m_statistics_numframes(0)
 {
 	m_window.setKeyRepeatEnabled(false);

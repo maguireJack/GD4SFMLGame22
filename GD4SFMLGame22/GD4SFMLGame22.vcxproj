@@ -177,7 +177,6 @@
     <ClCompile Include="State.cpp" />
     <ClCompile Include="StateStack.cpp" />
     <ClCompile Include="TextNode.cpp" />
-    <ClCompile Include="Tile.cpp" />
     <ClCompile Include="TileNode.cpp" />
     <ClCompile Include="TitleState.cpp" />
     <ClCompile Include="Utility.cpp" />
@@ -223,7 +222,6 @@
     <ClInclude Include="StateStack.hpp" />
     <ClInclude Include="TextNode.hpp" />
     <ClInclude Include="Textures.hpp" />
-    <ClInclude Include="Tile.hpp" />
     <ClInclude Include="TileNode.hpp" />
     <ClInclude Include="TitleState.hpp" />
     <ClInclude Include="Utility.hpp" />
