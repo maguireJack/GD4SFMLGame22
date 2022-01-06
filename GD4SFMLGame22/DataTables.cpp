@@ -26,7 +26,7 @@ std::vector<PlatformData> InitializePlatformData()
 std::vector<PlatformerCharacterData> InitializePlatformerCharacterData()
 {
 	std::vector<PlatformerCharacterData> data(static_cast<int>(PlatformerCharacterType::kPlatformerCount));
-	data[static_cast<int>(PlatformerCharacterType::kBruno)].m_jump_height = 10;
+	data[static_cast<int>(PlatformerCharacterType::kBruno)].m_jump_height = 2;
 	data[static_cast<int>(PlatformerCharacterType::kBruno)].m_acceleration = 1000;
 	data[static_cast<int>(PlatformerCharacterType::kBruno)].m_max_velocity = sf::Vector2f(1, 3);
 	data[static_cast<int>(PlatformerCharacterType::kBruno)].m_deceleration = 1000;

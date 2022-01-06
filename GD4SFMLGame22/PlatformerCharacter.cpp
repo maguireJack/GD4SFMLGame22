@@ -90,6 +90,7 @@ void PlatformerCharacter::HandleCollisions()
 				if (velocity.y > 0)
 				{
 					SetVelocity(velocity.x, 0);
+					SetGrounded(true);
 				}
 				return;
 
@@ -97,6 +98,7 @@ void PlatformerCharacter::HandleCollisions()
 				return;
 			}
 		}
+		
 	}
 }
 
@@ -108,6 +110,16 @@ sf::FloatRect PlatformerCharacter::GetBoundingRect() const
 void PlatformerCharacter::Jump()
 {
 	AddVelocity(0, -Table[static_cast<int>(m_type)].m_jump_height);
+}
+
+bool PlatformerCharacter::IsGrounded()
+{
+	return m_grounded;
+}
+
+void PlatformerCharacter::SetGrounded(bool grounded)
+{
+	m_grounded = grounded;
 }
 
 void PlatformerCharacter::DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) const

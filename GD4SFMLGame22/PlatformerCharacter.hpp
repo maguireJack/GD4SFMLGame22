@@ -24,6 +24,8 @@ public:
 	sf::FloatRect GetBoundingRect() const override;
 
 	void Jump();
+	bool IsGrounded();
+	void SetGrounded(bool grounded);
 
 private:
 	void DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) const override;
@@ -38,4 +40,5 @@ private:
 	Camera& m_camera;
 	AnimatedSpriteArtist m_artist;
 	TextNode* m_health_display;
+	bool m_grounded = true;
 };

@@ -36,7 +36,12 @@ struct PlatformerJump
 {
 	void operator()(PlatformerCharacter& platformer, sf::Time) const
 	{
-		platformer.Jump();
+		if (platformer.IsGrounded())
+		{
+			platformer.Jump();
+			platformer.SetGrounded(false);
+		}
+		
 	}
 };
 
