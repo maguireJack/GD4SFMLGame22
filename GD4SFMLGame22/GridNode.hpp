@@ -10,7 +10,14 @@
 class GridNode : public SceneNode
 {
 public:
-	GridNode(const sf::RenderWindow& window, const sf::View& camera_view, int horizontal_cells, int vertical_cells, float cell_size, float line_width);
+	GridNode(
+		const std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)>& scene_layers,
+		const sf::RenderWindow& window,
+		const sf::View& camera_view,
+		int horizontal_cells,
+		int vertical_cells,
+		float cell_size,
+		float line_width);
 
 	void AddTileNode(std::unique_ptr<TileNode> tile_node);
 	void AddTileNode(TileNode* tile_node);

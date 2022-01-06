@@ -6,10 +6,14 @@
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 
+#include "Collision.hpp"
 #include "Utility.hpp"
 
-SceneNode::SceneNode(Category::Type category)
-	: m_children()
+SceneNode::SceneNode(
+	const std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)>& scene_layers,
+	Category::Type category)
+	: m_scene_layers(scene_layers)
+	, m_children()
 	, m_parent(nullptr)
 	, m_default_category(category)
 {
@@ -54,6 +58,11 @@ sf::Transform SceneNode::GetWorldTransform() const
 	return transform;
 }
 
+const std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)>& SceneNode::GetSceneLayers() const
+{
+	return m_scene_layers;
+}
+
 void SceneNode::OnCommand(const Command& command, sf::Time dt)
 {
 	//Is this command for me?
@@ -79,17 +88,26 @@ sf::FloatRect SceneNode::GetBoundingRect() const
 	return sf::FloatRect();
 }
 
-void SceneNode::HandleCollisions(SceneNode* node)
+sf::Vector2f SceneNode::GetVelocity() const
 {
-	
+	return sf::Vector2f();
 }
 
-void SceneNode::CheckSceneCollision(SceneNode& scene_graph, std::set<Pair>& collision_pairs)
+void SceneNode::HandleCollisions()
 {
-	CheckNodeCollision(scene_graph, collision_pairs);
+	// Do Nothing
+}
+
+void SceneNode::PredictCollisionsWithScene(SceneNode& scene_graph, std::set<SceneNode*>& collisions)
+{
 	for (Ptr& child : scene_graph.m_children)
 	{
-		CheckSceneCollision(*child, collision_pairs);
+		if (this != &*child && Collision::Intersects(*this, *child) && !IsDestroyed() && !child->IsDestroyed())
+		{
+			collisions.insert(&*child);
+		}
+
+		PredictCollisionsWithScene(*child, collisions);
 	}
 }
 
@@ -158,18 +176,6 @@ bool SceneNode::IsDestroyed() const
 bool SceneNode::IsMarkedForRemoval() const
 {
 	return IsDestroyed();
-}
-
-void SceneNode::CheckNodeCollision(SceneNode& node, std::set<Pair>& collision_pairs)
-{
-	if(this != &node && Collision(*this, node) && !IsDestroyed() && !node.IsDestroyed())
-	{
-		collision_pairs.insert(std::minmax(this, &node));
-	}
-	for(Ptr& child : m_children)
-	{
-		child->CheckNodeCollision(node, collision_pairs);
-	}
 }
 
 bool Collision(const SceneNode& lhs, const SceneNode& rhs)

@@ -12,8 +12,12 @@ namespace
 	const std::vector<PlatformData> Table = InitializePlatformData();
 }
 
-TileNode::TileNode(PlatformType platform, const TextureHolder& textures)
-	: m_platform(platform)
+TileNode::TileNode(
+	const std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)>& scene_layers, 
+	PlatformType platform,
+	const TextureHolder& textures)
+	: SceneNode(scene_layers)
+	, m_platform(platform)
 	, m_selected(false)
 	, m_sprite(textures.Get(Table[static_cast<int>(platform)].m_textures))
 {

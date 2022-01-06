@@ -1,15 +1,16 @@
 #pragma once
+#include <array>
+#include <memory>
+#include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/Transformable.hpp>
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/System/Time.hpp>
-#include <SFML/Graphics/Transformable.hpp>
-#include <SFML/Graphics/Drawable.hpp>
 
-#include <vector>
-#include <memory>
+#include "Category.hpp"
+#include "CommandQueue.hpp"
 #include <set>
 
-#include "Command.hpp"
-#include "CommandQueue.hpp"
+#include "Layers.hpp"
 
 class SceneNode : public sf::Transformable, public sf::Drawable, private sf::NonCopyable
 {
@@ -18,7 +19,10 @@ public:
 	typedef std::pair<SceneNode*, SceneNode*> Pair;
 
 public:
-	explicit SceneNode(Category::Type category = Category::kNone);
+	explicit SceneNode(
+		const std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)>& scene_layers,
+		Category::Type category = Category::kNone);
+
 	void AttachChild(Ptr child);
 	Ptr DetachChild(const SceneNode& node);
 
@@ -26,13 +30,15 @@ public:
 
 	sf::Vector2f GetWorldPosition() const;
 	sf::Transform GetWorldTransform() const;
+	const std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)>& GetSceneLayers() const;
 
 	void OnCommand(const Command& command, sf::Time dt);
 	virtual unsigned int GetCategory() const;
 	virtual sf::FloatRect GetBoundingRect() const;
+	virtual sf::Vector2f GetVelocity() const;
 
-	virtual void HandleCollisions(SceneNode* node);
-	void CheckSceneCollision(SceneNode& scene_graph, std::set<Pair>& collision_pairs);
+	virtual void HandleCollisions();
+	void PredictCollisionsWithScene(SceneNode& scene_graph, std::set<SceneNode*>& collisions);
 	void RemoveWrecks();
 
 
@@ -49,11 +55,10 @@ private:
 
 	virtual bool IsDestroyed() const;
 	virtual bool IsMarkedForRemoval() const;
-	
-	void CheckNodeCollision(SceneNode& node, std::set<Pair>& collisionPairs);
-	
+
 
 private:
+	const std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)>& m_scene_layers;
 	std::vector<Ptr> m_children;
 	SceneNode* m_parent;
 	Category::Type m_default_category;

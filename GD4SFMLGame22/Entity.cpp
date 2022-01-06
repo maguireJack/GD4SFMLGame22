@@ -1,9 +1,18 @@
 #include "Entity.hpp"
 
+#include <iostream>
+
 #include "Utility.hpp"
 
-Entity::Entity(int hitpoints, float acceleration_speed, float max_velocity, float deceleration, float gravity)
-	: m_hitpoints(hitpoints)
+Entity::Entity(
+	const std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)>& scene_layers,
+	int hitpoints,
+	float acceleration_speed,
+	sf::Vector2f max_velocity,
+	float deceleration,
+	float gravity)
+	: SceneNode(scene_layers)
+	, m_hitpoints(hitpoints)
 	, m_acceleration_speed(acceleration_speed)
 	, m_max_velocity(max_velocity)
 	, m_deceleration(deceleration)
@@ -15,7 +24,6 @@ Entity::Entity(int hitpoints, float acceleration_speed, float max_velocity, floa
 void Entity::SetVelocity(sf::Vector2f velocity)
 {
 	m_velocity = velocity;
-	ValidateVelocity();
 }
 
 void Entity::SetGravity(float gravity)
@@ -27,7 +35,17 @@ void Entity::SetVelocity(float vx, float vy)
 {
 	m_velocity.x = vx;
 	m_velocity.y = vy;
-	ValidateVelocity();
+}
+
+void Entity::AddVelocity(sf::Vector2f velocity)
+{
+	m_velocity += velocity;
+}
+
+void Entity::AddVelocity(float vx, float vy)
+{
+	m_velocity.x += vx;
+	m_velocity.y += vy;
 }
 
 void Entity::AddDirection(sf::Vector2i direction)
@@ -55,10 +73,16 @@ void Entity::UpdateCurrent(sf::Time dt, CommandQueue& commands)
 		return;
 	}
 
-	move(m_velocity * dt.asSeconds());
-	Decelerate(dt);
 	Accelerate(dt);
+	Decelerate(dt);
 	ApplyGravity(dt);
+
+	ValidateVelocity();
+	HandleCollisions();
+
+	std::cout << m_velocity.x << ", " << m_velocity.y << std::endl;
+
+	move(m_velocity);
 }
 
 void Entity::ApplyGravity(sf::Time dt) 
@@ -69,8 +93,6 @@ void Entity::ApplyGravity(sf::Time dt)
 void Entity::Accelerate(sf::Time dt)
 {
 	m_velocity += m_direction_unit * m_acceleration_speed * dt.asSeconds();
-
-	ValidateVelocity();
 }
 
 void Entity::Decelerate(sf::Time dt)
@@ -89,37 +111,37 @@ void Entity::Decelerate(sf::Time dt)
 		}
 	}
 
-	if (m_direction_unit.y == 0.f)
-	{
-		if (m_velocity.y > 0)
-		{
-			m_velocity.y = std::max(m_velocity.y - deceleration, 0.f);
-		}
-		else if (m_velocity.y < 0)
-		{
-			m_velocity.y = std::min(m_velocity.y + deceleration, 0.f);
-		}
-	}
+	//if (m_direction_unit.y == 0.f)
+	//{
+	//	if (m_velocity.y > 0)
+	//	{
+	//		m_velocity.y = std::max(m_velocity.y - deceleration, 0.f);
+	//	}
+	//	else if (m_velocity.y < 0)
+	//	{
+	//		m_velocity.y = std::min(m_velocity.y + deceleration, 0.f);
+	//	}
+	//}
 }
 
 void Entity::ValidateVelocity()
 {
-	if (m_velocity.x > m_max_velocity)
+	if (m_velocity.x > m_max_velocity.x)
 	{
-		m_velocity.x = m_max_velocity;
+		m_velocity.x = m_max_velocity.x;
 	}
-	else if (m_velocity.x < -m_max_velocity)
+	else if (m_velocity.x < -m_max_velocity.x)
 	{
-		m_velocity.x = -m_max_velocity;
+		m_velocity.x = -m_max_velocity.x;
 	}
 
-	if (m_velocity.y > m_max_velocity)
+	if (m_velocity.y > m_max_velocity.y)
 	{
-		m_velocity.y = m_max_velocity;
+		m_velocity.y = m_max_velocity.y;
 	}
-	else if (m_velocity.y < -m_max_velocity)
+	else if (m_velocity.y < -m_max_velocity.y)
 	{
-		m_velocity.y = -m_max_velocity;
+		m_velocity.y = -m_max_velocity.y;
 	}
 }
 
@@ -145,7 +167,7 @@ sf::Vector2f Entity::GetDirectionUnit() const
 	return m_direction_unit;
 }
 
-float Entity::GetMaxVelocity() const
+sf::Vector2f Entity::GetMaxVelocity() const
 {
 	return m_max_velocity;
 }

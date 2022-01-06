@@ -37,8 +37,9 @@ struct PlatformerCharacterData
 {
 	float m_jump_height;
 	float m_acceleration;
-	float m_max_velocity;
+	sf::Vector2f m_max_velocity;
 	float m_deceleration;
+	float m_gravity;
 	int m_health;
 	PlatformerAnimationData m_animation_data;
 };

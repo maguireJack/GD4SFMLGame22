@@ -5,5 +5,6 @@ enum class PlayerAction
 	kMoveRight,
 	kMoveUp,
 	kMoveDown,
+	kJump,
 	kActionCount
 };

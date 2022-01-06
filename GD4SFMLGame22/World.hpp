@@ -58,8 +58,8 @@ private:
 	TextureHolder m_textures;
 	FontHolder& m_fonts;
 	Grid& m_grid;
-	SceneNode m_scenegraph;
 	std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)> m_scene_layers;
+	SceneNode m_scenegraph;
 	CommandQueue m_command_queue;
 
 	sf::FloatRect m_world_bounds;

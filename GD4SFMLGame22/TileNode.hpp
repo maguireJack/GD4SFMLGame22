@@ -10,7 +10,11 @@
 class TileNode : public SceneNode
 {
 public:
-	TileNode(PlatformType platform, const TextureHolder& textures);
+	TileNode(
+		const std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)>& scene_layers, 
+		PlatformType platform,
+		const TextureHolder& textures);
+
 	unsigned GetCategory() const override;
 	sf::FloatRect GetBoundingRect() const override;
 

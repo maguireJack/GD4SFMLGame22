@@ -7,9 +7,16 @@
 
 #include "Application.hpp"
 
-GridNode::GridNode(const sf::RenderWindow& window, const sf::View& camera_view, int horizontal_cells,
-	int vertical_cells, float cell_size, float line_width)
-	: m_window(window)
+GridNode::GridNode(
+	const std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)>& scene_layers,
+	const sf::RenderWindow& window,
+	const sf::View& camera_view,
+	int horizontal_cells,
+	int vertical_cells,
+	float cell_size,
+	float line_width)
+	: SceneNode(scene_layers)
+	, m_window(window)
 	, m_camera_view(camera_view)
 	, m_horizontal_cells(horizontal_cells)
 	, m_vertical_cells(vertical_cells)
@@ -25,7 +32,8 @@ void GridNode::AddTileNode(std::unique_ptr<TileNode> tile_node)
 {
 	const sf::Vector2i cell_position = GetCellPosition(tile_node->getPosition());
 	m_tile_map[cell_position] = tile_node.get();
-	AttachChild(std::move(tile_node));
+
+	GetSceneLayers()[static_cast<int>(Layers::kPlatforms)]->AttachChild(std::move(tile_node));
 }
 
 void GridNode::AddTileNode(TileNode* tile_node)
@@ -85,7 +93,7 @@ void GridNode::UpdateCurrent(sf::Time dt, CommandQueue& commands)
 	const sf::Vector2i cell_position = GetCellPosition(sf::Mouse::getPosition(m_window));
 	m_new_cell_position = cell_position;
 	/*std::cout << "(" << cell_position.x << ", " << cell_position.y << ")" << std::endl;*/
-	std::cout << "(" << m_selected_cell_position.x << ", " << m_selected_cell_position.y << ")" << std::endl;
+	// std::cout << "(" << m_selected_cell_position.x << ", " << m_selected_cell_position.y << ")" << std::endl;
 	if (cell_position != m_selected_cell_position)
 	{
 		m_selected_cell_position = cell_position;

@@ -5,8 +5,12 @@
 #include "ResourceHolder.hpp"
 #include "Utility.hpp"
 
-TextNode::TextNode(const FontHolder& fonts, const std::string& text)
-	: m_text(text, fonts.Get(Fonts::Main), 20)
+TextNode::TextNode(
+	const std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)>& scene_layers, 
+	const FontHolder& fonts,
+	const std::string& text)
+	: SceneNode(scene_layers)
+	, m_text(text, fonts.Get(Fonts::Main), 20)
 {
 }
 

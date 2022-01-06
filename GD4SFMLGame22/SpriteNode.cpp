@@ -2,18 +2,31 @@
 
 #include <SFML/Graphics/RenderTarget.hpp>
 
-SpriteNode::SpriteNode(const sf::Texture& texture)
-	: m_sprite(texture)
+SpriteNode::SpriteNode(
+	const std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)>& scene_layers,
+	const sf::Texture& texture)
+	: SceneNode(scene_layers)
+	, m_sprite(texture)
 {
 }
 
-SpriteNode::SpriteNode(const sf::Texture& texture, const sf::IntRect& textureRect)
-	: m_sprite(texture, textureRect)
+SpriteNode::SpriteNode(
+	const std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)>& scene_layers,
+	const sf::Texture& texture,
+	const sf::IntRect& textureRect)
+	: SceneNode(scene_layers)
+	, m_sprite(texture, textureRect)
 {
 }
 
-SpriteNode::SpriteNode(const sf::Texture& texture, const sf::IntRect& textureRect, const float position_x, const float position_y)
-	: m_sprite(texture, textureRect)
+SpriteNode::SpriteNode(
+	const std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)>& scene_layers,
+	const sf::Texture& texture,
+	const sf::IntRect& textureRect,
+	const float position_x,
+	const float position_y)
+	: SceneNode(scene_layers)
+	, m_sprite(texture, textureRect)
 {
 	setPosition(position_x, position_y);
 }

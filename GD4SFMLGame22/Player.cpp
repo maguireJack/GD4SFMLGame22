@@ -2,6 +2,7 @@
 #include <algorithm>
 
 #include "Entity.hpp"
+#include "PlatformerCharacter.hpp"
 
 struct EntityDirectionAdder
 {
@@ -31,6 +32,14 @@ struct EntityDirectionRemover
 	sf::Vector2i velocity;
 };
 
+struct PlatformerJump
+{
+	void operator()(PlatformerCharacter& platformer, sf::Time) const
+	{
+		platformer.Jump();
+	}
+};
+
 Player::Player() : m_current_mission_status(MissionStatus::kMissionRunning)
 {
 	//Set initial key bindings
@@ -38,6 +47,7 @@ Player::Player() : m_current_mission_status(MissionStatus::kMissionRunning)
 	m_key_binding[sf::Keyboard::D] = PlayerAction::kMoveRight;
 	m_key_binding[sf::Keyboard::W] = PlayerAction::kMoveUp;
 	m_key_binding[sf::Keyboard::S] = PlayerAction::kMoveDown;
+	m_key_binding[sf::Keyboard::Space] = PlayerAction::kJump;
 
 	//Set initial action bindings
 	InitialiseActions();
@@ -138,6 +148,7 @@ void Player::InitialiseActions()
 	m_action_binding[PlayerAction::kMoveRight].action = DerivedAction<Entity>(EntityDirectionAdder(1, 0));
 	m_action_binding[PlayerAction::kMoveUp].action = DerivedAction<Entity>(EntityDirectionAdder(0, -1));
 	m_action_binding[PlayerAction::kMoveDown].action = DerivedAction<Entity>(EntityDirectionAdder(0, 1));
+	m_action_binding[PlayerAction::kJump].action = DerivedAction<PlatformerCharacter>(PlatformerJump());
 
 	m_on_release_action_binding[PlayerAction::kMoveLeft].action = DerivedAction<Entity>(EntityDirectionRemover(-1, 0));
 	m_on_release_action_binding[PlayerAction::kMoveRight].action = DerivedAction<Entity>(EntityDirectionRemover(1, 0));

@@ -1,7 +1,5 @@
 #include "Container.hpp"
 
-#include <iostream>
-#include <ostream>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
@@ -41,7 +39,7 @@ namespace GUI
 			for (size_t i = 0; i < m_children.size(); i++)
 			{
 				const auto child = m_children[i];
-				if (child->GetBoundingRect().contains(mouse.x, mouse.y))
+				if (child->GetBoundingRect().contains(static_cast<float>(mouse.x), static_cast<float>(mouse.y)))
 				{
 					Select(i);
 				}
@@ -52,7 +50,7 @@ namespace GUI
 			if (event.mouseButton.button == sf::Mouse::Left)
 			{
 				const sf::Vector2i mouse = sf::Mouse::getPosition(m_window);
-				if (m_children[m_selected_child]->GetBoundingRect().contains(mouse.x, mouse.y))
+				if (m_children[m_selected_child]->GetBoundingRect().contains(static_cast<float>(mouse.x), static_cast<float>(mouse.y)))
 				{
 					m_children[m_selected_child]->Activate();
 				}

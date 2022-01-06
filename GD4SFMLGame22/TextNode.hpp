@@ -8,7 +8,11 @@
 class TextNode : public SceneNode
 {
 public:
-	explicit TextNode(const FontHolder& fonts, const std::string& text);
+	explicit TextNode(
+		const std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)>& scene_layers, 
+		const FontHolder& fonts,
+		const std::string& text);
+
 	void SetString(const std::string& text);
 
 private:

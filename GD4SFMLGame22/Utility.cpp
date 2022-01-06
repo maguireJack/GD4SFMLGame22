@@ -196,6 +196,11 @@ sf::IntRect Utility::GetIntRect(sf::Texture& texture)
 	return sf::IntRect(0, 0, texture.getSize().x, texture.getSize().y);
 }
 
+sf::Vector2f Utility::GetRectCenter(const sf::FloatRect& rect)
+{
+	return { rect.left + rect.width / 2, rect.top + rect.height / 2 };
+}
+
 int Utility::RandomInt(int exclusive_max)
 {
 	std::uniform_int_distribution<> distr(0, exclusive_max - 1);

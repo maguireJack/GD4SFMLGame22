@@ -3,10 +3,13 @@
 #include <iostream>
 #include <SFML/Graphics/RenderTarget.hpp>
 
+#include "Collision.hpp"
 #include "DataTables.hpp"
 #include "PlatformerAnimationState.hpp"
 #include "ResourceHolder.hpp"
 #include "Utility.hpp"
+
+enum class CollisionLocation;
 
 namespace
 {
@@ -14,18 +17,26 @@ namespace
 }
 
 
-PlatformerCharacter::PlatformerCharacter(PlatformerCharacterType type, Camera& camera, const TextureHolder& textures, const FontHolder& fonts)
+PlatformerCharacter::PlatformerCharacter(
+	const std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)>& scene_layers, 
+	PlatformerCharacterType type,
+	Camera& camera,
+	const TextureHolder&
+	textures,
+	const FontHolder& fonts)
 	: Entity(
+		scene_layers,
 		Table[static_cast<int>(type)].m_health,
 		Table[static_cast<int>(type)].m_acceleration,
 		Table[static_cast<int>(type)].m_max_velocity,
-		Table[static_cast<int>(type)].m_deceleration)
+		Table[static_cast<int>(type)].m_deceleration,
+		Table[static_cast<int>(type)].m_gravity)
 	, m_type(type)
 	, m_camera(camera)
 	, m_artist(Table[static_cast<int>(type)].m_animation_data.ToVector(), textures)
 	, m_health_display(nullptr)
 {
-	std::unique_ptr<TextNode> health_display(new TextNode(fonts, ""));
+	std::unique_ptr<TextNode> health_display(new TextNode(scene_layers, fonts, ""));
 	m_health_display = health_display.get();
 	AttachChild(std::move(health_display));
 }
@@ -35,22 +46,68 @@ unsigned PlatformerCharacter::GetCategory() const
 	return Category::kPlayerCharacter;
 }
 
-void PlatformerCharacter::HandleCollisions(SceneNode* node)
+void PlatformerCharacter::HandleCollisions()
 {
-	if (Category::kPlatform & node->GetCategory())
+	std::set<SceneNode*> collisions;
+
+	PredictCollisionsWithScene(*GetSceneLayers()[static_cast<int>(Layers::kPlatforms)], collisions);
+
+	for (SceneNode* node : collisions)
 	{
-		if (GetBoundingRect().top < node->GetBoundingRect().top)
+		if (Category::kPlatform & node->GetCategory())
 		{
-			SetGravity(0);
-			setPosition(getPosition().x, node->GetBoundingRect().top - GetBoundingRect().height/2);
+			const CollisionLocation location = Collision::CollisionLocation(*this, *node);
+			const sf::Vector2f velocity = GetVelocity();
+
+			switch (location)
+			{
+			case CollisionLocation::kLeft:
+				std::cout << "Left" << std::endl;
+				if (velocity.x < 0)
+				{
+					SetVelocity(0, velocity.y);
+				}
+				return;
+
+			case CollisionLocation::kRight:
+				std::cout << "Right" << std::endl;
+				if (velocity.x > 0)
+				{
+					SetVelocity(0, velocity.y);
+				}
+				return;
+
+			case CollisionLocation::kTop:
+				std::cout << "Top" << std::endl;
+				if (velocity.y < 0)
+				{
+					SetVelocity(velocity.x, 0);
+				}
+				return;
+
+			case CollisionLocation::kBottom:
+				std::cout << "Bottom" << std::endl;
+				if (velocity.y > 0)
+				{
+					SetVelocity(velocity.x, 0);
+				}
+				return;
+
+			case CollisionLocation::kNone:
+				return;
+			}
 		}
 	}
-	SetGravity(1000);
 }
 
 sf::FloatRect PlatformerCharacter::GetBoundingRect() const
 {
 	return GetWorldTransform().transformRect(m_artist.GetBoundingRect());
+}
+
+void PlatformerCharacter::Jump()
+{
+	AddVelocity(0, -Table[static_cast<int>(m_type)].m_jump_height);
 }
 
 void PlatformerCharacter::DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) const

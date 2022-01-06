@@ -26,6 +26,7 @@ public:
 	static float Length(sf::Vector2i vector);
 	static float ToDegrees(float angle);
 	static sf::IntRect GetIntRect(sf::Texture& texture);
+	static sf::Vector2f GetRectCenter(const sf::FloatRect& rect);
 	static int RandomInt(int exclusive_max);
 	static sf::Vector2i GetCellPosition(sf::Vector2i position, const sf::RenderWindow& window, const sf::View& camera_view);
 };

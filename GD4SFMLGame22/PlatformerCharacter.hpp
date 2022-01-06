@@ -11,11 +11,19 @@
 class PlatformerCharacter : public Entity
 {
 public:
-	PlatformerCharacter(PlatformerCharacterType type, Camera& camera, const TextureHolder& textures, const FontHolder& fonts);
+	PlatformerCharacter(
+		const std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)>& scene_layers,
+		PlatformerCharacterType type,
+		Camera& camera,
+		const TextureHolder& textures,
+		const FontHolder& fonts);
+
 	unsigned GetCategory() const override;
 
-	void HandleCollisions(SceneNode* node) override;
+	void HandleCollisions() override;
 	sf::FloatRect GetBoundingRect() const override;
+
+	void Jump();
 
 private:
 	void DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) const override;
