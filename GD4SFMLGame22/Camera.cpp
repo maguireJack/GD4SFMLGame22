@@ -1,7 +1,8 @@
 #include "Camera.hpp"
 
-Camera::Camera(sf::View view)
+Camera::Camera(sf::View view, sf::FloatRect bounds_constraint)
 	: m_view(view)
+	, m_bounds_constraint(bounds_constraint)
 {
 	SetCenter(view.getCenter());
 }
@@ -13,13 +14,36 @@ const sf::View& Camera::GetView() const
 
 void Camera::SetCenter(sf::Vector2f position)
 {
-	m_view.setCenter(position);
-	setPosition(position - m_view.getSize() / 2.f);
+	const sf::Vector2f size = m_view.getSize();
+	const float bounds_right = m_bounds_constraint.left + m_bounds_constraint.width;
+	const float bounds_bottom = m_bounds_constraint.top + m_bounds_constraint.height;
+
+	position -= size / 2.f;
+
+	if (position.x < m_bounds_constraint.left)
+	{
+		position.x = m_bounds_constraint.left;
+	}
+	else if (position.x + size.x > bounds_right)
+	{
+		position.x = bounds_right - size.x;
+	}
+
+	if (position.y < m_bounds_constraint.top)
+	{
+		position.y = m_bounds_constraint.top;
+	}
+	else if (position.y + size.y > bounds_bottom)
+	{
+		position.y = bounds_bottom - size.y;
+	}
+
+	m_view.setCenter(position + size / 2.f);
+	setPosition(position);
 }
 
 void Camera::SetPosition(sf::Vector2f position)
 {
-	setPosition(position);
 	m_view.setCenter(position + (m_view.getSize() / 2.f));
 }
 

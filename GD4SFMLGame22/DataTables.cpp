@@ -31,6 +31,7 @@ std::vector<PlatformerCharacterData> InitializePlatformerCharacterData()
 	data[static_cast<int>(PlatformerCharacterType::kBruno)].m_max_velocity = sf::Vector2f(1, 3);
 	data[static_cast<int>(PlatformerCharacterType::kBruno)].m_deceleration = 1000;
 	data[static_cast<int>(PlatformerCharacterType::kBruno)].m_gravity = 3;
+	data[static_cast<int>(PlatformerCharacterType::kBruno)].m_coyote_time = 0.5f;
 	data[static_cast<int>(PlatformerCharacterType::kBruno)].m_health = 100;
 
 	data[static_cast<int>(PlatformerCharacterType::kBruno)].m_animation_data = PlatformerAnimationData{

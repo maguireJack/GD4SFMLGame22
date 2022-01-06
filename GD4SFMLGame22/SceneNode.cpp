@@ -93,11 +93,6 @@ sf::Vector2f SceneNode::GetVelocity() const
 	return sf::Vector2f();
 }
 
-void SceneNode::HandleCollisions()
-{
-	// Do Nothing
-}
-
 void SceneNode::PredictCollisionsWithScene(SceneNode& scene_graph, std::set<SceneNode*>& collisions)
 {
 	for (Ptr& child : scene_graph.m_children)
@@ -116,6 +111,11 @@ void SceneNode::RemoveWrecks()
 	auto wreck_field_begin = std::remove_if(m_children.begin(), m_children.end(), std::mem_fn(&SceneNode::IsMarkedForRemoval));
 	m_children.erase(wreck_field_begin, m_children.end());
 	std::for_each(m_children.begin(), m_children.end(), std::mem_fn(&SceneNode::RemoveWrecks));
+}
+
+void SceneNode::HandleCollisions()
+{
+	// Do Nothing
 }
 
 void SceneNode::UpdateCurrent(sf::Time dt, CommandQueue& commands)

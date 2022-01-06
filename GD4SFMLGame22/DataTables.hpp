@@ -40,6 +40,7 @@ struct PlatformerCharacterData
 	sf::Vector2f m_max_velocity;
 	float m_deceleration;
 	float m_gravity;
+	float m_coyote_time;
 	int m_health;
 	PlatformerAnimationData m_animation_data;
 };

@@ -5,7 +5,7 @@
 class Camera : public sf::Transformable
 {
 public:
-	Camera(sf::View view);
+	Camera(sf::View view, sf::FloatRect bounds_constraint);
 	const sf::View& GetView() const;
 
 	void SetCenter(sf::Vector2f position);
@@ -19,4 +19,5 @@ public:
 
 private:
 	sf::View m_view;
+	sf::FloatRect m_bounds_constraint;
 };

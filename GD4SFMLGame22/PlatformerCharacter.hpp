@@ -19,20 +19,21 @@ public:
 		const FontHolder& fonts);
 
 	unsigned GetCategory() const override;
-
-	void HandleCollisions() override;
 	sf::FloatRect GetBoundingRect() const override;
 
 	void Jump();
-	bool IsGrounded();
-	void SetGrounded(bool grounded);
+	bool IsGrounded() const;
+	bool IsJumping() const;
+
+protected:
+	void HandleCollisions() override;
 
 private:
 	void DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) const override;
 	void UpdateCurrent(sf::Time dt, CommandQueue& commands) override;
 
 	void UpdateAnimationState();
-	void UpdateCamera(sf::Time dt) const;
+	void UpdateCamera(sf::Time dt);
 	void UpdateTexts() const;
 
 private:
@@ -40,5 +41,8 @@ private:
 	Camera& m_camera;
 	AnimatedSpriteArtist m_artist;
 	TextNode* m_health_display;
-	bool m_grounded = true;
+	bool m_jumping;
+	bool m_camera_move_constraint;
+	float m_coyote_time;
+	float m_air_time;
 };

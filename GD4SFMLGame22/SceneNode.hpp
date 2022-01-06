@@ -37,10 +37,11 @@ public:
 	virtual sf::FloatRect GetBoundingRect() const;
 	virtual sf::Vector2f GetVelocity() const;
 
-	virtual void HandleCollisions();
 	void PredictCollisionsWithScene(SceneNode& scene_graph, std::set<SceneNode*>& collisions);
 	void RemoveWrecks();
 
+protected:
+	virtual void HandleCollisions();
 
 private:
 	virtual void UpdateCurrent(sf::Time dt, CommandQueue& commands);

@@ -38,6 +38,8 @@ private:
 
 	sf::FloatRect GetViewBounds() const;
 	sf::FloatRect GetBattlefieldBounds() const;
+	sf::IntRect GetBackgroundRect(sf::Texture& texture) const;
+
 	void SelectTiles();
 	void HandleCollisions();
 	void DestroyEntitiesOutsideView();
@@ -48,13 +50,8 @@ private:
 		
 	};
 
-public:
-	std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)>& GetSceneLayers();
-	
-
 private:
 	sf::RenderWindow& m_window;
-	Camera m_camera;
 	TextureHolder m_textures;
 	FontHolder& m_fonts;
 	Grid& m_grid;
@@ -63,6 +60,7 @@ private:
 	CommandQueue m_command_queue;
 
 	sf::FloatRect m_world_bounds;
+	Camera m_camera;
 	sf::Vector2f m_spawn_position;
 	float m_scrollspeed;
 	PlatformerCharacter* m_player;

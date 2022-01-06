@@ -35,6 +35,10 @@ PlatformerCharacter::PlatformerCharacter(
 	, m_camera(camera)
 	, m_artist(Table[static_cast<int>(type)].m_animation_data.ToVector(), textures)
 	, m_health_display(nullptr)
+	, m_jumping(false)
+	, m_camera_move_constraint(false)
+	, m_coyote_time(Table[static_cast<int>(type)].m_coyote_time)
+	, m_air_time(0)
 {
 	std::unique_ptr<TextNode> health_display(new TextNode(scene_layers, fonts, ""));
 	m_health_display = health_display.get();
@@ -44,6 +48,31 @@ PlatformerCharacter::PlatformerCharacter(
 unsigned PlatformerCharacter::GetCategory() const
 {
 	return Category::kPlayerCharacter;
+}
+
+sf::FloatRect PlatformerCharacter::GetBoundingRect() const
+{
+	return GetWorldTransform().transformRect(m_artist.GetBoundingRect());
+}
+
+void PlatformerCharacter::Jump()
+{
+	if (!IsJumping() && m_air_time <= m_coyote_time)
+	{
+		m_jumping = true;
+		SetVelocity(GetVelocity().x, 0);
+		AddVelocity(0, -Table[static_cast<int>(m_type)].m_jump_height);
+	}
+}
+
+bool PlatformerCharacter::IsGrounded() const
+{
+	return m_air_time > 0;
+}
+
+bool PlatformerCharacter::IsJumping() const
+{
+	return m_jumping;
 }
 
 void PlatformerCharacter::HandleCollisions()
@@ -63,10 +92,10 @@ void PlatformerCharacter::HandleCollisions()
 			{
 			case CollisionLocation::kLeft:
 				std::cout << "Left" << std::endl;
-				if (velocity.x < 0)
-				{
-					SetVelocity(0, velocity.y);
-				}
+					if (velocity.x < 0)
+					{
+						SetVelocity(0, velocity.y);
+					}
 				return;
 
 			case CollisionLocation::kRight:
@@ -86,11 +115,13 @@ void PlatformerCharacter::HandleCollisions()
 				return;
 
 			case CollisionLocation::kBottom:
+				m_air_time = 0.f;
+				m_jumping = false;
+
 				std::cout << "Bottom" << std::endl;
 				if (velocity.y > 0)
 				{
 					SetVelocity(velocity.x, 0);
-					SetGrounded(true);
 				}
 				return;
 
@@ -98,28 +129,8 @@ void PlatformerCharacter::HandleCollisions()
 				return;
 			}
 		}
-		
+
 	}
-}
-
-sf::FloatRect PlatformerCharacter::GetBoundingRect() const
-{
-	return GetWorldTransform().transformRect(m_artist.GetBoundingRect());
-}
-
-void PlatformerCharacter::Jump()
-{
-	AddVelocity(0, -Table[static_cast<int>(m_type)].m_jump_height);
-}
-
-bool PlatformerCharacter::IsGrounded()
-{
-	return m_grounded;
-}
-
-void PlatformerCharacter::SetGrounded(bool grounded)
-{
-	m_grounded = grounded;
 }
 
 void PlatformerCharacter::DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
@@ -129,6 +140,8 @@ void PlatformerCharacter::DrawCurrent(sf::RenderTarget& target, sf::RenderStates
 
 void PlatformerCharacter::UpdateCurrent(sf::Time dt, CommandQueue& commands)
 {
+	m_air_time += dt.asSeconds();
+
 	Entity::UpdateCurrent(dt, commands);
 	m_artist.UpdateCurrent(dt);
 
@@ -161,33 +174,22 @@ void PlatformerCharacter::UpdateAnimationState()
 	}
 }
 
-void PlatformerCharacter::UpdateCamera(sf::Time dt) const
+void PlatformerCharacter::UpdateCamera(sf::Time dt)
 {
-	const sf::FloatRect bounds = m_camera.GetBoundingRect();
-	const float right = bounds.left + bounds.width;
-	const float bottom = bounds.top + bounds.height;
+	const sf::Vector2f distance = getPosition() - m_camera.GetCenter();
 
-	sf::Vector2f new_position;
+	if (m_camera_move_constraint || Utility::Length(distance) > 100)
+	{
+		m_camera_move_constraint = true;
 
-	if (getPosition().x > right - 100)
-	{
-		new_position.x += 100;
-	}
-	else if (getPosition().x < bounds.left + 100)
-	{
-		new_position.x -= 100;
-	}
+		const sf::Vector2f new_position = distance * 0.01f;
+		m_camera.SetCenter(m_camera.GetCenter() + new_position);
 
-	if (getPosition().y > bottom - 100)
-	{
-		new_position.y += 100;
+		if (Utility::Length(new_position) <= 0.2f)
+		{
+			m_camera_move_constraint = false;
+		}
 	}
-	else if (getPosition().y < bounds.top + 100)
-	{
-		new_position.y -= 100;
-	}
-
-	m_camera.SetPosition(m_camera.getPosition() + new_position * 0.01f);
 }
 
 void PlatformerCharacter::UpdateTexts() const

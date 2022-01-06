@@ -68,8 +68,9 @@ void GridNode::DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) co
 	sf::RectangleShape horizontal_line(sf::Vector2f(m_cell_size * m_horizontal_cells, m_line_width));
 	sf::RectangleShape vertical_line(sf::Vector2f(m_line_width, m_cell_size * m_vertical_cells));
 
-	horizontal_line.setFillColor(sf::Color::White);
-	vertical_line.setFillColor(sf::Color::White);
+	sf::Color color(255, 255, 255, 150);
+	horizontal_line.setFillColor(color);
+	vertical_line.setFillColor(color);
 
 	for (int i = 0; i < m_vertical_cells; i++)
 	{

@@ -9,13 +9,13 @@
 
 World::World(sf::RenderWindow& window, FontHolder& font, Grid& grid)
 	: m_window(window)
-	, m_camera(window.getDefaultView())
 	, m_textures()
 	, m_fonts(font)
 	, m_grid(grid)
 	, m_scene_layers()
 	, m_scenegraph(m_scene_layers)
-	, m_world_bounds(0.f, 0.f, 384, 432)
+	, m_world_bounds(0.f, 0.f, 768, 432)
+	, m_camera(window.getDefaultView(), m_world_bounds)
 	, m_spawn_position(384/2.f, 216.f + 216/2.f)
 	, m_scrollspeed(-50.f)
 	, m_player(nullptr)
@@ -23,7 +23,10 @@ World::World(sf::RenderWindow& window, FontHolder& font, Grid& grid)
 	LoadTextures();
 	BuildScene();
 	m_camera.SetCenter(m_spawn_position);
-	m_camera.SetSize(768/2.f, 432/2.f);
+	m_camera.SetSize(384 * 1.5f, 216 * 1.5f);
+
+	// background height = 216 x2 backgrounds
+	// background width = 384 (set to repeated)
 }
 
 void World::Update(sf::Time dt)
@@ -107,41 +110,50 @@ void World::BuildScene()
 	sf::Texture& temp_tile = m_textures.Get(Textures::kTempTile);
 
 	////Add the background sprite to our scene
-	std::unique_ptr<SpriteNode> jungle_sprite1(new SpriteNode(m_scene_layers, jungle1, Utility::GetIntRect(jungle1), m_world_bounds.left, m_world_bounds.top + 216));
+	std::unique_ptr<SpriteNode> jungle_sprite1(new SpriteNode(m_scene_layers, jungle1, GetBackgroundRect(jungle1), m_world_bounds.left, m_world_bounds.top + 216));
 	m_scene_layers[static_cast<int>(Layers::kBackground1)]->AttachChild(std::move(jungle_sprite1));
 
-	std::unique_ptr<SpriteNode> jungle_sprite2(new SpriteNode(m_scene_layers, jungle2, Utility::GetIntRect(jungle2), m_world_bounds.left, m_world_bounds.top + 216));
+	std::unique_ptr<SpriteNode> jungle_sprite2(new SpriteNode(m_scene_layers, jungle2, GetBackgroundRect(jungle2), m_world_bounds.left, m_world_bounds.top + 216));
 	m_scene_layers[static_cast<int>(Layers::kBackground2)]->AttachChild(std::move(jungle_sprite2));
 
-	std::unique_ptr<SpriteNode> jungle_sprite3(new SpriteNode(m_scene_layers, jungle3, Utility::GetIntRect(jungle3), m_world_bounds.left, m_world_bounds.top + 216));
+	std::unique_ptr<SpriteNode> jungle_sprite3(new SpriteNode(m_scene_layers, jungle3, GetBackgroundRect(jungle3), m_world_bounds.left, m_world_bounds.top + 216));
 	m_scene_layers[static_cast<int>(Layers::kBackground3)]->AttachChild(std::move(jungle_sprite3));
 
-	std::unique_ptr<SpriteNode> jungle_sprite4(new SpriteNode(m_scene_layers, jungle4, Utility::GetIntRect(jungle4), m_world_bounds.left, m_world_bounds.top + 216));
+	std::unique_ptr<SpriteNode> jungle_sprite4(new SpriteNode(m_scene_layers, jungle4, GetBackgroundRect(jungle4), m_world_bounds.left, m_world_bounds.top + 216));
 	m_scene_layers[static_cast<int>(Layers::kBackground4)]->AttachChild(std::move(jungle_sprite4));
 
-	std::unique_ptr<SpriteNode> jungle_sprite5(new SpriteNode(m_scene_layers, jungle5, Utility::GetIntRect(jungle5), m_world_bounds.left, m_world_bounds.top + 216));
+	std::unique_ptr<SpriteNode> jungle_sprite5(new SpriteNode(m_scene_layers, jungle5, GetBackgroundRect(jungle5), m_world_bounds.left, m_world_bounds.top + 216));
 	m_scene_layers[static_cast<int>(Layers::kBackground5)]->AttachChild(std::move(jungle_sprite5));
 
-	std::unique_ptr<SpriteNode> sky_sprite1(new SpriteNode(m_scene_layers, sky1, Utility::GetIntRect(sky1), m_world_bounds.left, m_world_bounds.top));
+	std::unique_ptr<SpriteNode> sky_sprite1(new SpriteNode(m_scene_layers, sky1, GetBackgroundRect(sky1), m_world_bounds.left, m_world_bounds.top));
 	m_scene_layers[static_cast<int>(Layers::kBackground1)]->AttachChild(std::move(sky_sprite1));
 
-	std::unique_ptr<SpriteNode> sky_sprite2(new SpriteNode(m_scene_layers, sky2, Utility::GetIntRect(sky2), m_world_bounds.left, m_world_bounds.top));
+	std::unique_ptr<SpriteNode> sky_sprite2(new SpriteNode(m_scene_layers, sky2, GetBackgroundRect(sky2), m_world_bounds.left, m_world_bounds.top));
 	m_scene_layers[static_cast<int>(Layers::kBackground2)]->AttachChild(std::move(sky_sprite2));
 
-	std::unique_ptr<SpriteNode> sky_sprite3(new SpriteNode(m_scene_layers, sky3, Utility::GetIntRect(sky3), m_world_bounds.left, m_world_bounds.top));
+	std::unique_ptr<SpriteNode> sky_sprite3(new SpriteNode(m_scene_layers, sky3, GetBackgroundRect(sky3), m_world_bounds.left, m_world_bounds.top));
 	m_scene_layers[static_cast<int>(Layers::kBackground3)]->AttachChild(std::move(sky_sprite3));
 
-	std::unique_ptr<SpriteNode> sky_sprite4(new SpriteNode(m_scene_layers, sky4, Utility::GetIntRect(sky4), m_world_bounds.left, m_world_bounds.top));
+	std::unique_ptr<SpriteNode> sky_sprite4(new SpriteNode(m_scene_layers, sky4, GetBackgroundRect(sky4), m_world_bounds.left, m_world_bounds.top));
 	m_scene_layers[static_cast<int>(Layers::kBackground4)]->AttachChild(std::move(sky_sprite4));
 
-	std::unique_ptr<SpriteNode> sky_sprite5(new SpriteNode(m_scene_layers, sky5, Utility::GetIntRect(sky5), m_world_bounds.left, m_world_bounds.top));
+	std::unique_ptr<SpriteNode> sky_sprite5(new SpriteNode(m_scene_layers, sky5, GetBackgroundRect(sky5), m_world_bounds.left, m_world_bounds.top));
 	m_scene_layers[static_cast<int>(Layers::kBackground5)]->AttachChild(std::move(sky_sprite5));
 
 	/*std::unique_ptr<SpriteNode> temp_tile_sprite(new SpriteNode(temp_tile, sf::IntRect(0, 0, temp_tile.getSize().x, temp_tile.getSize().y)));
 	temp_tile_sprite->setPosition(100, 316);
 	m_scene_layers[static_cast<int>(Layers::kAir)]->AttachChild(std::move(temp_tile_sprite));*/
 
-	std::unique_ptr<GridNode> grid_node(new GridNode(m_scene_layers, m_window, m_camera.GetView(), 24, 27, 16, 0.2f));
+	std::unique_ptr<GridNode> grid_node(
+		new GridNode(
+			m_scene_layers,
+			m_window,
+			m_camera.GetView(),
+			m_world_bounds.width/16,
+			m_world_bounds.height/16,
+			16,
+			0.5f));
+
 	m_grid.SetNode(grid_node.get());
 	m_scene_layers[static_cast<int>(Layers::kGrid)]->AttachChild(std::move(grid_node));
 
@@ -188,6 +200,12 @@ sf::FloatRect World::GetBattlefieldBounds() const
 	bounds.height += 100.f;
 
 	return bounds;
+}
+
+sf::IntRect World::GetBackgroundRect(sf::Texture& texture) const
+{
+	texture.setRepeated(true);
+	return { 0, 0, static_cast<int>(m_world_bounds.width), static_cast<int>(texture.getSize().y) };
 }
 
 bool MatchesCategories(SceneNode::Pair& colliders, Category::Type type1, Category::Type type2)
