@@ -52,8 +52,11 @@ void TileNode::Deselect()
 	m_sprite.setColor(sf::Color(255, 255, 255, 255));
 }
 
-void TileNode::SetTarget(sf::Vector2i position) {
-	this->setPosition(sf::Vector2f(position * 16));
+void TileNode::SetCellPosition(sf::Vector2i position, float cell_size)
+{
+	m_cell_position = position;
+	setPosition(sf::Vector2f(position) * cell_size);
+
 }
 
 void TileNode::DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) const

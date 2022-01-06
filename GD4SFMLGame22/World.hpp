@@ -33,15 +33,11 @@ public:
 
 private:
 	void LoadTextures();
+	void LoadTexturesPattern(Textures start_texture, Textures end_texture, const std::string& location_prefix);
 	void BuildScene();
-	void AdaptPlayerPosition();
 
-	sf::FloatRect GetViewBounds() const;
-	sf::FloatRect GetBattlefieldBounds() const;
 	sf::IntRect GetBackgroundRect(sf::Texture& texture) const;
 
-	void SelectTiles();
-	void HandleCollisions();
 	void DestroyEntitiesOutsideView();
 
 private:

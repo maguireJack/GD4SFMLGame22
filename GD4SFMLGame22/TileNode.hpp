@@ -21,14 +21,14 @@ public:
 	bool IsSelected() const;
 	void Select();
 	void Deselect();
-	void SetTarget(sf::Vector2i position);
+	void SetCellPosition(sf::Vector2i position, float cell_size);
 
 private:
 	void DrawCurrent(sf::RenderTarget&, sf::RenderStates states) const override;
 
 private:
 	PlatformType m_platform;
-	sf::Vector2f m_cell_position;
+	sf::Vector2i m_cell_position;
 	sf::Vector2f m_follow_target;
 	bool m_selected = false;
 	bool m_follow = false;

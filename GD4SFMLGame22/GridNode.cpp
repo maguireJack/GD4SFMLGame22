@@ -36,12 +36,6 @@ void GridNode::AddTileNode(std::unique_ptr<TileNode> tile_node)
 	GetSceneLayers()[static_cast<int>(Layers::kPlatforms)]->AttachChild(std::move(tile_node));
 }
 
-void GridNode::AddTileNode(TileNode* tile_node)
-{
-	const sf::Vector2i cell_position = GetCellPosition(tile_node->getPosition());
-	m_tile_map[cell_position] = tile_node;
-}
-
 void GridNode::RemoveTile(const TileNode* tile_node)
 {
 	const sf::Vector2i cell_position = GetCellPosition(tile_node->getPosition());
@@ -50,7 +44,7 @@ void GridNode::RemoveTile(const TileNode* tile_node)
 
 sf::Vector2i GridNode::GetCellPosition(sf::Vector2i position) const
 {
-	const sf::Vector2f pixel_position = m_window.mapPixelToCoords(position, m_camera_view);
+	const sf::Vector2f pixel_position = m_window.mapPixelToCoords(position);
 
 	return {
 		static_cast<int>(pixel_position.x / m_cell_size),
@@ -61,6 +55,16 @@ sf::Vector2i GridNode::GetCellPosition(sf::Vector2i position) const
 sf::Vector2i GridNode::GetCellPosition(sf::Vector2f position) const
 {
 	return GetCellPosition(sf::Vector2i(position));
+}
+
+sf::Vector2i GridNode::MouseToCellPosition() const
+{
+	const sf::Vector2f pixel_position = m_window.mapPixelToCoords(sf::Mouse::getPosition(m_window), m_camera_view);
+
+	return {
+		static_cast<int>(pixel_position.x / m_cell_size),
+		static_cast<int>(pixel_position.y / m_cell_size)
+	};
 }
 
 void GridNode::DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
@@ -91,17 +95,16 @@ void GridNode::DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) co
 
 void GridNode::UpdateCurrent(sf::Time dt, CommandQueue& commands)
 {
-	const sf::Vector2i cell_position = GetCellPosition(sf::Mouse::getPosition(m_window));
+	const sf::Vector2i cell_position = MouseToCellPosition();
 	m_new_cell_position = cell_position;
-	/*std::cout << "(" << cell_position.x << ", " << cell_position.y << ")" << std::endl;*/
-	// std::cout << "(" << m_selected_cell_position.x << ", " << m_selected_cell_position.y << ")" << std::endl;
+
 	if (cell_position != m_selected_cell_position)
 	{
 		m_selected_cell_position = cell_position;
 	}
 	if (m_selected_tile_node != nullptr)
 	{
-		m_selected_tile_node->SetTarget(cell_position);
+		m_selected_tile_node->SetCellPosition(cell_position, m_cell_size);
 	}
 }
 
@@ -110,26 +113,28 @@ void GridNode::HandleEvent(const sf::Event& event, CommandQueue& commands)
 	if (event.type == sf::Event::MouseButtonPressed)
 	{
 		if (event.mouseButton.button == sf::Mouse::Left) {
-			if (m_tile_map[m_selected_cell_position])
+			if (m_tile_map.count(m_selected_cell_position))
 			{
 				if (m_selected_tile_node == nullptr) {
-					std::cout << "Hovering" << std::endl;
-					if (!m_tile_map[m_selected_cell_position]->IsSelected())
+
+					TileNode* tile = m_tile_map[m_selected_cell_position];
+					if (!tile->IsSelected())
 					{
-						m_tile_map[m_selected_cell_position]->Select();
-						m_selected_tile_node = m_tile_map[m_selected_cell_position];
-						m_tile_map[m_selected_cell_position] = nullptr;
+						tile->Select();
+						m_selected_tile_node = tile;
+						m_tile_map.erase(m_selected_cell_position);
 					}
 				}
 
 			}
-			else if (m_selected_tile_node)
+			else if (m_selected_tile_node != nullptr)
 			{
 				m_selected_tile_node->Deselect();
-				m_selected_tile_node->setPosition(sf::Vector2f(m_new_cell_position * 16));
-				m_tile_map[m_selected_cell_position] = nullptr;
+				m_selected_tile_node->SetCellPosition(m_new_cell_position, m_cell_size);
+
 				m_tile_map.erase(m_selected_cell_position);
 				m_tile_map[m_new_cell_position] = m_selected_tile_node;
+
 				m_selected_tile_node = nullptr;
 			}
 		}

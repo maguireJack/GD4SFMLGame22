@@ -1,7 +1,5 @@
 #include "Entity.hpp"
 
-#include <iostream>
-
 #include "Utility.hpp"
 
 Entity::Entity(
@@ -79,8 +77,6 @@ void Entity::UpdateCurrent(sf::Time dt, CommandQueue& commands)
 
 	ValidateVelocity();
 	HandleCollisions();
-
-	std::cout << m_velocity.x << ", " << m_velocity.y << std::endl;
 
 	move(m_velocity);
 }

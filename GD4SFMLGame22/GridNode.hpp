@@ -20,11 +20,11 @@ public:
 		float line_width);
 
 	void AddTileNode(std::unique_ptr<TileNode> tile_node);
-	void AddTileNode(TileNode* tile_node);
 	void RemoveTile(const TileNode* tile);
 
 	sf::Vector2i GetCellPosition(sf::Vector2i position) const;
 	sf::Vector2i GetCellPosition(sf::Vector2f position) const;
+	sf::Vector2i MouseToCellPosition() const;
 
 	void DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
 	void UpdateCurrent(sf::Time dt, CommandQueue& commands);

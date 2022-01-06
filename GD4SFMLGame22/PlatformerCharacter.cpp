@@ -1,6 +1,5 @@
 #include "PlatformerCharacter.hpp"
 
-#include <iostream>
 #include <SFML/Graphics/RenderTarget.hpp>
 
 #include "Collision.hpp"
@@ -60,8 +59,7 @@ void PlatformerCharacter::Jump()
 	if (!IsJumping() && m_air_time <= m_coyote_time)
 	{
 		m_jumping = true;
-		SetVelocity(GetVelocity().x, 0);
-		AddVelocity(0, -Table[static_cast<int>(m_type)].m_jump_height);
+		SetVelocity(GetVelocity().x, -Table[static_cast<int>(m_type)].m_jump_height);
 	}
 }
 
@@ -91,15 +89,13 @@ void PlatformerCharacter::HandleCollisions()
 			switch (location)
 			{
 			case CollisionLocation::kLeft:
-				std::cout << "Left" << std::endl;
-					if (velocity.x < 0)
-					{
-						SetVelocity(0, velocity.y);
-					}
+				if (velocity.x < 0)
+				{
+					SetVelocity(0, velocity.y);
+				}
 				return;
 
 			case CollisionLocation::kRight:
-				std::cout << "Right" << std::endl;
 				if (velocity.x > 0)
 				{
 					SetVelocity(0, velocity.y);
@@ -107,7 +103,6 @@ void PlatformerCharacter::HandleCollisions()
 				return;
 
 			case CollisionLocation::kTop:
-				std::cout << "Top" << std::endl;
 				if (velocity.y < 0)
 				{
 					SetVelocity(velocity.x, 0);
@@ -118,7 +113,6 @@ void PlatformerCharacter::HandleCollisions()
 				m_air_time = 0.f;
 				m_jumping = false;
 
-				std::cout << "Bottom" << std::endl;
 				if (velocity.y > 0)
 				{
 					SetVelocity(velocity.x, 0);

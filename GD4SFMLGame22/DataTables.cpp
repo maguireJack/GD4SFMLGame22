@@ -10,7 +10,7 @@ std::vector<PlatformData> InitializePlatformData()
 	data[static_cast<int>(PlatformType::kStatic)].m_placetime = 1.f;
 	data[static_cast<int>(PlatformType::kStatic)].m_breaktime = 0.f;
 	data[static_cast<int>(PlatformType::kStatic)].m_moveDirection = sf::Vector2f(0, 0);
-	data[static_cast<int>(PlatformType::kStatic)].m_textures = Textures::kTempTile;
+	data[static_cast<int>(PlatformType::kStatic)].m_textures = Textures::kGrassTiles0;
 
 	data[static_cast<int>(PlatformType::kBreakable)].m_placetime = 0.5f;
 	data[static_cast<int>(PlatformType::kBreakable)].m_breaktime = 5.f;
