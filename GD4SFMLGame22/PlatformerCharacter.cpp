@@ -93,21 +93,21 @@ void PlatformerCharacter::HandleCollisions()
 				{
 					SetVelocity(0, velocity.y);
 				}
-				return;
+				break;
 
 			case CollisionLocation::kRight:
 				if (velocity.x > 0)
 				{
 					SetVelocity(0, velocity.y);
 				}
-				return;
+				break;
 
 			case CollisionLocation::kTop:
 				if (velocity.y < 0)
 				{
 					SetVelocity(velocity.x, 0);
 				}
-				return;
+				break;
 
 			case CollisionLocation::kBottom:
 				m_air_time = 0.f;
@@ -117,10 +117,10 @@ void PlatformerCharacter::HandleCollisions()
 				{
 					SetVelocity(velocity.x, 0);
 				}
-				return;
+				break;
 
 			case CollisionLocation::kNone:
-				return;
+				break;
 			}
 		}
 
