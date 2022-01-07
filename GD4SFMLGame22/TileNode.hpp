@@ -11,9 +11,9 @@ class TileNode : public SceneNode
 {
 public:
 	TileNode(
-		const std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)>& scene_layers, 
-		PlatformType platform,
-		const TextureHolder& textures);
+		const std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)>& scene_layers,
+		const sf::Texture& texture,
+		PlatformType platform);
 
 	unsigned GetCategory() const override;
 	sf::FloatRect GetBoundingRect() const override;
@@ -21,7 +21,10 @@ public:
 	bool IsSelected() const;
 	void Select();
 	void Deselect();
+	void Destroy();
 	void SetCellPosition(sf::Vector2i position, float cell_size);
+
+	bool IsDestroyed() const override;
 
 private:
 	void DrawCurrent(sf::RenderTarget&, sf::RenderStates states) const override;
@@ -29,10 +32,7 @@ private:
 private:
 	PlatformType m_platform;
 	sf::Vector2i m_cell_position;
-	sf::Vector2f m_follow_target;
-	bool m_selected = false;
-	bool m_follow = false;
+	bool m_selected;
+	bool m_destroy;
 	sf::Sprite m_sprite;
-	sf::Vector2f follow_mouse;
-	
 };

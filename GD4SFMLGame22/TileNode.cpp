@@ -12,14 +12,14 @@ namespace
 	const std::vector<PlatformData> Table = InitializePlatformData();
 }
 
-TileNode::TileNode(
-	const std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)>& scene_layers, 
-	PlatformType platform,
-	const TextureHolder& textures)
+TileNode::TileNode(const std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)>& scene_layers,
+	const sf::Texture& texture,
+	PlatformType platform)
 	: SceneNode(scene_layers)
 	, m_platform(platform)
 	, m_selected(false)
-	, m_sprite(textures.Get(Table[static_cast<int>(platform)].m_textures))
+	, m_destroy(false)
+	, m_sprite(texture)
 {
 }
 
@@ -52,11 +52,21 @@ void TileNode::Deselect()
 	m_sprite.setColor(sf::Color(255, 255, 255, 255));
 }
 
+void TileNode::Destroy()
+{
+	m_destroy = true;
+}
+
 void TileNode::SetCellPosition(sf::Vector2i position, float cell_size)
 {
 	m_cell_position = position;
 	setPosition(sf::Vector2f(position) * cell_size);
 
+}
+
+bool TileNode::IsDestroyed() const
+{
+	return m_destroy;
 }
 
 void TileNode::DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) const

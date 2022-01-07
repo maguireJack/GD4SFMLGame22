@@ -8,7 +8,7 @@
 
 SettingsState::SettingsState(StateStack& stack, Context context)
 	: State(stack, context)
-	, m_gui_container(*context.window)
+	, m_gui_container(*context.window, *context.camera)
 {
 	m_background_sprite.setTexture(context.textures->Get(Textures::kTitleScreen));
 
@@ -17,6 +17,7 @@ SettingsState::SettingsState(StateStack& stack, Context context)
 	AddButtonLabel(PlayerAction::kMoveRight, 350.f, "Move Right", context);
 	AddButtonLabel(PlayerAction::kMoveUp, 400.f, "Move Up", context);
 	AddButtonLabel(PlayerAction::kMoveDown, 450.f, "Move Down", context);
+	AddButtonLabel(PlayerAction::kJump, 500.f, "Jump", context);
 
 	UpdateLabels();
 

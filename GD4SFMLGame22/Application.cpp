@@ -14,18 +14,15 @@ const sf::Time Application::kTimePerFrame = sf::seconds(1.f / 60.f);
 
 Application::Application()
 	: m_window(sf::VideoMode(1920, 1080), "States", sf::Style::Close)
-	, m_stack(State::Context(m_window, m_textures, m_fonts, m_player, m_grid))
+	, m_camera(m_window.getDefaultView())
+	, m_stack(State::Context(m_window, m_textures, m_fonts, m_camera, m_player, m_grid))
 	, m_statistics_numframes(0)
 {
 	m_window.setKeyRepeatEnabled(false);
 
 	m_fonts.Load(Fonts::Main, "Media/Fonts/Sansation.ttf");
 
-	m_textures.Load(Textures::kDefault, "Media/Textures/Default.png");
-	m_textures.Load(Textures::kTitleScreen, "Media/Textures/TitleScreen.png");
-	m_textures.Load(Textures::kButtonNormal, "Media/Textures/ButtonNormal.png");
-	m_textures.Load(Textures::kButtonSelected, "Media/Textures/ButtonSelected.png");
-	m_textures.Load(Textures::kButtonPressed, "Media/Textures/ButtonPressed.png");
+	LoadTextures();
 
 	m_statistics_text.setFont(m_fonts.Get(Fonts::Main));
 	m_statistics_text.setPosition(5.f, 5.f);
@@ -101,6 +98,33 @@ void Application::UpdateStatistics(sf::Time elapsed_time)
 
 		m_statistics_updatetime -= sf::seconds(1.0f);
 		m_statistics_numframes = 0;
+	}
+}
+
+void Application::LoadTextures()
+{
+	m_textures.Load(Textures::kDefault, "Media/Textures/Default.png");
+	m_textures.Load(Textures::kTitleScreen, "Media/Textures/TitleScreen.png");
+	m_textures.Load(Textures::kButtonNormal, "Media/Textures/ButtonNormal.png");
+	m_textures.Load(Textures::kButtonSelected, "Media/Textures/ButtonSelected.png");
+	m_textures.Load(Textures::kButtonPressed, "Media/Textures/ButtonPressed.png");
+
+	m_textures.Load(Textures::kBrunoIdle, "Media/Textures/Bruno/Idle.png");
+	m_textures.Load(Textures::kBrunoRun, "Media/Textures/Bruno/Run.png");
+
+	LoadTexturesPattern(Textures::kJungle0, Textures::kJungle4, "Media/Textures/Jungle/jungle");
+	LoadTexturesPattern(Textures::kSky0, Textures::kSky4, "Media/Textures/Sky/sky");
+	LoadTexturesPattern(Textures::kGrassTiles0, Textures::kGrassTiles24, "Media/Textures/GrassTiles/tile");
+}
+
+void Application::LoadTexturesPattern(Textures start_texture, Textures end_texture, const std::string& location_prefix)
+{
+	int i = 0;
+	for (int texture = static_cast<int>(start_texture); texture <= static_cast<int>(end_texture); texture++)
+	{
+		std::string path = location_prefix + std::to_string(i) + ".png";
+		m_textures.Load(static_cast<Textures>(texture), path);
+		i++;
 	}
 }
 

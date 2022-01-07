@@ -12,9 +12,10 @@ namespace sf
 	class RenderWindow;
 }
 
-class StateStack;
-class Player;
+class Camera;
 class Grid;
+class Player;
+class StateStack;
 
 class State
 {
@@ -23,10 +24,11 @@ public:
 
 	struct Context
 	{
-		Context(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts, Player& player, Grid& grid);
+		Context(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts, Camera& camera, Player& player, Grid& grid);
 		sf::RenderWindow* window;
 		TextureHolder* textures;
 		FontHolder* fonts;
+		Camera* camera;
 		Player* player;
 		Grid* grid;
 	};

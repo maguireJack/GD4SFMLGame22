@@ -6,14 +6,28 @@
 
 namespace GUI
 {
-	Container::Container(sf::RenderWindow& window)
+	Container::Container(sf::RenderWindow& window, Camera& camera)
 		: m_window(window)
+		, m_camera(camera)
 		, m_selected_child(-1)
 	{
 	}
+
+	void Container::DeactivateAllExcept(const Component::Ptr& exception)
+	{
+		for (const auto& child : m_children)
+		{
+			if (child != exception)
+			{
+				child->Deactivate();
+			}
+		}
+	}
+
 	//TODO pass by reference as resharper is suggesting?
 	void Container::Pack(Component::Ptr component)
 	{
+		component->SetParent(this);
 		m_children.emplace_back(component);
 		if(!HasSelection() && component->IsSelectable())
 		{
@@ -32,14 +46,14 @@ namespace GUI
 		{
 			m_children[m_selected_child]->HandleEvent(event);
 		}
-		else if (event.type == sf::Event::MouseMoved)
-		{
-			const sf::Vector2i mouse = sf::Mouse::getPosition(m_window);
 
+		if (event.type == sf::Event::MouseMoved)
+		{
 			for (size_t i = 0; i < m_children.size(); i++)
 			{
+				const sf::Vector2f mouse = m_window.mapPixelToCoords(sf::Mouse::getPosition(m_window), m_camera.GetView());
 				const auto child = m_children[i];
-				if (child->GetBoundingRect().contains(static_cast<float>(mouse.x), static_cast<float>(mouse.y)))
+				if (child->GetBoundingRect().contains(mouse.x, mouse.y))
 				{
 					Select(i);
 				}
@@ -49,8 +63,8 @@ namespace GUI
 		{
 			if (event.mouseButton.button == sf::Mouse::Left)
 			{
-				const sf::Vector2i mouse = sf::Mouse::getPosition(m_window);
-				if (m_children[m_selected_child]->GetBoundingRect().contains(static_cast<float>(mouse.x), static_cast<float>(mouse.y)))
+				const sf::Vector2f mouse = m_window.mapPixelToCoords(sf::Mouse::getPosition(m_window), m_camera.GetView());
+				if (m_children[m_selected_child]->GetBoundingRect().contains(mouse.x, mouse.y))
 				{
 					m_children[m_selected_child]->Activate();
 				}
@@ -79,12 +93,11 @@ namespace GUI
 
 	void Container::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	{
-		states.transform *= getTransform();
+ 		states.transform *= getTransform();
 		for(const Component::Ptr& child : m_children)
 		{
 			target.draw(*child, states);
 		}
-
 	}
 
 	bool Container::HasSelection() const

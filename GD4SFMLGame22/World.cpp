@@ -6,23 +6,23 @@
 #include "GridNode.hpp"
 #include "Utility.hpp"
 
-World::World(sf::RenderWindow& window, FontHolder& font, Grid& grid)
+World::World(sf::RenderWindow& window, TextureHolder& textures, FontHolder& font, Camera& camera, Grid& grid)
 	: m_window(window)
-	, m_textures()
+	, m_textures(textures)
 	, m_fonts(font)
+	, m_camera(camera)
 	, m_grid(grid)
 	, m_scene_layers()
 	, m_scenegraph(m_scene_layers)
 	, m_world_bounds(0.f, 0.f, 768, 432)
-	, m_camera(window.getDefaultView(), m_world_bounds)
 	, m_spawn_position(384/2.f, 216.f + 216/2.f)
 	, m_scrollspeed(-50.f)
 	, m_player(nullptr)
 {
-	LoadTextures();
 	BuildScene();
 	m_camera.SetCenter(m_spawn_position);
 	m_camera.SetSize(384 * 1.5f, 216 * 1.5f);
+	m_camera.SetBoundsConstraint(m_world_bounds);
 
 	// background height = 216 x2 backgrounds
 	// background width = 384 (set to repeated)
@@ -57,28 +57,6 @@ void World::Draw()
 	m_window.setView(m_camera.GetView());
 	m_window.draw(m_scenegraph);
 }
-
-void World::LoadTextures()
-{
-	m_textures.Load(Textures::kBrunoIdle, "Media/Textures/Bruno/Idle.png");
-	m_textures.Load(Textures::kBrunoRun, "Media/Textures/Bruno/Run.png");
-
-	LoadTexturesPattern(Textures::kJungle0, Textures::kJungle4, "Media/Textures/Jungle/jungle");
-	LoadTexturesPattern(Textures::kSky0, Textures::kSky4, "Media/Textures/Sky/sky");
-	LoadTexturesPattern(Textures::kGrassTiles0, Textures::kGrassTiles24, "Media/Textures/GrassTiles/tile");
-
-}
-
-void World::LoadTexturesPattern(Textures start_texture, Textures end_texture, const std::string& location_prefix)
-{
-	int i = 0;
-	for (int texture = static_cast<int>(start_texture); texture <= static_cast<int>(end_texture); texture++)
-	{
-		std::string path = location_prefix + std::to_string(i) + ".png";
-		m_textures.Load(static_cast<Textures>(texture), path);
-		i++;
-	}
- }
 
 void World::BuildScene()
 {
@@ -147,7 +125,8 @@ void World::BuildScene()
 		new GridNode(
 			m_scene_layers,
 			m_window,
-			m_camera.GetView(),
+			m_textures,
+			m_camera,
 			m_world_bounds.width/16,
 			m_world_bounds.height/16,
 			16,
@@ -156,7 +135,7 @@ void World::BuildScene()
 	m_grid.SetNode(grid_node.get());
 	m_scene_layers[static_cast<int>(Layers::kGrid)]->AttachChild(std::move(grid_node));
 
-	std::unique_ptr<TileNode> tile_node(new TileNode(m_scene_layers, PlatformType::kStatic, m_textures));
+	std::unique_ptr<TileNode> tile_node(new TileNode(m_scene_layers, m_textures.Get(Textures::kGrassTiles0), PlatformType::kStatic));
 	tile_node->setPosition(16 * 8, 16 * 22);
 	m_grid.Node().AddTileNode(std::move(tile_node));
 

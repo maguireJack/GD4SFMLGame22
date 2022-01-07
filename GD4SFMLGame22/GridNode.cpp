@@ -10,22 +10,32 @@
 GridNode::GridNode(
 	const std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)>& scene_layers,
 	const sf::RenderWindow& window,
-	const sf::View& camera_view,
+	const TextureHolder& textures,
+	const Camera& camera,
 	int horizontal_cells,
 	int vertical_cells,
 	float cell_size,
 	float line_width)
 	: SceneNode(scene_layers)
 	, m_window(window)
-	, m_camera_view(camera_view)
+	, m_textures(textures)
+	, m_camera(camera)
 	, m_horizontal_cells(horizontal_cells)
 	, m_vertical_cells(vertical_cells)
 	, m_cell_size(cell_size)
 	, m_line_width(line_width)
-	, m_selected_cell_position(0, 0)
-	, m_new_cell_position(0, 0)
-	, m_selected_tile_node(nullptr)
+	, m_can_place(true)
+	, m_mouse_cell_position(0, 0)
+	, m_selected_tile(nullptr)
+	, m_create_texture(Textures::kDefault)
+	, m_create_type(PlatformType::kNone)
 {
+}
+
+void GridNode::SetNewTileSettings(PlatformType type, Textures texture)
+{
+	m_create_type = type;
+	m_create_texture = texture;
 }
 
 void GridNode::AddTileNode(std::unique_ptr<TileNode> tile_node)
@@ -40,6 +50,21 @@ void GridNode::RemoveTile(const TileNode* tile_node)
 {
 	const sf::Vector2i cell_position = GetCellPosition(tile_node->getPosition());
 	m_tile_map.erase(cell_position);
+}
+
+bool GridNode::IsHoldingTile() const
+{
+	return m_selected_tile != nullptr;
+}
+
+bool GridNode::IsInCreateMode() const
+{
+	return m_create_type != PlatformType::kNone;
+}
+
+bool GridNode::CellContainsTile(sf::Vector2i cell_position) const
+{
+	return m_tile_map.count(cell_position);
 }
 
 sf::Vector2i GridNode::GetCellPosition(sf::Vector2i position) const
@@ -59,7 +84,7 @@ sf::Vector2i GridNode::GetCellPosition(sf::Vector2f position) const
 
 sf::Vector2i GridNode::MouseToCellPosition() const
 {
-	const sf::Vector2f pixel_position = m_window.mapPixelToCoords(sf::Mouse::getPosition(m_window), m_camera_view);
+	const sf::Vector2f pixel_position = m_window.mapPixelToCoords(sf::Mouse::getPosition(m_window), m_camera.GetView());
 
 	return {
 		static_cast<int>(pixel_position.x / m_cell_size),
@@ -67,12 +92,17 @@ sf::Vector2i GridNode::MouseToCellPosition() const
 	};
 }
 
+const Camera& GridNode::GetCamera() const
+{
+	return m_camera;
+}
+
 void GridNode::DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	sf::RectangleShape horizontal_line(sf::Vector2f(m_cell_size * m_horizontal_cells, m_line_width));
 	sf::RectangleShape vertical_line(sf::Vector2f(m_line_width, m_cell_size * m_vertical_cells));
 
-	sf::Color color(255, 255, 255, 150);
+	sf::Color color(255, 255, 255, 60);
 	horizontal_line.setFillColor(color);
 	vertical_line.setFillColor(color);
 
@@ -89,22 +119,30 @@ void GridNode::DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) co
 	}
 
 	sf::RectangleShape square(sf::Vector2f(m_cell_size, m_cell_size));
-	square.setPosition(sf::Vector2f(m_selected_cell_position.x * m_cell_size, m_selected_cell_position.y * m_cell_size));
+	square.setPosition(sf::Vector2f(m_mouse_cell_position.x * m_cell_size, m_mouse_cell_position.y * m_cell_size));
+
+	sf::Color select_color = m_can_place
+		? sf::Color(255, 255, 255, 150)
+		: sf::Color(255, 0, 0, 150);
+
+	square.setFillColor(select_color);
+
 	target.draw(square, states);
 }
 
 void GridNode::UpdateCurrent(sf::Time dt, CommandQueue& commands)
 {
-	const sf::Vector2i cell_position = MouseToCellPosition();
-	m_new_cell_position = cell_position;
+	m_mouse_cell_position = MouseToCellPosition();
 
-	if (cell_position != m_selected_cell_position)
+	if (m_selected_tile != nullptr)
 	{
-		m_selected_cell_position = cell_position;
+		m_selected_tile->SetCellPosition(m_mouse_cell_position, m_cell_size);
+
+		m_can_place = !CellContainsTile(m_mouse_cell_position);
 	}
-	if (m_selected_tile_node != nullptr)
+	else if (IsInCreateMode())
 	{
-		m_selected_tile_node->SetCellPosition(cell_position, m_cell_size);
+		CreateTile();
 	}
 }
 
@@ -112,44 +150,42 @@ void GridNode::HandleEvent(const sf::Event& event, CommandQueue& commands)
 {
 	if (event.type == sf::Event::MouseButtonPressed)
 	{
-		if (event.mouseButton.button == sf::Mouse::Left) {
-			if (m_tile_map.count(m_selected_cell_position))
+		if (event.mouseButton.button == sf::Mouse::Left)
+		{
+			if (IsHoldingTile())
 			{
-				if (m_selected_tile_node == nullptr) {
-
-					TileNode* tile = m_tile_map[m_selected_cell_position];
-					if (!tile->IsSelected())
-					{
-						tile->Select();
-						m_selected_tile_node = tile;
-						m_tile_map.erase(m_selected_cell_position);
-					}
-				}
-
+				DropTile();
 			}
-			else if (m_selected_tile_node != nullptr)
+			else if (CellContainsTile(m_mouse_cell_position))
 			{
-				m_selected_tile_node->Deselect();
-				m_selected_tile_node->SetCellPosition(m_new_cell_position, m_cell_size);
-
-				m_tile_map.erase(m_selected_cell_position);
-				m_tile_map[m_new_cell_position] = m_selected_tile_node;
-
-				m_selected_tile_node = nullptr;
+				PickupTile();
+			}
+		}
+		else if (event.mouseButton.button == sf::Mouse::Right)
+		{
+			if (IsInCreateMode())
+			{
+				SetNewTileSettings(PlatformType::kNone, Textures::kDefault);
+				m_selected_tile->Destroy();
+				m_selected_tile = nullptr;
+			}
+			else if (IsHoldingTile())
+			{
+				DropTileAt(m_picked_up_position);
 			}
 		}
 		/*else if (event.mouseButton.button == sf::Mouse::Right)
 		{
-			if (m_tile_map[m_selected_cell_position])
+			if (m_tile_map[m_mouse_cell_position])
 			{
-				if (m_selected_tile_node == nullptr) {
+				if (m_selected_tile == nullptr) {
 					std::cout << "Hovering" << std::endl;
-					TileNode copied_tile(m_tile_map[m_selected_cell_position]);
+					TileNode copied_tile(m_tile_map[m_mouse_cell_position]);
 
 					if (!copied_tile.GetTile()->IsSelected())
 					{
 						copied_tile.GetTile()->Select();
-						m_selected_tile_node = &copied_tile;
+						m_selected_tile = &copied_tile;
 					}
 				}
 
@@ -157,4 +193,48 @@ void GridNode::HandleEvent(const sf::Event& event, CommandQueue& commands)
 		}
 		*/
 	}
+}
+
+void GridNode::CreateTile()
+{
+	if (!IsHoldingTile() && IsInCreateMode())
+	{
+		std::unique_ptr<TileNode> tile_node(new TileNode(GetSceneLayers(), m_textures.Get(m_create_texture), m_create_type));
+		m_selected_tile = tile_node.get();
+		GetSceneLayers()[static_cast<int>(Layers::kPlatforms)]->AttachChild(std::move(tile_node));
+	}
+}
+
+void GridNode::PickupTile()
+{
+	TileNode* tile = m_tile_map[m_mouse_cell_position];
+	if (!tile->IsSelected())
+	{
+		m_picked_up_position = m_mouse_cell_position;
+
+		tile->Select();
+		m_selected_tile = tile;
+		m_tile_map.erase(m_mouse_cell_position);
+	}
+}
+
+void GridNode::DropTile()
+{
+	if (m_can_place)
+	{
+		m_selected_tile->Deselect();
+		m_selected_tile->SetCellPosition(m_mouse_cell_position, m_cell_size);
+		m_tile_map[m_mouse_cell_position] = m_selected_tile;
+
+		m_selected_tile = nullptr;
+	}
+}
+
+void GridNode::DropTileAt(sf::Vector2i cell_position)
+{
+	m_selected_tile->Deselect();
+	m_selected_tile->SetCellPosition(cell_position, m_cell_size);
+	m_tile_map[cell_position] = m_selected_tile;
+
+	m_selected_tile = nullptr;
 }

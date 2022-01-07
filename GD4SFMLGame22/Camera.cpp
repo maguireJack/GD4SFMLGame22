@@ -1,8 +1,8 @@
 #include "Camera.hpp"
 
-Camera::Camera(sf::View view, sf::FloatRect bounds_constraint)
+Camera::Camera(sf::View view)
 	: m_view(view)
-	, m_bounds_constraint(bounds_constraint)
+	, m_has_constraint(false)
 {
 	SetCenter(view.getCenter());
 }
@@ -10,6 +10,13 @@ Camera::Camera(sf::View view, sf::FloatRect bounds_constraint)
 const sf::View& Camera::GetView() const
 {
 	return m_view;
+}
+
+void Camera::SetBoundsConstraint(sf::FloatRect bounds_constraint)
+{
+	m_bounds_constraint = bounds_constraint;
+	m_has_constraint = true;
+	SetCenter(GetCenter());
 }
 
 void Camera::SetCenter(sf::Vector2f position)
@@ -20,22 +27,25 @@ void Camera::SetCenter(sf::Vector2f position)
 
 	position -= size / 2.f;
 
-	if (position.x < m_bounds_constraint.left)
+	if (m_has_constraint)
 	{
-		position.x = m_bounds_constraint.left;
-	}
-	else if (position.x + size.x > bounds_right)
-	{
-		position.x = bounds_right - size.x;
-	}
+		if (position.x < m_bounds_constraint.left)
+		{
+			position.x = m_bounds_constraint.left;
+		}
+		else if (position.x + size.x > bounds_right)
+		{
+			position.x = bounds_right - size.x;
+		}
 
-	if (position.y < m_bounds_constraint.top)
-	{
-		position.y = m_bounds_constraint.top;
-	}
-	else if (position.y + size.y > bounds_bottom)
-	{
-		position.y = bounds_bottom - size.y;
+		if (position.y < m_bounds_constraint.top)
+		{
+			position.y = m_bounds_constraint.top;
+		}
+		else if (position.y + size.y > bounds_bottom)
+		{
+			position.y = bounds_bottom - size.y;
+		}
 	}
 
 	m_view.setCenter(position + size / 2.f);

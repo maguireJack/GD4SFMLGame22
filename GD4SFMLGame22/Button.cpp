@@ -1,4 +1,5 @@
 #include "Button.hpp"
+
 #include "ResourceIdentifiers.hpp"
 #include "ResourceHolder.hpp"
 #include "Utility.hpp"
@@ -40,9 +41,7 @@ namespace GUI
 
 	sf::FloatRect Button::GetBoundingRect() const
 	{
-		const sf::Transform transform = sf::Transform::Identity * getTransform();
-
-		return transform.transformRect(m_sprite.getGlobalBounds());
+		return GetWorldTransform().transformRect(m_sprite.getGlobalBounds());
 	}
 
 	bool Button::IsSelectable() const

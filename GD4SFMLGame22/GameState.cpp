@@ -1,27 +1,60 @@
 #include "GameState.hpp"
 
+#include "Button.hpp"
+#include "TexturedButton.hpp"
 #include "Player.hpp"
 
 GameState::GameState(StateStack& stack, Context context)
 	: State(stack, context)
-	, m_world(*context.window, *context.fonts, *context.grid)
+	, m_world(*context.window, *context.textures, *context.fonts, *context.camera, *context.grid)
 	, m_player(*context.player)
 	, m_grid(*context.grid)
+	, m_gui_container(*context.window, *context.camera)
 {
+	m_background.setFillColor(sf::Color(0, 0, 0, 150));
+	m_background.setSize(sf::Vector2f(576, 48));
+	m_background_position = sf::Vector2f(0, 276);
 
+	int i = 0;
+	float last_right_position = 0;
+
+	for (int texture_index = static_cast<int>(Textures::kGrassTiles0); texture_index <= static_cast<int>(Textures::kGrassTiles10); texture_index++)
+	{
+		last_right_position += 16;
+		auto texture = static_cast<Textures>(texture_index);
+		auto button = std::make_shared<GUI::TexturedButton>(*context.fonts, *context.textures, texture);
+		button->setPosition(last_right_position + 16, 292);
+		button->SetCallback([this, texture_index, button]()
+			{
+				m_grid.Node().SetNewTileSettings(PlatformType::kStatic, static_cast<Textures>(texture_index));
+				m_gui_container.DeactivateAllExcept(button);
+			});
+
+		last_right_position += context.textures->Get(static_cast<Textures>(texture_index)).getSize().x;
+		m_gui_container.Pack(button);
+		i++;
+	}
 }
 
 void GameState::Draw()
 {
+	sf::RenderWindow& window = *GetContext().window;
 	m_world.Draw();
+
+	window.draw(m_background);
+	window.draw(m_gui_container);
 }
 
 bool GameState::Update(sf::Time dt)
 {
 	m_world.Update(dt);
 	CommandQueue& commands = m_world.GetCommandQueue();
-
 	m_player.HandleRealtimeInput(commands);
+
+	const sf::Vector2f camera_position = m_grid.Node().GetCamera().getPosition();
+	m_background.setPosition(camera_position + m_background_position);
+	m_gui_container.setPosition(camera_position);
+
 	return true;
 }
 
@@ -30,6 +63,7 @@ bool GameState::HandleEvent(const sf::Event& event)
 	CommandQueue& commands = m_world.GetCommandQueue();
 	m_player.HandleEvent(event, commands);
 	m_grid.HandleEvent(event, commands);
+	m_gui_container.HandleEvent(event);
 
 	//Escape should bring up the Pause Menu
 	if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)

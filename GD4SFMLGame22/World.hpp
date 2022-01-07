@@ -26,14 +26,12 @@ namespace sf
 class World : private sf::NonCopyable
 {
 public:
-	explicit World(sf::RenderWindow& window, FontHolder& font, Grid& grid);
+	explicit World(sf::RenderWindow& window, TextureHolder& textures, FontHolder& font, Camera& camera, Grid& grid);
 	void Update(sf::Time dt);
 	void Draw();
 	CommandQueue& GetCommandQueue();
 
 private:
-	void LoadTextures();
-	void LoadTexturesPattern(Textures start_texture, Textures end_texture, const std::string& location_prefix);
 	void BuildScene();
 
 	sf::IntRect GetBackgroundRect(sf::Texture& texture) const;
@@ -48,15 +46,15 @@ private:
 
 private:
 	sf::RenderWindow& m_window;
-	TextureHolder m_textures;
+	TextureHolder& m_textures;
 	FontHolder& m_fonts;
+	Camera& m_camera;
 	Grid& m_grid;
 	std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)> m_scene_layers;
 	SceneNode m_scenegraph;
 	CommandQueue m_command_queue;
 
 	sf::FloatRect m_world_bounds;
-	Camera m_camera;
 	sf::Vector2f m_spawn_position;
 	float m_scrollspeed;
 	PlatformerCharacter* m_player;
