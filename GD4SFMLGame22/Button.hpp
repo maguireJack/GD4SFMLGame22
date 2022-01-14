@@ -23,6 +23,7 @@ namespace GUI
 
 	public:
 		Button(State::Context context);
+		Button(TextureHolder& textures, FontHolder& fonts, SoundPlayer& sounds);
 		void SetCallback(Callback callback);
 		void SetText(const std::string& text);
 		void SetToggle(bool flag);

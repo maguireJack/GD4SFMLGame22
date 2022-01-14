@@ -52,6 +52,7 @@ private:
 	sf::RenderTexture m_scene_texture;
 	TextureHolder& m_textures;
 	FontHolder& m_fonts;
+	SoundPlayer& m_sounds;
 	Camera& m_camera;
 	Grid& m_grid;
 	std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)> m_scene_layers;

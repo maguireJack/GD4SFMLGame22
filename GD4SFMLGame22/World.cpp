@@ -10,6 +10,7 @@ World::World(sf::RenderWindow& window, TextureHolder& textures, FontHolder& font
 	: m_window(window)
 	, m_textures(textures)
 	, m_fonts(font)
+	, m_sounds(sounds)
 	, m_camera(camera)
 	, m_grid(grid)
 	, m_scene_layers()
@@ -141,6 +142,7 @@ void World::BuildScene()
 			m_window,
 			m_textures,
 			m_fonts,
+			m_sounds,
 			m_camera,
 			m_world_bounds.width/16,
 			m_world_bounds.height/16,

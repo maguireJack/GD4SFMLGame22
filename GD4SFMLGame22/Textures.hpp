@@ -5,6 +5,8 @@ enum class Textures
 
 	kTitleScreen,
 	kButtons,
+	kAddButton,
+	kRemoveButton,
 
 	kParticle,
 

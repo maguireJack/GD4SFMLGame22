@@ -11,15 +11,26 @@
 namespace GUI
 {
 	Button::Button(State::Context context)
-	: m_sprite(context.textures->Get(Textures::kButtons))
-	, m_text("", context.fonts->Get(Fonts::Main), 16)
-	, m_is_toggle(false)
-	, m_sounds(*context.sounds)
+		: m_sprite(context.textures->Get(Textures::kButtons))
+		, m_text("", context.fonts->Get(Fonts::Main), 16)
+		, m_is_toggle(false)
+		, m_sounds(*context.sounds)
 	{
 		ChangeTexture(ButtonType::Normal);
 		sf::FloatRect bounds = m_sprite.getLocalBounds();
 		m_text.setPosition(bounds.width / 2, bounds.height / 2);
 
+	}
+
+	Button::Button(TextureHolder& textures, FontHolder& fonts, SoundPlayer& sounds)
+		: m_sprite(textures.Get(Textures::kButtons))
+		, m_text("", fonts.Get(Fonts::Main), 16)
+		, m_is_toggle(false)
+		, m_sounds(sounds)
+	{
+		ChangeTexture(ButtonType::Normal);
+		sf::FloatRect bounds = m_sprite.getLocalBounds();
+		m_text.setPosition(bounds.width / 2, bounds.height / 2);
 	}
 
 	void Button::SetCallback(Callback callback)

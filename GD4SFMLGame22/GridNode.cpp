@@ -5,13 +5,16 @@
 #include <utility>
 
 #include "Application.hpp"
+#include "Button.hpp"
+#include "Label.hpp"
 #include "TexturedButton.hpp"
 
 GridNode::GridNode(
 	const std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)>& scene_layers,
 	sf::RenderWindow& window,
-	const TextureHolder& textures,
-	const FontHolder& fonts,
+	TextureHolder& textures,
+	FontHolder& fonts,
+	SoundPlayer& sounds,
 	Camera& camera,
 	int horizontal_cells,
 	int vertical_cells,
@@ -22,11 +25,14 @@ GridNode::GridNode(
 	, m_window(window)
 	, m_textures(textures)
 	, m_fonts(fonts)
+	, m_sounds(sounds)
 	, m_camera(camera)
 	, m_horizontal_cells(horizontal_cells)
 	, m_vertical_cells(vertical_cells)
 	, m_cell_size(cell_size)
 	, m_line_width(line_width)
+	, m_editor_gui(window, fonts, camera, sf::FloatRect(0, 276, 576, 48), 0.5f)
+	, m_inventory_adder_gui(window, fonts, camera, sf::FloatRect(0, 276, 576, 48), 0)
 	, m_inventory_gui(window, fonts, camera, sf::FloatRect(0, 276, 576, 48), 0.5f)
 	, m_selected_button(nullptr)
 	, m_editor_mode(editor_mode)
@@ -43,22 +49,61 @@ GridNode::GridNode(
 	m_background.setSize(sf::Vector2f(576, 48));
 	m_background_position = sf::Vector2f(0, 276);
 
+	if (!editor_mode)
+	{
+		return;
+	}
+
 	for (int texture_index = static_cast<int>(Textures::kGrassTiles0); texture_index <= static_cast<int>(Textures::kGrassTiles24); texture_index++)
 	{
-		auto texture = static_cast<Textures>(texture_index);
+		Textures texture = static_cast<Textures>(texture_index);
+		PlatformType type = PlatformType::kStatic;
+
 		auto button = std::make_shared<GUI::TexturedButton>(m_fonts, m_textures, texture);
+		button->SetToggle(true);
 		button->setPosition(16, 292);
 		button->SetCallback([this, texture, button]()
 			{
 				SetNewTileSettings(PlatformType::kStatic, texture);
 				m_inventory_gui.DeactivateAllExcept(button);
-				m_inventory_mode = true;
 				m_selected_button = button;
 			});
 
-		AddToInventory(PlatformType::kStatic, texture);
+		bool new_page = m_editor_gui.Pack(button, 16);
 
-		m_inventory_gui.Pack(button, 16);
+		auto label = std::make_shared<GUI::Label>("", m_fonts);
+		label->setPosition(button->getPosition().x + button->GetBoundingRect().width / 2, 310);
+		label->setScale(0.5f, 0.5f);
+
+		auto remove_button = std::make_shared<GUI::TexturedButton>(m_fonts, m_textures, Textures::kRemoveButton);
+		remove_button->setPosition(button->getPosition().x - 5, 310);
+		remove_button->SetCallback([this, label, texture, type]()
+			{
+				TileData tile(texture, type, true);
+				RemoveFromInventory(tile);
+
+				if (m_inventory.count(tile))
+				{
+					label->SetText(std::to_string(m_inventory[tile]));
+				}
+				else
+				{
+					label->SetText("");
+				}
+			});
+
+		auto add_button = std::make_shared<GUI::TexturedButton>(m_fonts, m_textures, Textures::kAddButton);
+		add_button->setPosition(button->getPosition().x + button->GetBoundingRect().width, 310);
+		add_button->SetCallback([this, label, texture, type]()
+			{
+				TileData tile(texture, type, true);
+				AddToInventory(tile);
+				label->SetText(std::to_string(m_inventory[tile]));
+			});
+
+		m_inventory_adder_gui.PackManual(remove_button, new_page);
+		m_inventory_adder_gui.PackManual(label);
+		m_inventory_adder_gui.PackManual(add_button);
 	}
 }
 
@@ -66,7 +111,15 @@ void GridNode::SetNewTileSettings(PlatformType type, Textures texture)
 {
 	if (m_selected_tile != nullptr)
 	{
-		m_inventory_gui.DeactivateAll();
+		if (m_editor_mode)
+		{
+			m_editor_gui.DeactivateAll();
+		}
+		else
+		{
+			m_inventory_gui.DeactivateAll();
+		}
+
 		m_selected_tile->Destroy();
 		m_selected_tile = nullptr;
 	}
@@ -239,7 +292,16 @@ void GridNode::DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) co
 
 	target.draw(square, states);
 	target.draw(m_background, states);
-	target.draw(m_inventory_gui, states);
+
+	if (m_editor_mode)
+	{
+		target.draw(m_editor_gui, states);
+		target.draw(m_inventory_adder_gui, states);
+	}
+	else
+	{
+		target.draw(m_inventory_gui, states);
+	}
 }
 
 void GridNode::UpdateCurrent(sf::Time dt, CommandQueue& commands)
@@ -272,12 +334,22 @@ void GridNode::UpdateCurrent(sf::Time dt, CommandQueue& commands)
 
 	const sf::Vector2f camera_position = GetCamera().getPosition();
 	m_background.setPosition(camera_position + m_background_position);
+	m_editor_gui.setPosition(camera_position);
 	m_inventory_gui.setPosition(camera_position);
+	m_inventory_adder_gui.setPosition(camera_position);
 }
 
 void GridNode::HandleEvent(const sf::Event& event, CommandQueue& commands)
 {
-	m_inventory_gui.HandleEvent(event);
+	if (m_editor_mode)
+	{
+		m_editor_gui.HandleEvent(event);
+		m_inventory_adder_gui.HandleEvent(event);
+	}
+	else
+	{
+		m_inventory_gui.HandleEvent(event);
+	}
 
 	if (event.type == sf::Event::MouseButtonPressed)
 	{

@@ -15,7 +15,7 @@ namespace GUI
 {
 	TexturedButton::TexturedButton(const FontHolder& fonts, const TextureHolder& textures, Textures texture)
 		: m_text("", fonts.Get(Fonts::Main), 16)
-		, m_is_toggle(true)
+		, m_is_toggle(false)
 		, m_is_selectable(true)
 	{
 		m_sprite.setTexture(textures.Get(texture));

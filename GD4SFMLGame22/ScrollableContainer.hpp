@@ -15,6 +15,7 @@ namespace GUI
 		ScrollableContainer(sf::RenderWindow& window, const FontHolder& fonts, Camera& camera, sf::FloatRect bounds, float text_scale);
 		bool Pack(Component::Ptr component) override;
 		bool Pack(Component::Ptr component, float spacing);
+		void PackManual(Component::Ptr component, bool on_next_page = false);
 		void NextPage();
 		void PreviousPage();
 		bool IsLastPage() const;

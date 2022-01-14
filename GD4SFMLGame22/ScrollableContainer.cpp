@@ -3,6 +3,7 @@
 #include "ResourceHolder.hpp"
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Window/Event.hpp>
+#include <utility>
 
 #include "Fonts.hpp"
 
@@ -98,6 +99,25 @@ namespace GUI
 		}
 
 		return false;
+	}
+
+	void ScrollableContainer::PackManual(Component::Ptr component, bool on_next_page)
+	{
+		Container::Pack(std::move(component));
+
+		if (m_page_start_indexes[0] == -1) //first page is empty
+		{
+			m_page_start_indexes[0]++;
+			return;
+		}
+
+
+		if (on_next_page)
+		{
+			m_page_start_indexes.emplace_back(m_children.size() - 1);
+			UpdateCurrentPageText();
+			return;
+		}
 	}
 
 	void ScrollableContainer::NextPage()

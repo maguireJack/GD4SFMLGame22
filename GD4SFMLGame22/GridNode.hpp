@@ -7,6 +7,7 @@
 #include "Camera.hpp"
 #include "SceneNode.hpp"
 #include "ScrollableContainer.hpp"
+#include "SoundPlayer.hpp"
 #include "TexturedButton.hpp"
 #include "TileDataHash.hpp"
 #include "TileNode.hpp"
@@ -18,8 +19,9 @@ public:
 	GridNode(
 		const std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)>& scene_layers,
 		sf::RenderWindow& window,
-		const TextureHolder& textures,
-		const FontHolder& fonts,
+		TextureHolder& textures,
+		FontHolder& fonts,
+		SoundPlayer& sounds,
 		Camera& camera_view,
 		int horizontal_cells,
 		int vertical_cells,
@@ -61,9 +63,10 @@ private:
 	void DropTileAt(sf::Vector2i cell_position);
 
 private:
-	const sf::RenderWindow& m_window;
-	const TextureHolder& m_textures;
-	const FontHolder& m_fonts;
+	sf::RenderWindow& m_window;
+	TextureHolder& m_textures;
+	FontHolder& m_fonts;
+	SoundPlayer& m_sounds;
 	Camera& m_camera;
 
 	int m_horizontal_cells;
@@ -74,6 +77,8 @@ private:
 	std::unordered_map<sf::Vector2i, TileNode*, Vector2iHash> m_tile_map;
 	std::unordered_map<TileData, int, TileDataHash> m_inventory;
 
+	GUI::ScrollableContainer m_editor_gui;
+	GUI::ScrollableContainer m_inventory_adder_gui;
 	GUI::ScrollableContainer m_inventory_gui;
 	std::shared_ptr<GUI::TexturedButton> m_selected_button;
 	sf::RectangleShape m_background;

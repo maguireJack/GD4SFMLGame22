@@ -107,6 +107,8 @@ void Application::LoadTextures()
 	m_textures.Load(Textures::kDefault, "Media/Textures/Default.png");
 	m_textures.Load(Textures::kTitleScreen, "Media/Textures/TitleScreen.png");
 	m_textures.Load(Textures::kButtons, "Media/Textures/Buttons.png");
+	m_textures.Load(Textures::kAddButton, "Media/Textures/plus.png");
+	m_textures.Load(Textures::kRemoveButton, "Media/Textures/minus.png");
 
 	m_textures.Load(Textures::kBrunoIdle, "Media/Textures/Bruno/Idle.png");
 	m_textures.Load(Textures::kBrunoRun, "Media/Textures/Bruno/Run.png");
