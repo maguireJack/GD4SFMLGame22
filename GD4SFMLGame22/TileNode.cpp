@@ -14,9 +14,11 @@ namespace
 
 TileNode::TileNode(const std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)>& scene_layers,
 	const sf::Texture& texture,
-	PlatformType platform)
+	PlatformType platform,
+	bool pickable)
 	: SceneNode(scene_layers)
 	, m_platform(platform)
+	, m_pickable(pickable)
 	, m_selected(false)
 	, m_destroy(false)
 	, m_sprite(texture)
@@ -31,6 +33,11 @@ unsigned TileNode::GetCategory() const
 sf::FloatRect TileNode::GetBoundingRect() const
 {
 	return GetWorldTransform().transformRect(m_sprite.getGlobalBounds());
+}
+
+bool TileNode::IsPickable() const
+{
+	return m_pickable;
 }
 
 bool TileNode::IsSelected() const
@@ -62,6 +69,11 @@ void TileNode::SetCellPosition(sf::Vector2i position, float cell_size)
 	m_cell_position = position;
 	setPosition(sf::Vector2f(position) * cell_size);
 
+}
+
+void TileNode::SetPickable(bool pickable)
+{
+	m_pickable = pickable;
 }
 
 bool TileNode::IsDestroyed() const

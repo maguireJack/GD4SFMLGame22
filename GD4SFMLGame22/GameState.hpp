@@ -1,7 +1,7 @@
 #pragma once
 #include <SFML/Graphics/RectangleShape.hpp>
 
-#include "Container.hpp"
+#include "ScrollableContainer.hpp"
 #include "State.hpp"
 #include "World.hpp"
 
@@ -18,7 +18,7 @@ private:
 	Player& m_player;
 	Grid& m_grid;
 
-	GUI::Container m_gui_container;
+	GUI::ScrollableContainer m_gui_container;
 	sf::RectangleShape m_background;
 	sf::Vector2f m_background_position;
 };

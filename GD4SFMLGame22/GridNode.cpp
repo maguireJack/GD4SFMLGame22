@@ -15,7 +15,8 @@ GridNode::GridNode(
 	int horizontal_cells,
 	int vertical_cells,
 	float cell_size,
-	float line_width)
+	float line_width,
+	bool editor_mode)
 	: SceneNode(scene_layers)
 	, m_window(window)
 	, m_textures(textures)
@@ -24,7 +25,10 @@ GridNode::GridNode(
 	, m_vertical_cells(vertical_cells)
 	, m_cell_size(cell_size)
 	, m_line_width(line_width)
+	, m_editor_mode(editor_mode)
 	, m_can_place(true)
+	, m_can_pickup(false)
+	, m_mouse_contains_tile(false)
 	, m_mouse_cell_position(0, 0)
 	, m_selected_tile(nullptr)
 	, m_create_texture(Textures::kDefault)
@@ -34,6 +38,12 @@ GridNode::GridNode(
 
 void GridNode::SetNewTileSettings(PlatformType type, Textures texture)
 {
+	if (m_selected_tile != nullptr)
+	{
+		m_selected_tile->Destroy();
+		m_selected_tile = nullptr;
+	}
+
 	m_create_type = type;
 	m_create_texture = texture;
 }
@@ -65,6 +75,13 @@ bool GridNode::IsInCreateMode() const
 bool GridNode::CellContainsTile(sf::Vector2i cell_position) const
 {
 	return m_tile_map.count(cell_position);
+}
+
+bool GridNode::CellPickable(sf::Vector2i cell_position)
+{
+	return CellContainsTile(cell_position)
+		? m_tile_map[cell_position]->IsPickable()
+		: false;
 }
 
 sf::Vector2i GridNode::GetCellPosition(sf::Vector2i position) const
@@ -121,9 +138,21 @@ void GridNode::DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) co
 	sf::RectangleShape square(sf::Vector2f(m_cell_size, m_cell_size));
 	square.setPosition(sf::Vector2f(m_mouse_cell_position.x * m_cell_size, m_mouse_cell_position.y * m_cell_size));
 
-	sf::Color select_color = m_can_place
-		? sf::Color(255, 255, 255, 150)
-		: sf::Color(255, 0, 0, 150);
+	sf::Color select_color(sf::Color(255, 255, 255, 150));
+	sf::Color red(sf::Color(255, 0, 0, 150));
+
+	if (IsHoldingTile())
+	{
+		select_color = m_can_place
+			? select_color
+			: red;
+	}
+	else 
+	{
+		select_color =  !m_mouse_contains_tile || m_can_pickup
+			? select_color
+			: red;
+	}
 
 	square.setFillColor(select_color);
 
@@ -144,6 +173,19 @@ void GridNode::UpdateCurrent(sf::Time dt, CommandQueue& commands)
 	{
 		CreateTile();
 	}
+	else
+	{
+		if (CellContainsTile(m_mouse_cell_position))
+		{
+			m_mouse_contains_tile = true;
+			m_can_pickup = m_editor_mode || CellPickable(m_mouse_cell_position);
+		}
+		else
+		{
+			m_mouse_contains_tile = false;
+			m_can_pickup = false;
+		}
+	}
 }
 
 void GridNode::HandleEvent(const sf::Event& event, CommandQueue& commands)
@@ -152,11 +194,15 @@ void GridNode::HandleEvent(const sf::Event& event, CommandQueue& commands)
 	{
 		if (event.mouseButton.button == sf::Mouse::Left)
 		{
-			if (IsHoldingTile())
+			if (IsInCreateMode())
+			{
+				SetNewTileSettings(PlatformType::kNone, Textures::kDefault);
+			}
+			else if (IsHoldingTile())
 			{
 				DropTile();
 			}
-			else if (CellContainsTile(m_mouse_cell_position))
+			else
 			{
 				PickupTile();
 			}
@@ -165,9 +211,7 @@ void GridNode::HandleEvent(const sf::Event& event, CommandQueue& commands)
 		{
 			if (IsInCreateMode())
 			{
-				SetNewTileSettings(PlatformType::kNone, Textures::kDefault);
-				m_selected_tile->Destroy();
-				m_selected_tile = nullptr;
+				DropTile();
 			}
 			else if (IsHoldingTile())
 			{
@@ -207,14 +251,17 @@ void GridNode::CreateTile()
 
 void GridNode::PickupTile()
 {
-	TileNode* tile = m_tile_map[m_mouse_cell_position];
-	if (!tile->IsSelected())
+	if (m_can_pickup)
 	{
-		m_picked_up_position = m_mouse_cell_position;
+		TileNode* tile = m_tile_map[m_mouse_cell_position];
+		if (!tile->IsSelected())
+		{
+			m_picked_up_position = m_mouse_cell_position;
 
-		tile->Select();
-		m_selected_tile = tile;
-		m_tile_map.erase(m_mouse_cell_position);
+			tile->Select();
+			m_selected_tile = tile;
+			m_tile_map.erase(m_mouse_cell_position);
+		}
 	}
 }
 

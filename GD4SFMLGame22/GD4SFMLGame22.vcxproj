@@ -173,6 +173,7 @@
     <ClCompile Include="PlatformerCharacter.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="SceneNode.cpp" />
+    <ClCompile Include="ScrollableContainer.cpp" />
     <ClCompile Include="SettingsState.cpp" />
     <ClCompile Include="SpriteNode.cpp" />
     <ClCompile Include="State.cpp" />
@@ -219,6 +220,7 @@
     <ClInclude Include="ResourceHolder.hpp" />
     <ClInclude Include="ResourceIdentifiers.hpp" />
     <ClInclude Include="SceneNode.hpp" />
+    <ClInclude Include="ScrollableContainer.hpp" />
     <ClInclude Include="SettingsState.hpp" />
     <ClInclude Include="SpriteNode.hpp" />
     <ClInclude Include="State.hpp" />

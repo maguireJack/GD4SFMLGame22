@@ -19,7 +19,8 @@ public:
 		int horizontal_cells,
 		int vertical_cells,
 		float cell_size,
-		float line_width);
+		float line_width,
+		bool editor_mode = false);
 
 	void SetNewTileSettings(PlatformType type, Textures texture);
 	void AddTileNode(std::unique_ptr<TileNode> tile_node);
@@ -28,6 +29,7 @@ public:
 	bool IsHoldingTile() const;
 	bool IsInCreateMode() const;
 	bool CellContainsTile(sf::Vector2i cell_position) const;
+	bool CellPickable(sf::Vector2i cell_position);
 
 	sf::Vector2i GetCellPosition(sf::Vector2i position) const;
 	sf::Vector2i GetCellPosition(sf::Vector2f position) const;
@@ -56,8 +58,11 @@ private:
 	int m_vertical_cells;
 	float m_cell_size;
 	float m_line_width;
+	bool m_editor_mode;
 
 	bool m_can_place;
+	bool m_can_pickup;
+	bool m_mouse_contains_tile;
 
 	sf::Vector2i m_mouse_cell_position;
 	sf::Vector2i m_picked_up_position;

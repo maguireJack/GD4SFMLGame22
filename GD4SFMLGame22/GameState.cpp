@@ -9,30 +9,24 @@ GameState::GameState(StateStack& stack, Context context)
 	, m_world(*context.window, *context.textures, *context.fonts, *context.camera, *context.grid)
 	, m_player(*context.player)
 	, m_grid(*context.grid)
-	, m_gui_container(*context.window, *context.camera)
+	, m_gui_container(*context.window, *context.fonts, *context.camera, sf::FloatRect(0, 276, 576, 48), 0.5f)
 {
 	m_background.setFillColor(sf::Color(0, 0, 0, 150));
 	m_background.setSize(sf::Vector2f(576, 48));
 	m_background_position = sf::Vector2f(0, 276);
 
-	int i = 0;
-	float last_right_position = 0;
-
-	for (int texture_index = static_cast<int>(Textures::kGrassTiles0); texture_index <= static_cast<int>(Textures::kGrassTiles10); texture_index++)
+	for (int texture_index = static_cast<int>(Textures::kGrassTiles0); texture_index <= static_cast<int>(Textures::kGrassTiles24); texture_index++)
 	{
-		last_right_position += 16;
 		auto texture = static_cast<Textures>(texture_index);
 		auto button = std::make_shared<GUI::TexturedButton>(*context.fonts, *context.textures, texture);
-		button->setPosition(last_right_position + 16, 292);
+		button->setPosition(16, 292);
 		button->SetCallback([this, texture_index, button]()
 			{
 				m_grid.Node().SetNewTileSettings(PlatformType::kStatic, static_cast<Textures>(texture_index));
 				m_gui_container.DeactivateAllExcept(button);
 			});
 
-		last_right_position += context.textures->Get(static_cast<Textures>(texture_index)).getSize().x;
-		m_gui_container.Pack(button);
-		i++;
+		m_gui_container.Pack(button, 16);
 	}
 }
 
@@ -54,6 +48,7 @@ bool GameState::Update(sf::Time dt)
 	const sf::Vector2f camera_position = m_grid.Node().GetCamera().getPosition();
 	m_background.setPosition(camera_position + m_background_position);
 	m_gui_container.setPosition(camera_position);
+	//m_background.setPosition(m_background_position);
 
 	return true;
 }

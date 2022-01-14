@@ -14,6 +14,8 @@ public:
 
 	AnimatedSprite CurrentSpriteState() const;
 	sf::FloatRect GetBoundingRect() const;
+	sf::FloatRect GetLargestBounds() const;
+	sf::FloatRect GetSmallestBounds() const;
 	void ChangeState(int index);
 	void Pause();
 	void Play();
@@ -21,9 +23,13 @@ public:
 
 private:
 	AnimatedSprite& CurrentSpriteState();
+	void CalculateLargestAndSmallest();
 
 private:
 	std::vector<AnimatedSprite> m_sprite_states;
 	int m_current_sprite_index;
 	bool m_flipped;
+
+	int m_largest_bounds_index;
+	int m_smallest_bounds_index;
 }; 

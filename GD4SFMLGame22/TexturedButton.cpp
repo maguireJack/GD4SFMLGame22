@@ -13,7 +13,6 @@
 
 namespace GUI
 {
-
 	TexturedButton::TexturedButton(const FontHolder& fonts, const TextureHolder& textures, Textures texture)
 		: m_text("", fonts.Get(Fonts::Main), 16)
 		, m_is_toggle(true)

@@ -61,7 +61,6 @@ bool PauseState::HandleEvent(const sf::Event& event)
 
 	if (event.key.code == sf::Keyboard::BackSpace)
 	{
-		// Escape pressed, remove itself to return to the game
 		RequestStackClear();
 		RequestStackPush(StateID::kMenu);
 	}

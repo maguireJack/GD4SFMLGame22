@@ -13,16 +13,19 @@ public:
 	TileNode(
 		const std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)>& scene_layers,
 		const sf::Texture& texture,
-		PlatformType platform);
+		PlatformType platform,
+		bool pickable = false);
 
 	unsigned GetCategory() const override;
 	sf::FloatRect GetBoundingRect() const override;
 
+	bool IsPickable() const;
 	bool IsSelected() const;
 	void Select();
 	void Deselect();
 	void Destroy();
 	void SetCellPosition(sf::Vector2i position, float cell_size);
+	void SetPickable(bool pickable);
 
 	bool IsDestroyed() const override;
 
@@ -31,6 +34,7 @@ private:
 
 private:
 	PlatformType m_platform;
+	bool m_pickable;
 	sf::Vector2i m_cell_position;
 	bool m_selected;
 	bool m_destroy;

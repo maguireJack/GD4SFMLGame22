@@ -51,7 +51,7 @@ unsigned PlatformerCharacter::GetCategory() const
 
 sf::FloatRect PlatformerCharacter::GetBoundingRect() const
 {
-	return GetWorldTransform().transformRect(m_artist.GetBoundingRect());
+	return GetWorldTransform().transformRect(m_artist.GetSmallestBounds());
 }
 
 void PlatformerCharacter::Jump()
@@ -59,7 +59,7 @@ void PlatformerCharacter::Jump()
 	if (!IsJumping() && m_air_time <= m_coyote_time)
 	{
 		m_jumping = true;
-		SetVelocity(GetVelocity().x, -Table[static_cast<int>(m_type)].m_jump_height);
+		SetVelocity(GetVelocity().x, -Table[static_cast<int>(m_type)].m_jump_force);
 	}
 }
 

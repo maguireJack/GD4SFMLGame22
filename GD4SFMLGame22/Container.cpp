@@ -25,7 +25,7 @@ namespace GUI
 	}
 
 	//TODO pass by reference as resharper is suggesting?
-	void Container::Pack(Component::Ptr component)
+	bool Container::Pack(Component::Ptr component)
 	{
 		component->SetParent(this);
 		m_children.emplace_back(component);
@@ -33,6 +33,8 @@ namespace GUI
 		{
 			Select(m_children.size() - 1);
 		}
+
+		return true;
 	}
 
 	bool Container::IsSelectable() const
@@ -80,7 +82,7 @@ namespace GUI
 			{
 				SelectNext();
 			}
-			else if(event.key.code == sf::Keyboard::Return || event.key.code == sf::Keyboard::Space)
+			else if(event.key.code == sf::Keyboard::Return)
 			{
 				if(HasSelection())
 				{
