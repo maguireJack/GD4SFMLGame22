@@ -15,6 +15,7 @@ namespace GUI
 	public:
 		Container(sf::RenderWindow& window, Camera& camera);
 		void DeactivateAllExcept(const Component::Ptr& exception);
+		void DeactivateAll();
 		virtual bool Pack(Component::Ptr component);
 
 		bool IsSelectable() const override;

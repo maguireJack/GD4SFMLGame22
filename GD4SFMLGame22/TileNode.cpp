@@ -12,16 +12,17 @@ namespace
 	const std::vector<PlatformData> Table = InitializePlatformData();
 }
 
-TileNode::TileNode(const std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)>& scene_layers,
-	const sf::Texture& texture,
+TileNode::TileNode(
+	const TextureHolder& textures,
+	const std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)>& scene_layers,
+	Textures texture,
 	PlatformType platform,
 	bool pickable)
 	: SceneNode(scene_layers)
-	, m_platform(platform)
-	, m_pickable(pickable)
+	, m_data(texture, platform, pickable)
 	, m_selected(false)
 	, m_destroy(false)
-	, m_sprite(texture)
+	, m_sprite(textures.Get(texture))
 {
 }
 
@@ -37,7 +38,7 @@ sf::FloatRect TileNode::GetBoundingRect() const
 
 bool TileNode::IsPickable() const
 {
-	return m_pickable;
+	return m_data.IsPickable();
 }
 
 bool TileNode::IsSelected() const
@@ -66,14 +67,29 @@ void TileNode::Destroy()
 
 void TileNode::SetCellPosition(sf::Vector2i position, float cell_size)
 {
-	m_cell_position = position;
+	m_data.SetCellPosition(position);
 	setPosition(sf::Vector2f(position) * cell_size);
 
 }
 
 void TileNode::SetPickable(bool pickable)
 {
-	m_pickable = pickable;
+	m_data.SetPickable(pickable);
+}
+
+TileData TileNode::GetData() const
+{
+	return m_data;
+}
+
+PlatformType TileNode::GetPlatformType() const
+{
+	return m_data.GetPlatformType();
+}
+
+Textures TileNode::GetTexture() const
+{
+	return m_data.GetTexture();
 }
 
 bool TileNode::IsDestroyed() const

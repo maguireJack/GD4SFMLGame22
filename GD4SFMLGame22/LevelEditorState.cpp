@@ -48,7 +48,6 @@ bool LevelEditorState::Update(sf::Time dt)
 	const sf::Vector2f camera_position = m_grid.Node().GetCamera().getPosition();
 	m_background.setPosition(camera_position + m_background_position);
 	m_gui_container.setPosition(camera_position);
-	//m_background.setPosition(m_background_position);
 
 	return true;
 }

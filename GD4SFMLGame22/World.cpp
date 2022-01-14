@@ -126,6 +126,7 @@ void World::BuildScene()
 			m_scene_layers,
 			m_window,
 			m_textures,
+			m_fonts,
 			m_camera,
 			m_world_bounds.width/16,
 			m_world_bounds.height/16,
@@ -136,7 +137,7 @@ void World::BuildScene()
 	m_grid.SetNode(grid_node.get());
 	m_scene_layers[static_cast<int>(Layers::kGrid)]->AttachChild(std::move(grid_node));
 
-	std::unique_ptr<TileNode> tile_node(new TileNode(m_scene_layers, m_textures.Get(Textures::kGrassTiles0), PlatformType::kStatic));
+	std::unique_ptr<TileNode> tile_node(new TileNode(m_textures, m_scene_layers, Textures::kGrassTiles0, PlatformType::kStatic));
 	tile_node->setPosition(16 * 8, 16 * 22);
 	m_grid.Node().AddTileNode(std::move(tile_node));
 

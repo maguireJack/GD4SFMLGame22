@@ -137,7 +137,7 @@ namespace GUI
 			{
 				const sf::Vector2f mouse = m_window.mapPixelToCoords(sf::Mouse::getPosition(m_window), m_camera.GetView());
 				const auto child = m_children[i];
-				if (child->GetBoundingRect().contains(mouse.x, mouse.y))
+				if (child->IsSelectable() && child->GetBoundingRect().contains(mouse.x, mouse.y))
 				{
 					Select(i);
 				}

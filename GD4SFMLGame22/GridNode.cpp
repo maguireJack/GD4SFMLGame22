@@ -1,17 +1,18 @@
 #include "GridNode.hpp"
 
-#include <iostream>
-#include <ostream>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
+#include <utility>
 
 #include "Application.hpp"
+#include "TexturedButton.hpp"
 
 GridNode::GridNode(
 	const std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)>& scene_layers,
-	const sf::RenderWindow& window,
+	sf::RenderWindow& window,
 	const TextureHolder& textures,
-	const Camera& camera,
+	const FontHolder& fonts,
+	Camera& camera,
 	int horizontal_cells,
 	int vertical_cells,
 	float cell_size,
@@ -20,12 +21,16 @@ GridNode::GridNode(
 	: SceneNode(scene_layers)
 	, m_window(window)
 	, m_textures(textures)
+	, m_fonts(fonts)
 	, m_camera(camera)
 	, m_horizontal_cells(horizontal_cells)
 	, m_vertical_cells(vertical_cells)
 	, m_cell_size(cell_size)
 	, m_line_width(line_width)
+	, m_inventory_gui(window, fonts, camera, sf::FloatRect(0, 276, 576, 48), 0.5f)
+	, m_selected_button(nullptr)
 	, m_editor_mode(editor_mode)
+	, m_inventory_mode(false)
 	, m_can_place(true)
 	, m_can_pickup(false)
 	, m_mouse_contains_tile(false)
@@ -34,18 +39,45 @@ GridNode::GridNode(
 	, m_create_texture(Textures::kDefault)
 	, m_create_type(PlatformType::kNone)
 {
+	m_background.setFillColor(sf::Color(0, 0, 0, 150));
+	m_background.setSize(sf::Vector2f(576, 48));
+	m_background_position = sf::Vector2f(0, 276);
+
+	for (int texture_index = static_cast<int>(Textures::kGrassTiles0); texture_index <= static_cast<int>(Textures::kGrassTiles24); texture_index++)
+	{
+		auto texture = static_cast<Textures>(texture_index);
+		auto button = std::make_shared<GUI::TexturedButton>(m_fonts, m_textures, texture);
+		button->setPosition(16, 292);
+		button->SetCallback([this, texture, button]()
+			{
+				SetNewTileSettings(PlatformType::kStatic, texture);
+				m_inventory_gui.DeactivateAllExcept(button);
+				m_inventory_mode = true;
+				m_selected_button = button;
+			});
+
+		AddToInventory(PlatformType::kStatic, texture);
+
+		m_inventory_gui.Pack(button, 16);
+	}
 }
 
 void GridNode::SetNewTileSettings(PlatformType type, Textures texture)
 {
 	if (m_selected_tile != nullptr)
 	{
+		m_inventory_gui.DeactivateAll();
 		m_selected_tile->Destroy();
 		m_selected_tile = nullptr;
 	}
 
 	m_create_type = type;
 	m_create_texture = texture;
+}
+
+void GridNode::ExitCreateMode()
+{
+	SetNewTileSettings(PlatformType::kNone, Textures::kDefault);
 }
 
 void GridNode::AddTileNode(std::unique_ptr<TileNode> tile_node)
@@ -82,6 +114,55 @@ bool GridNode::CellPickable(sf::Vector2i cell_position)
 	return CellContainsTile(cell_position)
 		? m_tile_map[cell_position]->IsPickable()
 		: false;
+}
+
+int GridNode::GetInventoryCount(const TileData& tile)
+{
+	if (m_inventory.count(tile))
+	{
+		return m_inventory[tile];
+	}
+	return 0;
+}
+
+void GridNode::SelectFromInventory(TileData& tile)
+{
+	if (!IsHoldingTile() && m_inventory.count(tile))
+	{
+		m_inventory_mode = true;
+		SetNewTileSettings(tile.GetPlatformType(), tile.GetTexture());
+	}
+}
+
+void GridNode::AddToInventory(TileData& tile, int count)
+{
+	if (m_inventory.count(tile))
+	{
+		m_inventory[tile] += count;
+	}
+	else
+	{
+		m_inventory.emplace(tile, count);
+	}
+}
+
+void GridNode::AddToInventory(PlatformType platform, Textures texture, int count)
+{
+	TileData tile(texture, platform);
+	AddToInventory(tile, count);
+}
+
+void GridNode::RemoveFromInventory(const TileData& tile, int count)
+{
+	if (m_inventory.count(tile))
+	{
+		m_inventory[tile] -= count;
+
+		if (m_inventory[tile] <= 0)
+		{
+			m_inventory.erase(tile);
+		}
+	}
 }
 
 sf::Vector2i GridNode::GetCellPosition(sf::Vector2i position) const
@@ -157,6 +238,8 @@ void GridNode::DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) co
 	square.setFillColor(select_color);
 
 	target.draw(square, states);
+	target.draw(m_background, states);
+	target.draw(m_inventory_gui, states);
 }
 
 void GridNode::UpdateCurrent(sf::Time dt, CommandQueue& commands)
@@ -186,17 +269,23 @@ void GridNode::UpdateCurrent(sf::Time dt, CommandQueue& commands)
 			m_can_pickup = false;
 		}
 	}
+
+	const sf::Vector2f camera_position = GetCamera().getPosition();
+	m_background.setPosition(camera_position + m_background_position);
+	m_inventory_gui.setPosition(camera_position);
 }
 
 void GridNode::HandleEvent(const sf::Event& event, CommandQueue& commands)
 {
+	m_inventory_gui.HandleEvent(event);
+
 	if (event.type == sf::Event::MouseButtonPressed)
 	{
 		if (event.mouseButton.button == sf::Mouse::Left)
 		{
 			if (IsInCreateMode())
 			{
-				SetNewTileSettings(PlatformType::kNone, Textures::kDefault);
+				ExitCreateMode();
 			}
 			else if (IsHoldingTile())
 			{
@@ -209,7 +298,27 @@ void GridNode::HandleEvent(const sf::Event& event, CommandQueue& commands)
 		}
 		else if (event.mouseButton.button == sf::Mouse::Right)
 		{
-			if (IsInCreateMode())
+			if (!IsHoldingTile())
+			{
+				return;
+			}
+
+			if (m_inventory_mode)
+			{
+				if (IsHoldingTile() && DropTile())
+				{
+					const TileData tile(m_create_texture, m_create_type);
+					RemoveFromInventory(tile, 1);
+
+					if (!m_inventory.count(tile))
+					{
+						ExitCreateMode();
+						m_inventory_mode = false;
+						m_selected_button->SetSelectable(false);
+					}
+				}
+			}
+			else if (IsInCreateMode())
 			{
 				DropTile();
 			}
@@ -239,17 +348,20 @@ void GridNode::HandleEvent(const sf::Event& event, CommandQueue& commands)
 	}
 }
 
-void GridNode::CreateTile()
+bool GridNode::CreateTile()
 {
 	if (!IsHoldingTile() && IsInCreateMode())
 	{
-		std::unique_ptr<TileNode> tile_node(new TileNode(GetSceneLayers(), m_textures.Get(m_create_texture), m_create_type));
+		std::unique_ptr<TileNode> tile_node(new TileNode(m_textures, GetSceneLayers(), m_create_texture, m_create_type));
 		m_selected_tile = tile_node.get();
 		GetSceneLayers()[static_cast<int>(Layers::kPlatforms)]->AttachChild(std::move(tile_node));
+
+		return true;
 	}
+	return false;
 }
 
-void GridNode::PickupTile()
+bool GridNode::PickupTile()
 {
 	if (m_can_pickup)
 	{
@@ -261,20 +373,25 @@ void GridNode::PickupTile()
 			tile->Select();
 			m_selected_tile = tile;
 			m_tile_map.erase(m_mouse_cell_position);
+
+			return true;
 		}
 	}
+	return false;
 }
 
-void GridNode::DropTile()
+bool GridNode::DropTile()
 {
-	if (m_can_place)
+	if (IsHoldingTile() && m_can_place)
 	{
 		m_selected_tile->Deselect();
 		m_selected_tile->SetCellPosition(m_mouse_cell_position, m_cell_size);
 		m_tile_map[m_mouse_cell_position] = m_selected_tile;
-
 		m_selected_tile = nullptr;
+
+		return true;
 	}
+	return false;
 }
 
 void GridNode::DropTileAt(sf::Vector2i cell_position)

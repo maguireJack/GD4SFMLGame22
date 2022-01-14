@@ -180,6 +180,7 @@
     <ClCompile Include="StateStack.cpp" />
     <ClCompile Include="TextNode.cpp" />
     <ClCompile Include="TexturedButton.cpp" />
+    <ClCompile Include="TileData.cpp" />
     <ClCompile Include="TileNode.cpp" />
     <ClCompile Include="TitleState.cpp" />
     <ClCompile Include="Utility.cpp" />
@@ -229,7 +230,9 @@
     <ClInclude Include="TextNode.hpp" />
     <ClInclude Include="TexturedButton.hpp" />
     <ClInclude Include="Textures.hpp" />
+    <ClInclude Include="TileData.hpp" />
     <ClInclude Include="TileNode.hpp" />
+    <ClInclude Include="TileDataHash.hpp" />
     <ClInclude Include="TitleState.hpp" />
     <ClInclude Include="Utility.hpp" />
     <ClInclude Include="Vector2iHash.hpp" />

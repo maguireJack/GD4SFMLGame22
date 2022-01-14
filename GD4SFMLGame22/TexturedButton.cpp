@@ -16,6 +16,7 @@ namespace GUI
 	TexturedButton::TexturedButton(const FontHolder& fonts, const TextureHolder& textures, Textures texture)
 		: m_text("", fonts.Get(Fonts::Main), 16)
 		, m_is_toggle(true)
+		, m_is_selectable(true)
 	{
 		m_sprite.setTexture(textures.Get(texture));
 		sf::FloatRect bounds = m_sprite.getLocalBounds();
@@ -51,7 +52,18 @@ namespace GUI
 
 	bool TexturedButton::IsSelectable() const
 	{
-		return true;
+		return m_is_selectable;
+	}
+
+	void TexturedButton::SetSelectable(bool selectable)
+	{
+		if (!selectable)
+		{
+			Deactivate();
+			Deselect();
+		}
+
+		m_is_selectable = selectable;
 	}
 
 	void TexturedButton::Activate()
@@ -105,6 +117,13 @@ namespace GUI
 		{
 			sf::RectangleShape shape;
 			shape.setFillColor(sf::Color(68, 160, 253, 60));
+			shape.setSize(sf::Vector2f(m_sprite.getGlobalBounds().width, m_sprite.getGlobalBounds().height));
+			target.draw(shape, states);
+		}
+		else if (!IsSelectable())
+		{
+			sf::RectangleShape shape;
+			shape.setFillColor(sf::Color(43, 45, 47, 200));
 			shape.setSize(sf::Vector2f(m_sprite.getGlobalBounds().width, m_sprite.getGlobalBounds().height));
 			target.draw(shape, states);
 		}

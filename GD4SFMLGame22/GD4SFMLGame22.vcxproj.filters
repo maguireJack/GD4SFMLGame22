@@ -106,6 +106,7 @@
     <ClCompile Include="ScrollableContainer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TileData.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.hpp">
@@ -252,6 +253,10 @@
     <ClInclude Include="ScrollableContainer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TileDataHash.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TileData.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">

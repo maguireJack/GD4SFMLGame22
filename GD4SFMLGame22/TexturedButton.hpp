@@ -26,6 +26,7 @@ namespace GUI
 
 		sf::FloatRect GetBoundingRect() const override;
 		bool IsSelectable() const override;
+		void SetSelectable(bool selectable);
 		void Activate() override;
 		void HandleEvent(const sf::Event& event) override;
 
@@ -37,6 +38,7 @@ namespace GUI
 		sf::Sprite m_sprite;
 		sf::Text m_text;
 		bool m_is_toggle;
+		bool m_is_selectable;
 	};
 }
 

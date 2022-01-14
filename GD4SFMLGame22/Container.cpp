@@ -24,6 +24,14 @@ namespace GUI
 		}
 	}
 
+	void Container::DeactivateAll()
+	{
+		for (const auto& child : m_children)
+		{
+			child->Deactivate();
+		}
+	}
+
 	//TODO pass by reference as resharper is suggesting?
 	bool Container::Pack(Component::Ptr component)
 	{

@@ -6,13 +6,15 @@
 #include "PlatformType.hpp"
 #include "ResourceIdentifiers.hpp"
 #include "SceneNode.hpp"
+#include "TileData.hpp"
 
 class TileNode : public SceneNode
 {
 public:
 	TileNode(
+		const TextureHolder& textures,
 		const std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)>& scene_layers,
-		const sf::Texture& texture,
+		Textures texture,
 		PlatformType platform,
 		bool pickable = false);
 
@@ -27,15 +29,17 @@ public:
 	void SetCellPosition(sf::Vector2i position, float cell_size);
 	void SetPickable(bool pickable);
 
+	TileData GetData() const;
+	PlatformType GetPlatformType() const;
+	Textures GetTexture() const;
+
 	bool IsDestroyed() const override;
 
 private:
 	void DrawCurrent(sf::RenderTarget&, sf::RenderStates states) const override;
 
 private:
-	PlatformType m_platform;
-	bool m_pickable;
-	sf::Vector2i m_cell_position;
+	TileData m_data;
 	bool m_selected;
 	bool m_destroy;
 	sf::Sprite m_sprite;
