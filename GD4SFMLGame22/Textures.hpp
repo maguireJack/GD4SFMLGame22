@@ -2,6 +2,12 @@
 enum class Textures
 {
 	kDefault,
+
+	kTitleScreen,
+	kButtons,
+
+	kParticle,
+
 	kBrunoIdle,
 	kBrunoRun,
 	kBrunoJump,
@@ -43,10 +49,4 @@ enum class Textures
 	kGrassTiles22,
 	kGrassTiles23,
 	kGrassTiles24,
-
-
-	kTitleScreen,
-	kButtonNormal,
-	kButtonSelected,
-	kButtonPressed
 };

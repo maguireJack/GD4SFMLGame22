@@ -11,10 +11,12 @@
 
 #include <array>
 
+#include "BloomEffect.hpp"
 #include "Camera.hpp"
 #include "CommandQueue.hpp"
 #include "Grid.hpp"
 #include "PlatformerCharacter.hpp"
+#include "SoundPlayer.hpp"
 
 //Foward
 namespace sf
@@ -26,7 +28,7 @@ namespace sf
 class World : private sf::NonCopyable
 {
 public:
-	explicit World(sf::RenderWindow& window, TextureHolder& textures, FontHolder& font, Camera& camera, Grid& grid);
+	explicit World(sf::RenderWindow& window, TextureHolder& textures, FontHolder& font, SoundPlayer& sounds, Camera& camera, Grid& grid);
 	void Update(sf::Time dt);
 	void Draw();
 	CommandQueue& GetCommandQueue();
@@ -37,6 +39,7 @@ private:
 	sf::IntRect GetBackgroundRect(sf::Texture& texture) const;
 
 	void DestroyEntitiesOutsideView();
+	void UpdateSounds();
 
 private:
 	struct SpawnPoint
@@ -46,6 +49,7 @@ private:
 
 private:
 	sf::RenderWindow& m_window;
+	sf::RenderTexture m_scene_texture;
 	TextureHolder& m_textures;
 	FontHolder& m_fonts;
 	Camera& m_camera;
@@ -58,5 +62,7 @@ private:
 	sf::Vector2f m_spawn_position;
 	float m_scrollspeed;
 	PlatformerCharacter* m_player;
+
+	BloomEffect m_bloom_effect;
 };
 

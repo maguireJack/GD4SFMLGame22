@@ -1,21 +1,21 @@
 #include "Application.hpp"
 
-#include "State.hpp"
-#include "StateID.hpp"
-#include "TitleState.hpp"
 #include "GameOverState.hpp"
 #include "GameState.hpp"
 #include "LevelEditorState.hpp"
 #include "MenuState.hpp"
 #include "PauseState.hpp"
 #include "SettingsState.hpp"
+#include "State.hpp"
+#include "StateID.hpp"
+#include "TitleState.hpp"
 
 const sf::Time Application::kTimePerFrame = sf::seconds(1.f / 60.f);
 
 Application::Application()
 	: m_window(sf::VideoMode(1920, 1080), "States", sf::Style::Close)
 	, m_camera(m_window.getDefaultView())
-	, m_stack(State::Context(m_window, m_textures, m_fonts, m_camera, m_player, m_grid))
+	, m_stack(State::Context(m_window, m_textures, m_fonts, m_music, m_sounds, m_camera, m_player, m_grid))
 	, m_statistics_numframes(0)
 {
 	m_window.setKeyRepeatEnabled(false);
@@ -36,6 +36,7 @@ void Application::Run()
 {
 	sf::Clock clock;
 	sf::Time time_since_last_update = sf::Time::Zero;
+
 	while (m_window.isOpen())
 	{
 		sf::Time elapsedTime = clock.restart();
@@ -47,7 +48,7 @@ void Application::Run()
 			ProcessInput();
 			Update(kTimePerFrame);
 
-			if(m_stack.IsEmpty())
+			if (m_stack.IsEmpty())
 			{
 				m_window.close();
 			}
@@ -105,9 +106,7 @@ void Application::LoadTextures()
 {
 	m_textures.Load(Textures::kDefault, "Media/Textures/Default.png");
 	m_textures.Load(Textures::kTitleScreen, "Media/Textures/TitleScreen.png");
-	m_textures.Load(Textures::kButtonNormal, "Media/Textures/ButtonNormal.png");
-	m_textures.Load(Textures::kButtonSelected, "Media/Textures/ButtonSelected.png");
-	m_textures.Load(Textures::kButtonPressed, "Media/Textures/ButtonPressed.png");
+	m_textures.Load(Textures::kButtons, "Media/Textures/Buttons.png");
 
 	m_textures.Load(Textures::kBrunoIdle, "Media/Textures/Bruno/Idle.png");
 	m_textures.Load(Textures::kBrunoRun, "Media/Textures/Bruno/Run.png");

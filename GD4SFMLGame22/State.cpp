@@ -2,13 +2,15 @@
 
 #include "StateStack.hpp"
 
-State::Context::Context(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts, Camera& camera, Player& player, Grid& grid)
-: window(&window)
-, textures(&textures)
-, fonts(&fonts)
-, camera(&camera)
-, player(&player)
-, grid(&grid)
+State::Context::Context(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts, MusicPlayer& music, SoundPlayer& sounds, Camera& camera, Player& player, Grid& grid)
+	: window(&window)
+	, textures(&textures)
+	, fonts(&fonts)
+	, music(&music)
+	, sounds(&sounds)
+	, camera(&camera)
+	, player(&player)
+	, grid(&grid)
 {
 }
 

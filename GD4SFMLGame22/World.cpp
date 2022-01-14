@@ -6,7 +6,7 @@
 #include "GridNode.hpp"
 #include "Utility.hpp"
 
-World::World(sf::RenderWindow& window, TextureHolder& textures, FontHolder& font, Camera& camera, Grid& grid)
+World::World(sf::RenderWindow& window, TextureHolder& textures, FontHolder& font, SoundPlayer& sounds, Camera& camera, Grid& grid)
 	: m_window(window)
 	, m_textures(textures)
 	, m_fonts(font)
@@ -19,6 +19,8 @@ World::World(sf::RenderWindow& window, TextureHolder& textures, FontHolder& font
 	, m_scrollspeed(-50.f)
 	, m_player(nullptr)
 {
+	m_scene_texture.create(m_window.getSize().x, m_window.getSize().y);
+
 	BuildScene();
 	m_camera.SetCenter(m_spawn_position);
 	m_camera.SetSize(384 * 1.5f, 216 * 1.5f);
@@ -54,9 +56,21 @@ void World::Update(sf::Time dt)
 
 void World::Draw()
 {
-	m_window.setView(m_camera.GetView());
-	m_window.draw(m_scenegraph);
+	if (PostEffect::IsSupported())
+	{
+		m_scene_texture.clear();
+		m_scene_texture.setView(m_camera.GetView());
+		m_scene_texture.draw(m_scenegraph);
+		m_scene_texture.display();
+		m_bloom_effect.Apply(m_scene_texture, m_window);
+	}
+	else
+	{
+		m_window.setView(m_camera.GetView());
+		m_window.draw(m_scenegraph);
+	}
 }
+
 
 void World::BuildScene()
 {
@@ -173,4 +187,12 @@ void World::DestroyEntitiesOutsideView()
 	//	}
 	//});
 	//m_command_queue.Push(command);
+}
+
+void World::UpdateSounds()
+{
+	// Set listener's position to player position
+	//m_sounds.SetListenerPosition(m_player_aircraft->GetWorldPosition());
+	// Remove unused sounds
+	//m_sounds.RemoveStoppedSounds();
 }

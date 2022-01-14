@@ -8,5 +8,7 @@ namespace Category
 		kScene = 1 << 0,
 		kPlayerCharacter = 1 << 1,
 		kPlatform = 1 << 2,
+		kParticleSystem = 1 << 3,
+		kSoundEffect = 1 << 4,
 	};
 }

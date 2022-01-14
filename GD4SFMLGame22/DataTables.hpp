@@ -1,5 +1,7 @@
 #pragma once
 #include <vector>
+#include <SFML/Graphics/Color.hpp>
+#include <SFML/System/Time.hpp>
 #include <SFML/System/Vector2.hpp>
 
 #include "ResourceIdentifiers.hpp"
@@ -45,5 +47,12 @@ struct PlatformerCharacterData
 	PlatformerAnimationData m_animation_data;
 };
 
+struct ParticleData
+{
+	sf::Color m_color;
+	sf::Time m_lifetime;
+};
+
 std::vector<PlatformData> InitializePlatformData();
 std::vector<PlatformerCharacterData> InitializePlatformerCharacterData();
+std::vector<ParticleData> InitializeParticleData();

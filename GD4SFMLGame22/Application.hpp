@@ -4,6 +4,7 @@
 #include <SFML/System/Time.hpp>
 
 #include "Grid.hpp"
+#include "MusicPlayer.hpp"
 #include "Player.hpp"
 #include "ResourceHolder.hpp"
 #include "ResourceIdentifiers.hpp"
@@ -32,6 +33,9 @@ private:
 
 	TextureHolder m_textures;
 	FontHolder m_fonts;
+
+	MusicPlayer m_music;
+	SoundPlayer m_sounds;
 
 	StateStack m_stack;
 

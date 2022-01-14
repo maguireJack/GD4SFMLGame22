@@ -6,7 +6,7 @@
 
 LevelEditorState::LevelEditorState(StateStack& stack, Context context)
 	: State(stack, context)
-	, m_world(*context.window, *context.textures, *context.fonts, *context.camera, *context.grid)
+	, m_world(*context.window, *context.textures, *context.fonts, *context.sounds, *context.camera, *context.grid)
 	, m_player(*context.player)
 	, m_grid(*context.grid)
 	, m_gui_container(*context.window, *context.fonts, *context.camera, sf::FloatRect(0, 276, 576, 48), 0.5f)

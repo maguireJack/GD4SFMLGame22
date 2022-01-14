@@ -5,7 +5,7 @@ void ResourceHolder<Resource, Identifier>::Load(Identifier id, const std::string
 	std::unique_ptr<Resource> resource(new Resource());
 	if(!resource->loadFromFile(filename))
 	{
-		throw std::runtime_error("ResouceHolder::load - Failed to load " + filename);
+		throw std::runtime_error("ResourceHolder::Load - Failed to load " + filename);
 	}
 	//If loading successful insert resource into map
 	InsertResource(id, std::move(resource));
@@ -22,7 +22,7 @@ void ResourceHolder<Resource, Identifier>::Load(Identifier id, const std::string
 		throw std::runtime_error("ResourceHolder::Load - Failed to load " + filename);
 	}
 	//If loading successful insert resource into map
-	insertResource(id, std::move(resource));
+	InsertResource(id, std::move(resource));
 }
 
 template<typename Resource, typename Identifier>

@@ -7,6 +7,9 @@
 
 #include <memory>
 
+#include "MusicPlayer.hpp"
+#include "SoundPlayer.hpp"
+
 namespace sf
 {
 	class RenderWindow;
@@ -24,10 +27,12 @@ public:
 
 	struct Context
 	{
-		Context(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts, Camera& camera, Player& player, Grid& grid);
+		Context(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts, MusicPlayer& music, SoundPlayer& sounds, Camera& camera, Player& player, Grid& grid);
 		sf::RenderWindow* window;
 		TextureHolder* textures;
 		FontHolder* fonts;
+		MusicPlayer* music;
+		SoundPlayer* sounds;
 		Camera* camera;
 		Player* player;
 		Grid* grid;

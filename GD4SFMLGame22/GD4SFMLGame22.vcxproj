@@ -94,7 +94,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\Users\Jack\OneDrive - Dundalk Institute of Technology\Desktop\SFML-2.5.1-windows-vc15-32-bit\SFML-2.5.1\lib;D:\AProgramming\C++\Repos\SFML_Starting\SFML-2.5.1\lib;C:\Users\jmagu\Desktop\SFML-2.5.1-windows-vc15-32-bit\SFML-2.5.1\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-system-d.lib;sfml-window-d.lib;sfml-graphics-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sfml-system-d.lib;sfml-window-d.lib;sfml-graphics-d.lib;sfml-audio-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -152,6 +152,7 @@
     <ClCompile Include="AnimatedSprite.cpp" />
     <ClCompile Include="AnimatedSpriteArtist.cpp" />
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="BloomEffect.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Collision.cpp" />
@@ -160,6 +161,7 @@
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="Container.cpp" />
     <ClCompile Include="DataTables.cpp" />
+    <ClCompile Include="EmitterNode.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="GameOverState.cpp" />
     <ClCompile Include="GameState.cpp" />
@@ -169,12 +171,17 @@
     <ClCompile Include="LevelEditorState.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MenuState.cpp" />
+    <ClCompile Include="MusicPlayer.cpp" />
+    <ClCompile Include="ParticleNode.cpp" />
     <ClCompile Include="PauseState.cpp" />
     <ClCompile Include="PlatformerCharacter.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PostEffect.cpp" />
     <ClCompile Include="SceneNode.cpp" />
     <ClCompile Include="ScrollableContainer.cpp" />
     <ClCompile Include="SettingsState.cpp" />
+    <ClCompile Include="SoundNode.cpp" />
+    <ClCompile Include="SoundPlayer.cpp" />
     <ClCompile Include="SpriteNode.cpp" />
     <ClCompile Include="State.cpp" />
     <ClCompile Include="StateStack.cpp" />
@@ -190,7 +197,9 @@
     <ClInclude Include="AnimatedSprite.hpp" />
     <ClInclude Include="AnimatedSpriteArtist.hpp" />
     <ClInclude Include="Application.hpp" />
+    <ClInclude Include="BloomEffect.hpp" />
     <ClInclude Include="Button.hpp" />
+    <ClInclude Include="ButtonType.hpp" />
     <ClInclude Include="Camera.hpp" />
     <ClInclude Include="Category.hpp" />
     <ClInclude Include="Collision.hpp" />
@@ -200,6 +209,7 @@
     <ClInclude Include="Component.hpp" />
     <ClInclude Include="Container.hpp" />
     <ClInclude Include="DataTables.hpp" />
+    <ClInclude Include="EmitterNode.hpp" />
     <ClInclude Include="Entity.hpp" />
     <ClInclude Include="Fonts.hpp" />
     <ClInclude Include="GameOverState.hpp" />
@@ -211,6 +221,11 @@
     <ClInclude Include="LevelEditorState.hpp" />
     <ClInclude Include="MenuState.hpp" />
     <ClInclude Include="MissionStatus.hpp" />
+    <ClInclude Include="MusicPlayer.hpp" />
+    <ClInclude Include="MusicThemes.hpp" />
+    <ClInclude Include="Particle.hpp" />
+    <ClInclude Include="ParticleNode.hpp" />
+    <ClInclude Include="ParticleType.hpp" />
     <ClInclude Include="PauseState.hpp" />
     <ClInclude Include="PlatformerAnimationState.hpp" />
     <ClInclude Include="PlatformerCharacter.hpp" />
@@ -218,11 +233,16 @@
     <ClInclude Include="Player.hpp" />
     <ClInclude Include="PlayerAction.hpp" />
     <ClInclude Include="PlatformType.hpp" />
+    <ClInclude Include="PostEffect.hpp" />
     <ClInclude Include="ResourceHolder.hpp" />
     <ClInclude Include="ResourceIdentifiers.hpp" />
     <ClInclude Include="SceneNode.hpp" />
     <ClInclude Include="ScrollableContainer.hpp" />
     <ClInclude Include="SettingsState.hpp" />
+    <ClInclude Include="Shaders.hpp" />
+    <ClInclude Include="SoundEffect.hpp" />
+    <ClInclude Include="SoundNode.hpp" />
+    <ClInclude Include="SoundPlayer.hpp" />
     <ClInclude Include="SpriteNode.hpp" />
     <ClInclude Include="State.hpp" />
     <ClInclude Include="StateID.hpp" />

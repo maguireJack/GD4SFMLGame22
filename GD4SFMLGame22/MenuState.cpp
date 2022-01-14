@@ -12,11 +12,12 @@ MenuState::MenuState(StateStack& stack, Context context)
 	: State(stack, context)
 	, m_gui_container(*context.window, *context.camera)
 {
-	sf::Texture& texture = context.textures->Get(Textures::kTitleScreen);
+	*context.camera = Camera(context.window->getDefaultView());
 
+	sf::Texture& texture = context.textures->Get(Textures::kTitleScreen);
 	m_background_sprite.setTexture(texture);
 
-	auto play_button = std::make_shared<GUI::Button>(*context.fonts, *context.textures);
+	auto play_button = std::make_shared<GUI::Button>(context);
 	play_button->setPosition(100, 250);
 	play_button->SetText("Play");
 	play_button->SetCallback([this]()
@@ -25,7 +26,7 @@ MenuState::MenuState(StateStack& stack, Context context)
 		RequestStackPush(StateID::kGame);
 	});
 
-	auto settings_button = std::make_shared<GUI::Button>(*context.fonts, *context.textures);
+	auto settings_button = std::make_shared<GUI::Button>(context);
 	settings_button->setPosition(100, 300);
 	settings_button->SetText("Settings");
 	settings_button->SetCallback([this]()
@@ -33,7 +34,7 @@ MenuState::MenuState(StateStack& stack, Context context)
 		RequestStackPush(StateID::kSettings);
 	});
 
-	auto level_editor_button = std::make_shared<GUI::Button>(*context.fonts, *context.textures);
+	auto level_editor_button = std::make_shared<GUI::Button>(context);
 	level_editor_button->setPosition(100, 350);
 	level_editor_button->SetText("Level Editor");
 	level_editor_button->SetCallback([this]()
@@ -42,7 +43,7 @@ MenuState::MenuState(StateStack& stack, Context context)
 		RequestStackPush(StateID::kLevelEditor);
 	});
 
-	auto exit_button = std::make_shared<GUI::Button>(*context.fonts, *context.textures);
+	auto exit_button = std::make_shared<GUI::Button>(context);
 	exit_button->setPosition(100, 400);
 	exit_button->SetText("Exit");
 	exit_button->SetCallback([this]()
@@ -59,6 +60,7 @@ MenuState::MenuState(StateStack& stack, Context context)
 void MenuState::Draw()
 {
 	sf::RenderWindow& window = *GetContext().window;
+	auto x = window.getDefaultView();
 	window.setView(window.getDefaultView());
 	window.draw(m_background_sprite);
 	window.draw(m_gui_container);

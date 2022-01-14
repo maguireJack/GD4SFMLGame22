@@ -192,3 +192,18 @@ void PlatformerCharacter::UpdateTexts() const
 	m_health_display->setPosition(0.f, 50.f);
 	m_health_display->setRotation(-getRotation());
 }
+
+//void PlatformerCharacter::PlayLocalSound(CommandQueue& commands, SoundEffect effect)
+//{
+//	sf::Vector2f world_position = GetWorldPosition();
+//
+//	Command command;
+//	command.category = Category::kSoundEffect;
+//	command.action = DerivedAction<SoundNode>(
+//		[effect, world_position](SoundNode& node, sf::Time)
+//	{
+//		node.PlaySound(effect, world_position);
+//	});
+//
+//	commands.Push(command);
+//}
