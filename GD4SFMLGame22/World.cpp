@@ -153,7 +153,7 @@ void World::BuildScene()
 	m_grid.SetNode(grid_node.get());
 	m_scene_layers[static_cast<int>(Layers::kGrid)]->AttachChild(std::move(grid_node));
 
-	std::unique_ptr<TileNode> tile_node(new TileNode(m_textures, m_scene_layers, Textures::kGrassTiles0, PlatformType::kStatic));
+	std::unique_ptr<TileNode> tile_node(new TileNode(m_textures, m_scene_layers, Textures::kGrassTiles0));
 	tile_node->setPosition(16 * 8, 16 * 22);
 	m_grid.Node().AddTileNode(std::move(tile_node));
 

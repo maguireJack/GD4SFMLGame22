@@ -43,7 +43,6 @@ GridNode::GridNode(
 	, m_mouse_cell_position(0, 0)
 	, m_selected_tile(nullptr)
 	, m_create_texture(Textures::kDefault)
-	, m_create_type(PlatformType::kNone)
 {
 	m_background.setFillColor(sf::Color(0, 0, 0, 150));
 	m_background.setSize(sf::Vector2f(576, 48));
@@ -56,20 +55,19 @@ GridNode::GridNode(
 
 	for (int texture_index = static_cast<int>(Textures::kWooden_2x1); texture_index <= static_cast<int>(Textures::kGrassTiles24); texture_index++)
 	{
-		Textures texture = static_cast<Textures>(texture_index);
-		PlatformType type = PlatformType::kStatic;
+		auto texture = static_cast<Textures>(texture_index);
 
 		auto button = std::make_shared<GUI::TexturedButton>(m_fonts, m_textures, texture);
 		button->SetToggle(true);
 		button->setPosition(16, 292);
 		button->SetCallback([this, texture, button]()
 			{
-				SetNewTileSettings(PlatformType::kStatic, texture);
+				SetNewTileSettings(texture);
 				m_inventory_gui.DeactivateAllExcept(button);
 				m_selected_button = button;
 			});
 
-		bool new_page = m_editor_gui.Pack(button, 16);
+		const bool new_page = m_editor_gui.Pack(button, 16);
 
 		auto label = std::make_shared<GUI::Label>("", m_fonts);
 		label->setPosition(button->getPosition().x + button->GetBoundingRect().width / 2, 310);
@@ -77,9 +75,9 @@ GridNode::GridNode(
 
 		auto remove_button = std::make_shared<GUI::TexturedButton>(m_fonts, m_textures, Textures::kRemoveButton);
 		remove_button->setPosition(button->getPosition().x - 5, 310);
-		remove_button->SetCallback([this, label, texture, type]()
+		remove_button->SetCallback([this, label, texture]()
 			{
-				TileData tile(texture, type, true);
+				TileData tile(texture, true);
 				RemoveFromInventory(tile);
 
 				if (m_inventory.count(tile))
@@ -94,9 +92,9 @@ GridNode::GridNode(
 
 		auto add_button = std::make_shared<GUI::TexturedButton>(m_fonts, m_textures, Textures::kAddButton);
 		add_button->setPosition(button->getPosition().x + button->GetBoundingRect().width, 310);
-		add_button->SetCallback([this, label, texture, type]()
+		add_button->SetCallback([this, label, texture]()
 			{
-				TileData tile(texture, type, true);
+				TileData tile(texture, true);
 				AddToInventory(tile);
 				label->SetText(std::to_string(m_inventory[tile]));
 			});
@@ -107,7 +105,7 @@ GridNode::GridNode(
 	}
 }
 
-void GridNode::SetNewTileSettings(PlatformType type, Textures texture)
+void GridNode::SetNewTileSettings(Textures texture)
 {
 	if (m_selected_tile != nullptr)
 	{
@@ -124,13 +122,12 @@ void GridNode::SetNewTileSettings(PlatformType type, Textures texture)
 		m_selected_tile = nullptr;
 	}
 
-	m_create_type = type;
 	m_create_texture = texture;
 }
 
 void GridNode::ExitCreateMode()
 {
-	SetNewTileSettings(PlatformType::kNone, Textures::kDefault);
+	SetNewTileSettings(Textures::kDefault);
 }
 
 void GridNode::AddTileNode(std::unique_ptr<TileNode> tile_node)
@@ -186,7 +183,7 @@ bool GridNode::IsHoldingTile() const
 
 bool GridNode::IsInCreateMode() const
 {
-	return m_create_type != PlatformType::kNone;
+	return m_create_texture != Textures::kDefault;
 }
 
 bool GridNode::TileIntersectsTile(TileNode* tile, sf::Vector2i cell_position) const
@@ -234,7 +231,7 @@ void GridNode::SelectFromInventory(TileData& tile)
 	if (!IsHoldingTile() && m_inventory.count(tile))
 	{
 		m_inventory_mode = true;
-		SetNewTileSettings(tile.GetPlatformType(), tile.GetTexture());
+		SetNewTileSettings(tile.GetTexture());
 	}
 }
 
@@ -250,9 +247,9 @@ void GridNode::AddToInventory(TileData& tile, int count)
 	}
 }
 
-void GridNode::AddToInventory(PlatformType platform, Textures texture, int count)
+void GridNode::AddToInventory(Textures texture, int count)
 {
-	TileData tile(texture, platform);
+	TileData tile(texture);
 	AddToInventory(tile, count);
 }
 
@@ -323,7 +320,7 @@ void GridNode::DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) co
 	sf::RectangleShape square(sf::Vector2f(m_cell_size, m_cell_size));
 	square.setPosition(sf::Vector2f(m_mouse_cell_position.x * m_cell_size, m_mouse_cell_position.y * m_cell_size));
 
-	sf::Color select_color(sf::Color(255, 255, 255, 150));
+	sf::Color select_color(sf::Color(150, 150, 255, 150));
 	sf::Color red(sf::Color(255, 0, 0, 150));
 
 	if (IsHoldingTile())
@@ -430,7 +427,7 @@ void GridNode::HandleEvent(const sf::Event& event, CommandQueue& commands)
 			{
 				if (IsHoldingTile() && DropTile())
 				{
-					const TileData tile(m_create_texture, m_create_type);
+					const TileData tile(m_create_texture);
 					RemoveFromInventory(tile, 1);
 
 					if (!m_inventory.count(tile))
@@ -475,7 +472,7 @@ bool GridNode::CreateTile()
 {
 	if (!IsHoldingTile() && IsInCreateMode())
 	{
-		std::unique_ptr<TileNode> tile_node(new TileNode(m_textures, GetSceneLayers(), m_create_texture, m_create_type));
+		std::unique_ptr<TileNode> tile_node(new TileNode(m_textures, GetSceneLayers(), m_create_texture));
 		m_selected_tile = tile_node.get();
 		GetSceneLayers()[static_cast<int>(Layers::kPlatforms)]->AttachChild(std::move(tile_node));
 

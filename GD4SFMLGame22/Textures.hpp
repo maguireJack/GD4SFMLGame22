@@ -17,6 +17,9 @@ enum class Textures
 	kWooden_2x1,
 	kWooden_3x1,
 
+	kSlime_2x1,
+	kSlime_3x1,
+
 	kGrassTiles0,
 	kGrassTiles1,
 	kGrassTiles2,

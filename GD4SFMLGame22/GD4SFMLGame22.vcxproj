@@ -227,12 +227,12 @@
     <ClInclude Include="ParticleNode.hpp" />
     <ClInclude Include="ParticleType.hpp" />
     <ClInclude Include="PauseState.hpp" />
+    <ClInclude Include="PlatformEffects.hpp" />
     <ClInclude Include="PlatformerAnimationState.hpp" />
     <ClInclude Include="PlatformerCharacter.hpp" />
     <ClInclude Include="PlatformerCharacterType.hpp" />
     <ClInclude Include="Player.hpp" />
     <ClInclude Include="PlayerAction.hpp" />
-    <ClInclude Include="PlatformType.hpp" />
     <ClInclude Include="PostEffect.hpp" />
     <ClInclude Include="ResourceHolder.hpp" />
     <ClInclude Include="ResourceIdentifiers.hpp" />
@@ -259,6 +259,11 @@
     <ClInclude Include="World.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Media\Shaders\Add.frag" />
+    <None Include="Media\Shaders\Brightness.frag" />
+    <None Include="Media\Shaders\DownSample.frag" />
+    <None Include="Media\Shaders\Fullpass.vert" />
+    <None Include="Media\Shaders\GuassianBlur.frag" />
     <None Include="ResourceHolder.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -1,17 +1,18 @@
 #pragma once
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/System/Time.hpp>
 #include <SFML/System/Vector2.hpp>
 
+#include "PlatformEffects.hpp"
 #include "ResourceIdentifiers.hpp"
 
 struct PlatformData
 {
-	sf::Vector2f m_moveDirection;
-	float m_breaktime;
-	float m_placetime;
+	sf::Vector2i m_cell_size;
+	std::unordered_set<PlatformEffects> m_effects;
 };
 
 struct AnimationData
@@ -53,7 +54,6 @@ struct ParticleData
 	sf::Time m_lifetime;
 };
 
-std::vector<PlatformData> InitializePlatformData();
-std::unordered_map<Textures, sf::Vector2i> InitializeTextureCellSizeData();
+std::unordered_map<Textures, PlatformData> InitializePlatformData();
 std::vector<PlatformerCharacterData> InitializePlatformerCharacterData();
 std::vector<ParticleData> InitializeParticleData();

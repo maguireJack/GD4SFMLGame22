@@ -2,31 +2,18 @@
 
 #include "ParticleType.hpp"
 #include "PlatformerCharacterType.hpp"
-#include "PlatformType.hpp"
 
-std::vector<PlatformData> InitializePlatformData()
+std::unordered_map<Textures, PlatformData> InitializePlatformData()
 {
-	std::vector<PlatformData> data(static_cast<int>(PlatformType::kPlatformCount));
-	data[static_cast<int>(PlatformType::kStatic)].m_placetime = 1.f;
-	data[static_cast<int>(PlatformType::kStatic)].m_breaktime = 0.f;
-	data[static_cast<int>(PlatformType::kStatic)].m_moveDirection = sf::Vector2f(0, 0);
+	std::unordered_map<Textures, PlatformData> data;
+	data[Textures::kWooden_2x1].m_cell_size = sf::Vector2i(2, 1);
+	data[Textures::kWooden_3x1].m_cell_size = sf::Vector2i(3, 1);
 
-	data[static_cast<int>(PlatformType::kBreakable)].m_placetime = 0.5f;
-	data[static_cast<int>(PlatformType::kBreakable)].m_breaktime = 5.f;
-	data[static_cast<int>(PlatformType::kBreakable)].m_moveDirection = sf::Vector2f(0, 0);
+	data[Textures::kSlime_2x1].m_cell_size = sf::Vector2i(2, 1);
+	data[Textures::kSlime_2x1].m_effects = {Bouncy};
 
-	data[static_cast<int>(PlatformType::kMoveable)].m_placetime = 2.f;
-	data[static_cast<int>(PlatformType::kMoveable)].m_breaktime = 0.f;
-	data[static_cast<int>(PlatformType::kMoveable)].m_moveDirection = sf::Vector2f(1, 0);
-
-	return data;
-}
-
-std::unordered_map<Textures, sf::Vector2i> InitializeTextureCellSizeData()
-{
-	std::unordered_map<Textures, sf::Vector2i> data;
-	data[Textures::kWooden_2x1] = sf::Vector2i(2, 1);
-	data[Textures::kWooden_3x1] = sf::Vector2i(3, 1);
+	data[Textures::kSlime_3x1].m_cell_size = sf::Vector2i(3, 1);
+	data[Textures::kSlime_3x1].m_effects = { Bouncy };
 
 	return data;
 }

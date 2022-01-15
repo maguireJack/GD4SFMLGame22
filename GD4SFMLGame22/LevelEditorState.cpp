@@ -22,7 +22,7 @@ LevelEditorState::LevelEditorState(StateStack& stack, Context context)
 		button->setPosition(16, 292);
 		button->SetCallback([this, texture_index, button]()
 			{
-				m_grid.Node().SetNewTileSettings(PlatformType::kStatic, static_cast<Textures>(texture_index));
+				m_grid.Node().SetNewTileSettings(static_cast<Textures>(texture_index));
 				m_gui_container.DeactivateAllExcept(button);
 			});
 

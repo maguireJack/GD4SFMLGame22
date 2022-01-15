@@ -3,7 +3,6 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 
-#include "PlatformType.hpp"
 #include "ResourceIdentifiers.hpp"
 #include "SceneNode.hpp"
 #include "TileData.hpp"
@@ -15,7 +14,6 @@ public:
 		const TextureHolder& textures,
 		const std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)>& scene_layers,
 		Textures texture,
-		PlatformType platform,
 		bool pickable = false);
 
 	unsigned GetCategory() const override;

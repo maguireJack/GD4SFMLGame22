@@ -3,10 +3,12 @@
 
 #include "AnimatedSpriteArtist.hpp"
 #include "Camera.hpp"
+#include "CollisionLocation.hpp"
 #include "Entity.hpp"
 #include "PlatformerCharacterType.hpp"
 #include "ResourceIdentifiers.hpp"
 #include "TextNode.hpp"
+#include "TileNode.hpp"
 
 class PlatformerCharacter : public Entity
 {
@@ -22,11 +24,14 @@ public:
 	sf::FloatRect GetBoundingRect() const override;
 
 	void Jump();
+	void ResetJump();
 	bool IsGrounded() const;
 	bool IsJumping() const;
 
 protected:
 	void HandleCollisions() override;
+	void BlockingCollision(CollisionLocation location);
+	void BouncyCollision(CollisionLocation location);
 
 private:
 	void DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) const override;

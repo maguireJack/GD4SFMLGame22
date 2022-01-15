@@ -1,8 +1,12 @@
 #include "TileData.hpp"
 
-TileData::TileData(Textures textures, PlatformType platform, bool pickable)
+namespace
+{
+	const std::unordered_map<Textures, PlatformData> Table = InitializePlatformData();
+}
+
+TileData::TileData(Textures textures, bool pickable)
 	: m_texture(textures)
-	, m_platform(platform)
 	, m_pickable(pickable)
 {
 }
@@ -19,9 +23,9 @@ sf::Vector2i TileData::GetCellPosition() const
 
 sf::Vector2i TileData::GetCellSize() const
 {
-	if (CellSizes.count(m_texture))
+	if (Table.count(m_texture))
 	{
-		return CellSizes.at(m_texture);
+		return Table.at(m_texture).m_cell_size;
 	}
 
 	return { 1, 1 };
@@ -37,9 +41,14 @@ void TileData::SetPickable(bool pickable)
 	m_pickable = pickable;
 }
 
-PlatformType TileData::GetPlatformType() const
+std::unordered_set<PlatformEffects> TileData::GetEffects() const
 {
-	return m_platform;
+	if (Table.count(m_texture))
+	{
+		return Table.at(m_texture).m_effects;
+	}
+
+	return std::unordered_set<PlatformEffects>();
 }
 
 Textures TileData::GetTexture() const
@@ -49,6 +58,5 @@ Textures TileData::GetTexture() const
 
 bool TileData::operator==(const TileData& other) const
 {
-	return m_platform == other.m_platform &&
-		m_texture == other.m_texture;
+	return m_texture == other.m_texture;
 }

@@ -10,10 +10,9 @@ TileNode::TileNode(
 	const TextureHolder& textures,
 	const std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)>& scene_layers,
 	Textures texture,
-	PlatformType platform,
 	bool pickable)
 	: SceneNode(scene_layers)
-	, m_data(texture, platform, pickable)
+	, m_data(texture, pickable)
 	, m_selected(false)
 	, m_destroy(false)
 	, m_sprite(textures.Get(texture))
@@ -58,7 +57,6 @@ void TileNode::SetCellPosition(sf::Vector2i position, float cell_size)
 {
 	m_data.SetCellPosition(position);
 	setPosition(sf::Vector2f(position) * cell_size);
-
 }
 
 TileData TileNode::Data() const

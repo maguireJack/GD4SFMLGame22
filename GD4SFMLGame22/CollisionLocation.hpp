@@ -6,4 +6,7 @@ enum class CollisionLocation
 	kTop = 1 << 1,
 	kRight = 1 << 2,
 	kBottom = 1 << 3,
+
+	kXAxis = kLeft | kRight,
+	kYAxis = kTop | kBottom,
 };

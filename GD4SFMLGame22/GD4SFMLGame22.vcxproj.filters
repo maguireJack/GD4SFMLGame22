@@ -303,9 +303,6 @@
     <ClInclude Include="PlatformerCharacterType.hpp">
       <Filter>Header Files\Enums</Filter>
     </ClInclude>
-    <ClInclude Include="PlatformType.hpp">
-      <Filter>Header Files\Enums</Filter>
-    </ClInclude>
     <ClInclude Include="PlayerAction.hpp">
       <Filter>Header Files\Enums</Filter>
     </ClInclude>
@@ -319,6 +316,9 @@
       <Filter>Header Files\Enums</Filter>
     </ClInclude>
     <ClInclude Include="Textures.hpp">
+      <Filter>Header Files\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="PlatformEffects.hpp">
       <Filter>Header Files\Enums</Filter>
     </ClInclude>
   </ItemGroup>
@@ -353,10 +353,31 @@
     <Filter Include="Header Files\Hash">
       <UniqueIdentifier>{6d1a9b3b-eeec-4b6e-aa2c-efa5d9fcb0b3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Media">
+      <UniqueIdentifier>{e2d23235-281a-47c8-a22f-20a41d393148}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Media\Shaders">
+      <UniqueIdentifier>{94dbb2ea-1bfc-4518-a032-ade620521064}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ResourceHolder.inl">
       <Filter>Header Files</Filter>
+    </None>
+    <None Include="Media\Shaders\Add.frag">
+      <Filter>Media\Shaders</Filter>
+    </None>
+    <None Include="Media\Shaders\Brightness.frag">
+      <Filter>Media\Shaders</Filter>
+    </None>
+    <None Include="Media\Shaders\DownSample.frag">
+      <Filter>Media\Shaders</Filter>
+    </None>
+    <None Include="Media\Shaders\Fullpass.vert">
+      <Filter>Media\Shaders</Filter>
+    </None>
+    <None Include="Media\Shaders\GuassianBlur.frag">
+      <Filter>Media\Shaders</Filter>
     </None>
   </ItemGroup>
 </Project>

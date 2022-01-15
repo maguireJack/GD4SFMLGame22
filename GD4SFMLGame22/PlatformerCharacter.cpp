@@ -63,6 +63,12 @@ void PlatformerCharacter::Jump()
 	}
 }
 
+void PlatformerCharacter::ResetJump()
+{
+	m_air_time = 0.f;
+	m_jumping = false;
+}
+
 bool PlatformerCharacter::IsGrounded() const
 {
 	return m_air_time > 0;
@@ -84,46 +90,74 @@ void PlatformerCharacter::HandleCollisions()
 		if (Category::kPlatform & node->GetCategory())
 		{
 			const CollisionLocation location = Collision::CollisionLocation(*this, *node);
-			const sf::Vector2f velocity = GetVelocity();
+			const auto tile = dynamic_cast<TileNode*>(node);
+			std::unordered_set<PlatformEffects> effects = tile->Data().GetEffects();
 
-			switch (location)
+			if (effects.count(Bouncy))
 			{
-			case CollisionLocation::kLeft:
-				if (velocity.x < 0)
-				{
-					SetVelocity(0, velocity.y);
-				}
-				break;
-
-			case CollisionLocation::kRight:
-				if (velocity.x > 0)
-				{
-					SetVelocity(0, velocity.y);
-				}
-				break;
-
-			case CollisionLocation::kTop:
-				if (velocity.y < 0)
-				{
-					SetVelocity(velocity.x, 0);
-				}
-				break;
-
-			case CollisionLocation::kBottom:
-				m_air_time = 0.f;
-				m_jumping = false;
-
-				if (velocity.y > 0)
-				{
-					SetVelocity(velocity.x, 0);
-				}
-				break;
-
-			case CollisionLocation::kNone:
-				break;
+				BouncyCollision(location);
+			}
+			else
+			{
+				BlockingCollision(location);
 			}
 		}
 
+	}
+}
+
+void PlatformerCharacter::BlockingCollision(CollisionLocation location)
+{
+	const sf::Vector2f velocity = GetVelocity();
+
+	switch (location)
+	{
+	case CollisionLocation::kLeft:
+		if (velocity.x < 0)
+		{
+			SetVelocity(0, velocity.y);
+		}
+		break;
+
+	case CollisionLocation::kRight:
+		if (velocity.x > 0)
+		{
+			SetVelocity(0, velocity.y);
+		}
+		break;
+
+	case CollisionLocation::kTop:
+		if (velocity.y < 0)
+		{
+			SetVelocity(velocity.x, 0);
+		}
+		break;
+
+	case CollisionLocation::kBottom:
+		ResetJump();
+
+		if (velocity.y > 0)
+		{
+			SetVelocity(velocity.x, 0);
+		}
+		break;
+
+	case CollisionLocation::kNone:
+		break;
+	}
+}
+
+void PlatformerCharacter::BouncyCollision(CollisionLocation location)
+{
+	const sf::Vector2f velocity = GetVelocity();
+
+	if (static_cast<int>(location) & static_cast<int>(CollisionLocation::kXAxis))
+	{
+		SetVelocity(velocity.x * -1.f, velocity.y);
+	}
+	else
+	{
+		SetVelocity(velocity.x, velocity.y * -1.f);
 	}
 }
 

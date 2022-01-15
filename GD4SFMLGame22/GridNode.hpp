@@ -29,7 +29,7 @@ public:
 		float line_width,
 		bool editor_mode = false);
 
-	void SetNewTileSettings(PlatformType type, Textures texture);
+	void SetNewTileSettings(Textures texture);
 	void ExitCreateMode();
 	void AddTileNode(std::unique_ptr<TileNode> tile_node);
 	void AddTileNode(TileNode* tile_node, sf::Vector2i cell_position);
@@ -44,7 +44,7 @@ public:
 	int GetInventoryCount(const TileData& tile);
 	void SelectFromInventory(TileData& tile);
 	void AddToInventory(TileData& tile, int count = 1);
-	void AddToInventory(PlatformType platform, Textures texture, int count = 1);
+	void AddToInventory(Textures texture, int count = 1);
 	void RemoveFromInventory(const TileData& tile, int count = 1);
 
 	sf::Vector2i GetCellPosition(sf::Vector2i position) const;
@@ -98,5 +98,4 @@ private:
 	TileNode* m_selected_tile;
 
 	Textures m_create_texture;
-	PlatformType m_create_type;
 };
