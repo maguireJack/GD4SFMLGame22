@@ -1,8 +1,16 @@
 #pragma once
 #include <SFML/System/Vector2.hpp>
 
+#include "DataTables.hpp"
 #include "PlatformType.hpp"
 #include "Textures.hpp"
+
+namespace
+{
+	const std::vector<PlatformData> Table = InitializePlatformData();
+	const std::unordered_map<Textures, sf::Vector2i> CellSizes = InitializeTextureCellSizeData();
+}
+
 
 class TileData
 {
@@ -11,6 +19,7 @@ public:
 
 	bool IsPickable() const;
 	sf::Vector2i GetCellPosition() const;
+	sf::Vector2i GetCellSize() const;
 
 	void SetCellPosition(sf::Vector2i position);
 	void SetPickable(bool pickable);

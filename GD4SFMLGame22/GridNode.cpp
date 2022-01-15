@@ -54,7 +54,7 @@ GridNode::GridNode(
 		return;
 	}
 
-	for (int texture_index = static_cast<int>(Textures::kGrassTiles0); texture_index <= static_cast<int>(Textures::kGrassTiles24); texture_index++)
+	for (int texture_index = static_cast<int>(Textures::kWooden_2x1); texture_index <= static_cast<int>(Textures::kGrassTiles24); texture_index++)
 	{
 		Textures texture = static_cast<Textures>(texture_index);
 		PlatformType type = PlatformType::kStatic;
@@ -136,15 +136,47 @@ void GridNode::ExitCreateMode()
 void GridNode::AddTileNode(std::unique_ptr<TileNode> tile_node)
 {
 	const sf::Vector2i cell_position = GetCellPosition(tile_node->getPosition());
-	m_tile_map[cell_position] = tile_node.get();
+	const sf::Vector2i cell_size = tile_node->Data().GetCellSize();
+
+	for (int x = 0; x < cell_size.x; x++)
+	{
+		for (int y = 0; y < cell_size.y; y++)
+		{
+			sf::Vector2i delta(x, y);
+			m_tile_map[cell_position + delta] = tile_node.get();
+		}
+	}
 
 	GetSceneLayers()[static_cast<int>(Layers::kPlatforms)]->AttachChild(std::move(tile_node));
 }
 
+void GridNode::AddTileNode(TileNode* tile_node, sf::Vector2i cell_position)
+{
+	const sf::Vector2i cell_size = tile_node->Data().GetCellSize();
+
+	for (int x = 0; x < cell_size.x; x++)
+	{
+		for (int y = 0; y < cell_size.y; y++)
+		{
+			sf::Vector2i delta(x, y);
+			m_tile_map[cell_position + delta] = tile_node;
+		}
+	}
+}
+
 void GridNode::RemoveTile(const TileNode* tile_node)
 {
-	const sf::Vector2i cell_position = GetCellPosition(tile_node->getPosition());
-	m_tile_map.erase(cell_position);
+	const sf::Vector2i cell_position = tile_node->Data().GetCellPosition();
+	const sf::Vector2i cell_size = tile_node->Data().GetCellSize();
+
+	for (int x = 0; x < cell_size.x; x++)
+	{
+		for (int y = 0; y < cell_size.y; y++)
+		{
+			sf::Vector2i delta(x, y);
+			m_tile_map.erase(cell_position + delta);
+		}
+	}
 }
 
 bool GridNode::IsHoldingTile() const
@@ -157,6 +189,25 @@ bool GridNode::IsInCreateMode() const
 	return m_create_type != PlatformType::kNone;
 }
 
+bool GridNode::TileIntersectsTile(TileNode* tile, sf::Vector2i cell_position) const
+{
+	const sf::Vector2i cell_size = tile->Data().GetCellSize();
+
+	for (int x = 0; x < cell_size.x; x++)
+	{
+		for (int y = 0; y < cell_size.y; y++)
+		{
+			sf::Vector2i delta(x, y);
+			if (CellContainsTile(cell_position + delta))
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
 bool GridNode::CellContainsTile(sf::Vector2i cell_position) const
 {
 	return m_tile_map.count(cell_position);
@@ -165,7 +216,7 @@ bool GridNode::CellContainsTile(sf::Vector2i cell_position) const
 bool GridNode::CellPickable(sf::Vector2i cell_position)
 {
 	return CellContainsTile(cell_position)
-		? m_tile_map[cell_position]->IsPickable()
+		? m_tile_map[cell_position]->Data().IsPickable()
 		: false;
 }
 
@@ -312,7 +363,7 @@ void GridNode::UpdateCurrent(sf::Time dt, CommandQueue& commands)
 	{
 		m_selected_tile->SetCellPosition(m_mouse_cell_position, m_cell_size);
 
-		m_can_place = !CellContainsTile(m_mouse_cell_position);
+		m_can_place = !TileIntersectsTile(m_selected_tile, m_mouse_cell_position);
 	}
 	else if (IsInCreateMode())
 	{
@@ -444,7 +495,7 @@ bool GridNode::PickupTile()
 
 			tile->Select();
 			m_selected_tile = tile;
-			m_tile_map.erase(m_mouse_cell_position);
+			RemoveTile(tile);
 
 			return true;
 		}
@@ -458,9 +509,9 @@ bool GridNode::DropTile()
 	{
 		m_selected_tile->Deselect();
 		m_selected_tile->SetCellPosition(m_mouse_cell_position, m_cell_size);
-		m_tile_map[m_mouse_cell_position] = m_selected_tile;
-		m_selected_tile = nullptr;
+		AddTileNode(m_selected_tile, m_mouse_cell_position);
 
+		m_selected_tile = nullptr;
 		return true;
 	}
 	return false;
@@ -470,7 +521,7 @@ void GridNode::DropTileAt(sf::Vector2i cell_position)
 {
 	m_selected_tile->Deselect();
 	m_selected_tile->SetCellPosition(cell_position, m_cell_size);
-	m_tile_map[cell_position] = m_selected_tile;
+	AddTileNode(m_selected_tile, cell_position);
 
 	m_selected_tile = nullptr;
 }

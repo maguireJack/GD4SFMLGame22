@@ -10,7 +10,6 @@ std::vector<PlatformData> InitializePlatformData()
 	data[static_cast<int>(PlatformType::kStatic)].m_placetime = 1.f;
 	data[static_cast<int>(PlatformType::kStatic)].m_breaktime = 0.f;
 	data[static_cast<int>(PlatformType::kStatic)].m_moveDirection = sf::Vector2f(0, 0);
-	data[static_cast<int>(PlatformType::kStatic)].m_textures = Textures::kGrassTiles0;
 
 	data[static_cast<int>(PlatformType::kBreakable)].m_placetime = 0.5f;
 	data[static_cast<int>(PlatformType::kBreakable)].m_breaktime = 5.f;
@@ -19,6 +18,15 @@ std::vector<PlatformData> InitializePlatformData()
 	data[static_cast<int>(PlatformType::kMoveable)].m_placetime = 2.f;
 	data[static_cast<int>(PlatformType::kMoveable)].m_breaktime = 0.f;
 	data[static_cast<int>(PlatformType::kMoveable)].m_moveDirection = sf::Vector2f(1, 0);
+
+	return data;
+}
+
+std::unordered_map<Textures, sf::Vector2i> InitializeTextureCellSizeData()
+{
+	std::unordered_map<Textures, sf::Vector2i> data;
+	data[Textures::kWooden_2x1] = sf::Vector2i(2, 1);
+	data[Textures::kWooden_3x1] = sf::Vector2i(3, 1);
 
 	return data;
 }

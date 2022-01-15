@@ -4,13 +4,7 @@
 #include <ostream>
 
 #include "Application.hpp"
-#include "DataTables.hpp"
 #include "Utility.hpp"
-
-namespace
-{
-	const std::vector<PlatformData> Table = InitializePlatformData();
-}
 
 TileNode::TileNode(
 	const TextureHolder& textures,
@@ -34,11 +28,6 @@ unsigned TileNode::GetCategory() const
 sf::FloatRect TileNode::GetBoundingRect() const
 {
 	return GetWorldTransform().transformRect(m_sprite.getGlobalBounds());
-}
-
-bool TileNode::IsPickable() const
-{
-	return m_data.IsPickable();
 }
 
 bool TileNode::IsSelected() const
@@ -72,24 +61,9 @@ void TileNode::SetCellPosition(sf::Vector2i position, float cell_size)
 
 }
 
-void TileNode::SetPickable(bool pickable)
-{
-	m_data.SetPickable(pickable);
-}
-
-TileData TileNode::GetData() const
+TileData TileNode::Data() const
 {
 	return m_data;
-}
-
-PlatformType TileNode::GetPlatformType() const
-{
-	return m_data.GetPlatformType();
-}
-
-Textures TileNode::GetTexture() const
-{
-	return m_data.GetTexture();
 }
 
 bool TileNode::IsDestroyed() const

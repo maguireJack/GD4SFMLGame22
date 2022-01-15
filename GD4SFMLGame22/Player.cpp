@@ -152,7 +152,7 @@ void Player::InitialiseActions()
 
 	m_on_release_action_binding[PlayerAction::kMoveLeft].action = DerivedAction<Entity>(EntityDirectionRemover(-1, 0));
 	m_on_release_action_binding[PlayerAction::kMoveRight].action = DerivedAction<Entity>(EntityDirectionRemover(1, 0));
-	m_on_release_action_binding[PlayerAction::kMoveUp].action = DerivedAction<Entity>(EntityDirectionRemover(0.f, -1));
+	m_on_release_action_binding[PlayerAction::kMoveUp].action = DerivedAction<Entity>(EntityDirectionRemover(0, -1));
 	m_on_release_action_binding[PlayerAction::kMoveDown].action = DerivedAction<Entity>(EntityDirectionRemover(0, 1));
 }
 

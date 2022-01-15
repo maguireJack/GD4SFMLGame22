@@ -1,4 +1,5 @@
 #pragma once
+#include <unordered_map>
 #include <vector>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/System/Time.hpp>
@@ -9,7 +10,6 @@
 struct PlatformData
 {
 	sf::Vector2f m_moveDirection;
-	Textures m_textures;
 	float m_breaktime;
 	float m_placetime;
 };
@@ -54,5 +54,6 @@ struct ParticleData
 };
 
 std::vector<PlatformData> InitializePlatformData();
+std::unordered_map<Textures, sf::Vector2i> InitializeTextureCellSizeData();
 std::vector<PlatformerCharacterData> InitializePlatformerCharacterData();
 std::vector<ParticleData> InitializeParticleData();

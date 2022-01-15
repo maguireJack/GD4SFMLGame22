@@ -113,6 +113,9 @@ void Application::LoadTextures()
 	m_textures.Load(Textures::kBrunoIdle, "Media/Textures/Bruno/Idle.png");
 	m_textures.Load(Textures::kBrunoRun, "Media/Textures/Bruno/Run.png");
 
+	m_textures.Load(Textures::kWooden_2x1, "Media/Textures/SpecialPlatforms/wooden_2x1.png");
+	m_textures.Load(Textures::kWooden_3x1, "Media/Textures/SpecialPlatforms/wooden_3x1.png");
+
 	LoadTexturesPattern(Textures::kJungle0, Textures::kJungle4, "Media/Textures/Jungle/jungle");
 	LoadTexturesPattern(Textures::kSky0, Textures::kSky4, "Media/Textures/Sky/sky");
 	LoadTexturesPattern(Textures::kGrassTiles0, Textures::kGrassTiles24, "Media/Textures/GrassTiles/tile");

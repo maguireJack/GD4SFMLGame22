@@ -144,8 +144,8 @@ void World::BuildScene()
 			m_fonts,
 			m_sounds,
 			m_camera,
-			m_world_bounds.width/16,
-			m_world_bounds.height/16,
+			static_cast<int>(m_world_bounds.width)/16,
+			static_cast<int>(m_world_bounds.height)/16,
 			16,
 			0.5f,
 			true));

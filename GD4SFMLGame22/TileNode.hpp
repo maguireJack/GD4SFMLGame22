@@ -21,17 +21,13 @@ public:
 	unsigned GetCategory() const override;
 	sf::FloatRect GetBoundingRect() const override;
 
-	bool IsPickable() const;
 	bool IsSelected() const;
 	void Select();
 	void Deselect();
 	void Destroy();
 	void SetCellPosition(sf::Vector2i position, float cell_size);
-	void SetPickable(bool pickable);
 
-	TileData GetData() const;
-	PlatformType GetPlatformType() const;
-	Textures GetTexture() const;
+	TileData Data() const;
 
 	bool IsDestroyed() const override;
 

@@ -32,10 +32,12 @@ public:
 	void SetNewTileSettings(PlatformType type, Textures texture);
 	void ExitCreateMode();
 	void AddTileNode(std::unique_ptr<TileNode> tile_node);
+	void AddTileNode(TileNode* tile_node, sf::Vector2i cell_position);
 	void RemoveTile(const TileNode* tile);
 
 	bool IsHoldingTile() const;
 	bool IsInCreateMode() const;
+	bool TileIntersectsTile(TileNode* tile, sf::Vector2i cell_position) const;
 	bool CellContainsTile(sf::Vector2i cell_position) const;
 	bool CellPickable(sf::Vector2i cell_position);
 

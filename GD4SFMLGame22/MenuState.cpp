@@ -60,7 +60,6 @@ MenuState::MenuState(StateStack& stack, Context context)
 void MenuState::Draw()
 {
 	sf::RenderWindow& window = *GetContext().window;
-	auto x = window.getDefaultView();
 	window.setView(window.getDefaultView());
 	window.draw(m_background_sprite);
 	window.draw(m_gui_container);

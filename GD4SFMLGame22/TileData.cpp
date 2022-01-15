@@ -17,6 +17,16 @@ sf::Vector2i TileData::GetCellPosition() const
 	return m_cell_position;
 }
 
+sf::Vector2i TileData::GetCellSize() const
+{
+	if (CellSizes.count(m_texture))
+	{
+		return CellSizes.at(m_texture);
+	}
+
+	return { 1, 1 };
+}
+
 void TileData::SetCellPosition(sf::Vector2i position)
 {
 	m_cell_position = position;
