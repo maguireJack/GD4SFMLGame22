@@ -386,11 +386,19 @@ void GridNode::LoadData(const std::string& path)
 		const int x = data[1];
 		const int y = data[2];
 		const int textureID = data[3];
-
-		std::unique_ptr<TileNode> tile_node(new TileNode(m_textures, GetSceneLayers(), static_cast<Textures>(textureID)));
-		tile_node->setPosition(static_cast<float>(16 * x), static_cast<float>(16 * y));
-
-		AddTileNode(std::move(tile_node));
+		if (textureID == static_cast<int>(Textures::kCoin)) 
+		{
+			AnimationData data = { static_cast<Textures>(textureID), 8, 8, 4, 1.f };
+			std::unique_ptr<AnimatedTileNode> tile_node(new AnimatedTileNode(m_textures, GetSceneLayers(), static_cast<Textures>(textureID), data));
+			tile_node->setPosition(static_cast<float>(16 * x), static_cast<float>(16 * y));
+			AddTileNode(std::move(tile_node));
+		} 
+		else {
+			std::unique_ptr<TileNode> tile_node(new TileNode(m_textures, GetSceneLayers(), static_cast<Textures>(textureID)));
+			tile_node->setPosition(static_cast<float>(16 * x), static_cast<float>(16 * y));
+			AddTileNode(std::move(tile_node));
+		}
+		
 	}
 
 	save_data.close();

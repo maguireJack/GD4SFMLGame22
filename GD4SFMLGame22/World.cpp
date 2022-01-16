@@ -145,6 +145,8 @@ void World::BuildScene()
 	m_scene_layers[static_cast<int>(Layers::kGrid)]->AttachChild(std::move(grid_node));
 
 	//Add player's character
+	m_sounds.Play(SoundEffect::kBackground);
+
 	std::unique_ptr<PlatformerCharacter> player(new PlatformerCharacter(m_scene_layers, PlatformerCharacterType::kBruno, m_camera, m_textures, m_fonts, m_sounds));
 	m_player = player.get();
 	m_player->setPosition(m_spawn_position);

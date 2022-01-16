@@ -20,6 +20,7 @@ public:
 
 	void RemoveStoppedSounds();
 	void SetListenerPosition(sf::Vector2f position);
+	std::list<sf::Sound> GetSounds();
 	sf::Vector2f GetListenerPosition() const;
 
 
