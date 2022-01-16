@@ -199,15 +199,6 @@ namespace GUI
 		}
 
 		target.draw(m_page_text, states);
-
-		sf::FloatRect rect = GetBoundingRect();
-		sf::RectangleShape shape;
-		shape.setPosition(sf::Vector2f(rect.left, rect.top));
-		shape.setSize(sf::Vector2f(rect.width, rect.height));
-		shape.setFillColor(sf::Color::Transparent);
-		shape.setOutlineColor(sf::Color::Green);
-		shape.setOutlineThickness(1.f);
-		target.draw(shape);
 	}
 
 	int ScrollableContainer::EndIndexOfCurrentPage() const

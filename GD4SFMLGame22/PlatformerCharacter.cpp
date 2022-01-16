@@ -34,7 +34,6 @@ PlatformerCharacter::PlatformerCharacter(
 	, m_type(type)
 	, m_camera(camera)
 	, m_artist(Table[static_cast<int>(type)].m_animation_data.ToVector(), textures)
-	, m_health_display(nullptr)
 	, m_sounds(sounds)
 	, m_jumping(false)
 	, m_camera_move_constraint(false)
@@ -42,9 +41,6 @@ PlatformerCharacter::PlatformerCharacter(
 	, m_air_time(0)
 	, m_collected_coins(0)
 {
-	std::unique_ptr<TextNode> health_display(new TextNode(scene_layers, fonts, ""));
-	m_health_display = health_display.get();
-	AttachChild(std::move(health_display));
 }
 
 unsigned PlatformerCharacter::GetCategory() const
@@ -62,6 +58,9 @@ int PlatformerCharacter::GetCollectedCoins() const
 	return m_collected_coins;
 }
 
+/// <summary>
+/// Vilandas
+/// </summary>
 void PlatformerCharacter::Jump()
 {
 	if (!IsJumping() && m_air_time <= m_coyote_time)
@@ -96,7 +95,7 @@ bool PlatformerCharacter::IsJumping() const
 	return m_jumping;
 }
 /// <summary>
-/// Jack - Handle Collisions between the Player Character and any SceneNode with a collider
+/// Vilandas/Jack - Handle Collisions between the Player Character and any SceneNode with a collider
 /// </summary>
 void PlatformerCharacter::HandleCollisions()
 {
@@ -139,6 +138,10 @@ void PlatformerCharacter::HandleCollisions()
 	}
 }
 
+/// <summary>
+/// Vilandas
+/// </summary>
+/// <param name="location"></param>
 void PlatformerCharacter::BlockingCollision(CollisionLocation location)
 {
 	const sf::Vector2f velocity = GetVelocity();
@@ -180,6 +183,10 @@ void PlatformerCharacter::BlockingCollision(CollisionLocation location)
 	}
 }
 
+/// <summary>
+/// Vilandas
+/// </summary>
+/// <param name="location"></param>
 void PlatformerCharacter::BouncyCollision(CollisionLocation location)
 {
 	const sf::Vector2f velocity = GetVelocity();
@@ -194,6 +201,11 @@ void PlatformerCharacter::BouncyCollision(CollisionLocation location)
 	}
 }
 
+/// <summary>
+/// Vilandas
+/// </summary>
+/// <param name="location"></param>
+/// <param name="tile"></param>
 void PlatformerCharacter::VerticalMovementCollision(CollisionLocation location, TileNode* tile)
 {
 	if (location == CollisionLocation::kBottom)
@@ -222,7 +234,6 @@ void PlatformerCharacter::UpdateCurrent(sf::Time dt, CommandQueue& commands)
 
 	UpdateAnimationState();
 	UpdateCamera(dt);
-	UpdateTexts();
 
 	std::cout << GetVelocity().x << std::endl;
 }
@@ -250,6 +261,11 @@ void PlatformerCharacter::UpdateAnimationState()
 	}
 }
 
+
+/// <summary>
+/// Vilandas
+/// </summary>
+/// <param name="dt"></param>
 void PlatformerCharacter::UpdateCamera(sf::Time dt)
 {
 	const sf::Vector2f distance = getPosition() - m_camera.GetCenter();
@@ -266,13 +282,6 @@ void PlatformerCharacter::UpdateCamera(sf::Time dt)
 			m_camera_move_constraint = false;
 		}
 	}
-}
-
-void PlatformerCharacter::UpdateTexts() const
-{
-	m_health_display->SetString(std::to_string(GetHitPoints()) + "HP");
-	m_health_display->setPosition(0.f, 50.f);
-	m_health_display->setRotation(-getRotation());
 }
 
 //void PlatformerCharacter::PlayLocalSound(CommandQueue& commands, SoundEffect effect)

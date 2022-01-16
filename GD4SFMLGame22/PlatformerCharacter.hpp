@@ -46,13 +46,11 @@ private:
 
 	void UpdateAnimationState();
 	void UpdateCamera(sf::Time dt);
-	void UpdateTexts() const;
 
 private:
 	PlatformerCharacterType m_type;
 	Camera& m_camera;
 	AnimatedSpriteArtist m_artist;
-	TextNode* m_health_display;
 	SoundPlayer& m_sounds;
 	bool m_jumping;
 	bool m_camera_move_constraint;
