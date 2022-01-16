@@ -43,7 +43,7 @@ void Grid::CreatePath()
 		stream = std::fstream(path);
 	} while (stream.good());
 
-	stream.open(path, std::fstream::out);
+	stream.open("Levels/level" + std::to_string(number), std::fstream::out);
 	m_path_to_load = path;
 }
 
