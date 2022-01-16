@@ -5,6 +5,14 @@
 
 #include "Utility.hpp"
 
+/// <summary>
+/// TileNode
+/// TileNode exists within the grid, refers to each tile as a SceneNode.
+/// </summary>
+/// <param name="textures">Texture Holder</param>
+/// <param name="scene_layers">Scene Layers</param>
+/// <param name="texture">Texture of the TileNode</param>
+/// <param name="pickable">Pickable</param>
 TileNode::TileNode(
 	const TextureHolder& textures,
 	const std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)>& scene_layers,
@@ -39,11 +47,18 @@ float TileNode::GetDeltaTimeInSeconds() const
 	return m_delta_time_in_seconds;
 }
 
+/// <summary>
+/// Check if the tile is selected
+/// </summary>
+/// <returns>Selected</returns>
 bool TileNode::IsSelected() const
 {
 	return m_selected;
 }
 
+/// <summary>
+/// Selects the current Tile
+/// </summary>
 void TileNode::Select()
 {
 	std::cout << "Selected" << std::endl;
@@ -51,6 +66,9 @@ void TileNode::Select()
 	m_sprite.setColor(sf::Color(255, 255, 255, 100));
 }
 
+/// <summary>
+/// Deselects the current Tile
+/// </summary>
 void TileNode::Deselect()
 {
 	std::cout << "Deselected" << std::endl;
@@ -63,6 +81,11 @@ void TileNode::Destroy()
 	m_destroy = true;
 }
 
+/// <summary>
+/// Sets the current TileNodes position within the Grid
+/// </summary>
+/// <param name="position">Position relative to the world, not the grid</param>
+/// <param name="cell_size">Size of each square on the grid</param>
 void TileNode::SetCellPosition(sf::Vector2i position, float cell_size = 16)
 {
 	m_data.SetCellPosition(position);
@@ -70,6 +93,10 @@ void TileNode::SetCellPosition(sf::Vector2i position, float cell_size = 16)
 	setPosition(sf::Vector2f(position) * cell_size);
 }
 
+/// <summary>
+/// Returns the underlying TileData for the current Node
+/// </summary>
+/// <returns></returns>
 TileData TileNode::Data() const
 {
 	return m_data;
@@ -80,6 +107,9 @@ bool TileNode::IsDestroyed() const
 	return m_destroy;
 }
 
+/// <summary>
+/// Used for Moving Platforms, activates its movement path
+/// </summary>
 void TileNode::ActivateVerticalMovement()
 {
 	if (m_velocity == sf::Vector2f())

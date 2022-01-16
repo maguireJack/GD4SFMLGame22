@@ -3,7 +3,11 @@
 #include "CommandQueue.hpp"
 #include "Command.hpp"
 
-
+/// <summary>
+/// Emitter Node
+/// </summary>
+/// <param name="scene_layers">Scene Layers</param>
+/// <param name="type">Particle Type to emit</param>
 EmitterNode::EmitterNode(const std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)>& scene_layers,
 	ParticleType type)
 	: SceneNode(scene_layers)
@@ -13,6 +17,11 @@ EmitterNode::EmitterNode(const std::array<SceneNode*, static_cast<int>(Layers::k
 {
 }
 
+/// <summary>
+/// Update
+/// </summary>
+/// <param name="dt"></param>
+/// <param name="commands"></param>
 void EmitterNode::UpdateCurrent(sf::Time dt, CommandQueue& commands)
 {
 	if (m_particle_system)
@@ -36,6 +45,10 @@ void EmitterNode::UpdateCurrent(sf::Time dt, CommandQueue& commands)
 	}
 }
 
+/// <summary>
+/// Emits the particles over time relative to world position
+/// </summary>
+/// <param name="dt"></param>
 void EmitterNode::EmitParticles(sf::Time dt)
 {
 	const float emissionRate = 30.f;

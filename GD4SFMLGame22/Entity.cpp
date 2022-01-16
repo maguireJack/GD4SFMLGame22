@@ -2,6 +2,16 @@
 
 #include "Utility.hpp"
 
+
+/// <summary>
+/// Vilandas - Entity
+/// </summary>
+/// <param name="scene_layers">Scene Layers</param>
+/// <param name="hitpoints">Total hitpoints for the entity</param>
+/// <param name="acceleration_speed">Rate of acceleration</param>
+/// <param name="max_velocity">Entities max velocity</param>
+/// <param name="deceleration">Deceleration rate</param>
+/// <param name="gravity">Gravity</param>
 Entity::Entity(
 	const std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)>& scene_layers,
 	int hitpoints,
@@ -20,55 +30,99 @@ Entity::Entity(
 {
 }
 
+/// <summary>
+/// Sets the entities Velocity
+/// </summary>
+/// <param name="velocity">Velocity to set to</param>
 void Entity::SetVelocity(sf::Vector2f velocity)
 {
 	m_velocity = velocity;
 }
 
+/// <summary>
+/// Sets the entities Gravity
+/// </summary>
+/// <param name="gravity"></param>
 void Entity::SetGravity(float gravity)
 {
 	m_gravity = gravity;
 }
 
+/// <summary>
+/// Sets the entities velocity
+/// </summary>
+/// <param name="vx">Other x value</param>
+/// <param name="vy">Other y value</param>
 void Entity::SetVelocity(float vx, float vy)
 {
 	m_velocity.x = vx;
 	m_velocity.y = vy;
 }
 
+/// <summary>
+/// Add velocity to current velocity
+/// </summary>
+/// <param name="velocity">Other Velocity</param>
 void Entity::AddVelocity(sf::Vector2f velocity)
 {
 	m_velocity += velocity;
 }
 
+
+/// <summary>
+/// Add velocity to current velocity
+/// </summary>
+/// <param name="vx">Other X velocity</param>
+/// <param name="vy">Other y velocity</param>
 void Entity::AddVelocity(float vx, float vy)
 {
 	m_velocity.x += vx;
 	m_velocity.y += vy;
 }
 
+/// <summary>
+/// Adds direction to the list of possible directions
+/// </summary>
+/// <param name="direction">Direction to add to list</param>
 void Entity::AddDirection(sf::Vector2i direction)
 {
 	m_directions.emplace(direction);
 	UpdateDirectionUnit();
 }
 
+/// <summary>
+/// Removes a direction from the list of possible directions
+/// </summary>
+/// <param name="direction">Direction to remove from list</param>
 void Entity::RemoveDirection(sf::Vector2i direction)
 {
 	m_directions.erase(direction);
 	UpdateDirectionUnit();
 }
 
+/// <summary>
+/// Returns the current entities velocity
+/// </summary>
+/// <returns>Velocity</returns>
 sf::Vector2f Entity::GetVelocity() const
 {
 	return m_velocity;
 }
 
+/// <summary>
+/// Get time since last frame update in seconds
+/// </summary>
+/// <returns>Delta time in seconds</returns>
 float Entity::GetDeltaTimeInSeconds() const
 {
 	return m_delta_time_in_seconds;
 }
 
+/// <summary>
+/// Update
+/// </summary>
+/// <param name="dt">Delta time</param>
+/// <param name="commands">Command queue</param>
 void Entity::UpdateCurrent(sf::Time dt, CommandQueue& commands)
 {
 	m_delta_time_in_seconds = dt.asSeconds();
@@ -89,16 +143,28 @@ void Entity::UpdateCurrent(sf::Time dt, CommandQueue& commands)
 	move(m_velocity * dt.asSeconds());
 }
 
+/// <summary>
+/// Applies gravity to the current velocity
+/// </summary>
+/// <param name="dt">Delta time</param>
 void Entity::ApplyGravity(sf::Time dt) 
 {
 	m_velocity.y += m_gravity * dt.asSeconds();
 }
 
+/// <summary>
+/// Accelerate the entity over time
+/// </summary>
+/// <param name="dt">Delta Time</param>
 void Entity::Accelerate(sf::Time dt)
 {
 	m_velocity += m_direction_unit * m_acceleration_speed * dt.asSeconds();
 }
 
+/// <summary>
+/// Decelerate the entity over time
+/// </summary>
+/// <param name="dt">Delta Time</param>
 void Entity::Decelerate(sf::Time dt)
 {
 	const float deceleration = m_deceleration * dt.asSeconds();
@@ -128,6 +194,9 @@ void Entity::Decelerate(sf::Time dt)
 	//}
 }
 
+/// <summary>
+/// Ensures the velocity does not exceed the entities max velocity
+/// </summary>
 void Entity::ValidateVelocity()
 {
 	if (m_velocity.x > m_max_velocity.x)
@@ -149,6 +218,9 @@ void Entity::ValidateVelocity()
 	}
 }
 
+/// <summary>
+/// Changes direction to the new direction
+/// </summary>
 void Entity::UpdateDirectionUnit()
 {
 	sf::Vector2i new_direction;

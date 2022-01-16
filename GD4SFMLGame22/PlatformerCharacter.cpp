@@ -95,7 +95,9 @@ bool PlatformerCharacter::IsJumping() const
 {
 	return m_jumping;
 }
-
+/// <summary>
+/// Jack - Handle Collisions between the Player Character and any SceneNode with a collider
+/// </summary>
 void PlatformerCharacter::HandleCollisions()
 {
 	std::set<SceneNode*> collisions;

@@ -30,6 +30,9 @@ void Grid::SetEditMode(bool editor_mode)
 	m_editor_mode = editor_mode;
 }
 
+/// <summary>
+/// Jack, Vilandas - Create the file path to the Level's .sav file checking for duplicates in the process
+/// </summary>
 void Grid::CreatePath()
 {
 	int number = 0;
