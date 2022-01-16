@@ -158,6 +158,15 @@ CommandQueue& World::GetCommandQueue()
 	return m_command_queue;
 }
 
+bool World::HasPlayerAchievedVictory() const
+{
+	if (!m_grid.Node().IsInEditMode())
+	{
+		return m_player->GetCollectedCoins() >= m_grid.Node().CoinCount();
+	}
+	return false;
+}
+
 sf::IntRect World::GetBackgroundRect(sf::Texture& texture) const
 {
 	texture.setRepeated(true);

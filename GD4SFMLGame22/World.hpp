@@ -34,6 +34,8 @@ public:
 	void Draw();
 	CommandQueue& GetCommandQueue();
 
+	bool HasPlayerAchievedVictory() const;
+
 private:
 	void BuildScene();
 

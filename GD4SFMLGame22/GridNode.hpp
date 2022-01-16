@@ -5,13 +5,11 @@
 #include <SFML/Graphics/RectangleShape.hpp>
 
 #include "Camera.hpp"
-#include "SceneNode.hpp"
 #include "ScrollableContainer.hpp"
 #include "AnimatedTileNode.hpp"
 #include "SoundPlayer.hpp"
 #include "TexturedButton.hpp"
 #include "TileDataHash.hpp"
-#include "TileNode.hpp"
 #include "Vector2iHash.hpp"
 #include <iostream>
 #include <fstream>
@@ -41,6 +39,7 @@ public:
 	void RemoveTile(const TileNode* tile);
 
 	bool IsHoldingTile() const;
+	bool IsInEditMode() const;
 	bool IsInCreateMode() const;
 	bool TileIntersectsTile(TileNode* tile, sf::Vector2i cell_position) const;
 	bool CellContainsTile(sf::Vector2i cell_position) const;
@@ -60,6 +59,8 @@ public:
 
 	void DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
 	void UpdateCurrent(sf::Time dt, CommandQueue& commands);
+
+	int CoinCount() const;
 
 	void SetEditorMode(bool editor_mode);
 	void LoadData(const std::string& path);
@@ -108,6 +109,7 @@ private:
 
 	bool m_can_place;
 	bool m_can_pickup;
+	int m_coin_count;
 	bool m_mouse_contains_tile;
 
 	sf::Vector2i m_mouse_cell_position;

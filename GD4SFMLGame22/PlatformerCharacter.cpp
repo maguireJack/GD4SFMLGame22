@@ -35,11 +35,12 @@ PlatformerCharacter::PlatformerCharacter(
 	, m_camera(camera)
 	, m_artist(Table[static_cast<int>(type)].m_animation_data.ToVector(), textures)
 	, m_health_display(nullptr)
+	, m_sounds(sounds)
 	, m_jumping(false)
 	, m_camera_move_constraint(false)
 	, m_coyote_time(Table[static_cast<int>(type)].m_coyote_time)
 	, m_air_time(0)
-	, m_sounds(sounds)
+	, m_collected_coins(0)
 {
 	std::unique_ptr<TextNode> health_display(new TextNode(scene_layers, fonts, ""));
 	m_health_display = health_display.get();
@@ -54,6 +55,11 @@ unsigned PlatformerCharacter::GetCategory() const
 sf::FloatRect PlatformerCharacter::GetBoundingRect() const
 {
 	return GetWorldTransform().transformRect(m_artist.GetSmallestBounds());
+}
+
+int PlatformerCharacter::GetCollectedCoins() const
+{
+	return m_collected_coins;
 }
 
 void PlatformerCharacter::Jump()
@@ -120,11 +126,12 @@ void PlatformerCharacter::HandleCollisions()
 				}
 			}
 		}
-		if (Category::kPickup & node->GetCategory()) 
+		else if (Category::kPickup & node->GetCategory()) 
 		{
 			m_sounds.Play(SoundEffect::kCollectPickup);
 			auto coin = dynamic_cast<TileNode*>(node);
 			coin->Destroy();
+			m_collected_coins++;
 		}
 
 	}

@@ -1,12 +1,8 @@
 #include "GridNode.hpp"
 
-#include <SFML/Graphics/RectangleShape.hpp>
-#include <SFML/Graphics/RenderTarget.hpp>
 #include <utility>
 
-#include "Application.hpp"
 #include "Button.hpp"
-#include "Label.hpp"
 #include "TexturedButton.hpp"
 
 GridNode::GridNode(
@@ -42,6 +38,7 @@ GridNode::GridNode(
 	, m_inventory_mode(false)
 	, m_can_place(true)
 	, m_can_pickup(false)
+	, m_coin_count(0)
 	, m_mouse_contains_tile(false)
 	, m_mouse_cell_position(0, 0)
 	, m_selected_tile(nullptr)
@@ -82,6 +79,11 @@ void GridNode::AddTileNode(std::unique_ptr<TileNode> tile_node)
 	const sf::Vector2i cell_position = GetCellPosition(tile_node->getPosition());
 	const sf::Vector2i cell_size = tile_node->Data().GetCellSize();
 	tile_node->SetCellPosition(cell_position, 16);
+
+	if (tile_node->Data().GetTexture() == Textures::kCoin)
+	{
+		m_coin_count++;
+	}
 
 	for (int x = 0; x < cell_size.x; x++)
 	{
@@ -128,6 +130,11 @@ void GridNode::RemoveTile(const TileNode* tile_node)
 bool GridNode::IsHoldingTile() const
 {
 	return m_selected_tile != nullptr;
+}
+
+bool GridNode::IsInEditMode() const
+{
+	return m_editor_mode;
 }
 
 bool GridNode::IsInCreateMode() const
@@ -350,6 +357,11 @@ void GridNode::UpdateCurrent(sf::Time dt, CommandQueue& commands)
 		m_inventory_gui.setPosition(camera_position);
 		m_inventory_labels_gui.setPosition(camera_position);
 	}
+}
+
+int GridNode::CoinCount() const
+{
+	return m_coin_count;
 }
 
 void GridNode::SetEditorMode(bool editor_mode)

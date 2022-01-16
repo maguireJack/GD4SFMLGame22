@@ -24,6 +24,7 @@ public:
 
 	unsigned GetCategory() const override;
 	sf::FloatRect GetBoundingRect() const override;
+	int GetCollectedCoins() const;
 
 	void Jump();
 	void ResetJump();
@@ -54,4 +55,5 @@ private:
 	bool m_camera_move_constraint;
 	float m_coyote_time;
 	float m_air_time;
+	int m_collected_coins;
 };
