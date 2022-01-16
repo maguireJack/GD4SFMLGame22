@@ -17,7 +17,7 @@ World::World(sf::RenderWindow& window, TextureHolder& textures, FontHolder& font
 	, m_scene_layers()
 	, m_scenegraph(m_scene_layers)
 	, m_world_bounds(0.f, 0.f, 768, 432)
-	, m_spawn_position(100, 216)
+	, m_spawn_position(20, 100)
 	, m_player(nullptr)
 {
 	m_scene_texture.create(m_window.getSize().x, m_window.getSize().y);
@@ -164,7 +164,7 @@ bool World::HasAlivePlayer() const
 	{
 		return m_player->GetBoundingRect().intersects(m_world_bounds);
 	}
-	return false;
+	return true;
 }
 
 bool World::HasPlayerAchievedVictory() const
