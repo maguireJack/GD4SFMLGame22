@@ -139,7 +139,7 @@ void World::BuildScene()
 			static_cast<int>(m_world_bounds.height)/16,
 			16,
 			0.5f,
-			true));
+			false));
 
 	m_grid.SetNode(grid_node.get());
 	m_scene_layers[static_cast<int>(Layers::kGrid)]->AttachChild(std::move(grid_node));

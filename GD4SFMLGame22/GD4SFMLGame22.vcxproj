@@ -169,7 +169,6 @@
     <ClCompile Include="Grid.cpp" />
     <ClCompile Include="GridNode.cpp" />
     <ClCompile Include="Label.cpp" />
-    <ClCompile Include="LevelEditorState.cpp" />
     <ClCompile Include="LevelSelectState.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MenuState.cpp" />
@@ -222,7 +221,6 @@
     <ClInclude Include="Texture.hpp" />
     <ClInclude Include="Label.hpp" />
     <ClInclude Include="Layers.hpp" />
-    <ClInclude Include="LevelEditorState.hpp" />
     <ClInclude Include="LevelSelectState.hpp" />
     <ClInclude Include="MenuState.hpp" />
     <ClInclude Include="MissionStatus.hpp" />

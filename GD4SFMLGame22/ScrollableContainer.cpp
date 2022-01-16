@@ -150,7 +150,7 @@ namespace GUI
 
 	void ScrollableContainer::HandleEvent(const sf::Event& event)
 	{
-		if (event.type == sf::Event::MouseMoved)
+		if (event.type == sf::Event::MouseMoved && !m_children.empty())
 		{
 			const int end_index = EndIndexOfCurrentPage();
 			for (size_t i = m_page_start_indexes[m_current_page]; i <= end_index; i++)
@@ -185,6 +185,11 @@ namespace GUI
 
 	void ScrollableContainer::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	{
+		if (m_children.empty())
+		{
+			return;
+		}
+
 		states.transform *= getTransform();
 
 		const int end_index = EndIndexOfCurrentPage();

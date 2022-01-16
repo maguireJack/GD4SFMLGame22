@@ -37,6 +37,7 @@ GridNode::GridNode(
 	, m_inventory_gui(window, fonts, camera, sf::FloatRect(0, 276, 576, 48), 0.5f)
 	, m_selected_button(nullptr)
 	, m_editor_mode(editor_mode)
+	, m_editor_loaded(false)
 	, m_inventory_mode(false)
 	, m_can_place(true)
 	, m_can_pickup(false)
@@ -48,73 +49,6 @@ GridNode::GridNode(
 	m_background.setFillColor(sf::Color(0, 0, 0, 150));
 	m_background.setSize(sf::Vector2f(576, 48));
 	m_background_position = sf::Vector2f(0, 276);
-
-	if (!editor_mode)
-	{
-		return;
-	}
-
-	auto save_button = std::make_shared<GUI::Button>(textures, fonts, sounds);
-	save_button->setScale(0.5f, 0.5f);
-	save_button->setPosition(m_camera.getPosition().x + m_camera.GetBoundingRect().width - save_button->GetBoundingRect().width,  0);
-	save_button->SetText("Save");
-	save_button->SetCallback([this]()
-		{
-			this->SaveData();
-		});
-
-	m_editor_gui.Pack(save_button);
-
-	for (int texture_index = static_cast<int>(Textures::kWooden_2x1); texture_index <= static_cast<int>(Textures::kGrassTiles24); texture_index++)
-	{
-		auto texture = static_cast<Textures>(texture_index);
-
-		auto button = std::make_shared<GUI::TexturedButton>(m_fonts, m_textures, texture);
-		button->SetToggle(true);
-		button->setPosition(16, 292);
-		button->SetCallback([this, texture, button]()
-			{
-				SetNewTileSettings(texture);
-				m_inventory_gui.DeactivateAllExcept(button);
-				m_selected_button = button;
-			});
-
-		const bool new_page = m_editor_inventory_gui.Pack(button, 16);
-
-		auto label = std::make_shared<GUI::Label>("", m_fonts);
-		label->setPosition(button->getPosition().x + button->GetBoundingRect().width / 2, 310);
-		label->setScale(0.5f, 0.5f);
-
-		auto remove_button = std::make_shared<GUI::TexturedButton>(m_fonts, m_textures, Textures::kRemoveButton);
-		remove_button->setPosition(button->getPosition().x - 5, 310);
-		remove_button->SetCallback([this, label, texture]()
-			{
-				TileData tile(texture, true);
-				RemoveFromInventory(tile);
-
-				if (m_inventory.count(tile))
-				{
-					label->SetText(std::to_string(m_inventory[tile]));
-				}
-				else
-				{
-					label->SetText("");
-				}
-			});
-
-		auto add_button = std::make_shared<GUI::TexturedButton>(m_fonts, m_textures, Textures::kAddButton);
-		add_button->setPosition(button->getPosition().x + button->GetBoundingRect().width, 310);
-		add_button->SetCallback([this, label, texture]()
-			{
-				TileData tile(texture, true);
-				AddToInventory(tile);
-				label->SetText(std::to_string(m_inventory[tile]));
-			});
-
-		m_editor_adder_gui.PackManual(remove_button, new_page);
-		m_editor_adder_gui.PackManual(label);
-		m_editor_adder_gui.PackManual(add_button);
-	}
 }
 
 void GridNode::SetNewTileSettings(Textures texture)
@@ -410,8 +344,20 @@ void GridNode::UpdateCurrent(sf::Time dt, CommandQueue& commands)
 	}
 }
 
+void GridNode::SetEditorMode(bool editor_mode)
+{
+	m_editor_mode = editor_mode;
+
+	if (m_editor_mode)
+	{
+		LoadEditor();
+	}
+}
+
 void GridNode::LoadData(const std::string& path)
 {
+	m_file_path = path;
+
 	std::ifstream save_data;
 	std::string unfiltered;
 	save_data.open(path);
@@ -443,7 +389,7 @@ void GridNode::LoadData(const std::string& path)
 void GridNode::SaveData()
 {
 	std::ofstream save_data;
-	save_data.open("Levels/test.sav", std::fstream::out);
+	save_data.open(m_file_path + ".sav", std::fstream::out);
 	std::unordered_set<sf::Vector2i, Vector2iHash> saved;
 
 	for (const auto& x : m_tile_map)
@@ -461,7 +407,7 @@ void GridNode::SaveData()
 	texture.create(1920, 1080);
 	texture.update(m_window);
 	sf::Image image = texture.copyToImage();
-	image.saveToFile("Levels/test.png");
+	image.saveToFile(m_file_path + ".png");
 }
 
 void GridNode::HandleEvent(const sf::Event& event, CommandQueue& commands)
@@ -600,4 +546,75 @@ void GridNode::DropTileAt(sf::Vector2i cell_position)
 	AddTileNode(m_selected_tile, cell_position);
 
 	m_selected_tile = nullptr;
+}
+
+void GridNode::LoadEditor()
+{
+	if (m_editor_loaded)
+	{
+		return;
+	}
+	m_editor_loaded = true;
+
+	auto save_button = std::make_shared<GUI::Button>(m_textures, m_fonts, m_sounds);
+	save_button->setScale(0.5f, 0.5f);
+	save_button->setPosition(m_camera.getPosition().x + m_camera.GetBoundingRect().width - save_button->GetBoundingRect().width, 0);
+	save_button->SetText("Save");
+	save_button->SetCallback([this]()
+		{
+			this->SaveData();
+		});
+
+	m_editor_gui.Pack(save_button);
+
+	for (int texture_index = static_cast<int>(Textures::kWooden_2x1); texture_index <= static_cast<int>(Textures::kGrassTiles24); texture_index++)
+	{
+		auto texture = static_cast<Textures>(texture_index);
+
+		auto button = std::make_shared<GUI::TexturedButton>(m_fonts, m_textures, texture);
+		button->SetToggle(true);
+		button->setPosition(16, 292);
+		button->SetCallback([this, texture, button]()
+			{
+				SetNewTileSettings(texture);
+				//m_inventory_gui.DeactivateAllExcept(button);
+				m_selected_button = button;
+			});
+
+		const bool new_page = m_editor_inventory_gui.Pack(button, 16);
+
+		auto label = std::make_shared<GUI::Label>("", m_fonts);
+		label->setPosition(button->getPosition().x + button->GetBoundingRect().width / 2, 310);
+		label->setScale(0.5f, 0.5f);
+
+		auto remove_button = std::make_shared<GUI::TexturedButton>(m_fonts, m_textures, Textures::kRemoveButton);
+		remove_button->setPosition(button->getPosition().x - 5, 310);
+		remove_button->SetCallback([this, label, texture]()
+			{
+				TileData tile(texture, true);
+				RemoveFromInventory(tile);
+
+				if (m_inventory.count(tile))
+				{
+					label->SetText(std::to_string(m_inventory[tile]));
+				}
+				else
+				{
+					label->SetText("");
+				}
+			});
+
+		auto add_button = std::make_shared<GUI::TexturedButton>(m_fonts, m_textures, Textures::kAddButton);
+		add_button->setPosition(button->getPosition().x + button->GetBoundingRect().width, 310);
+		add_button->SetCallback([this, label, texture]()
+			{
+				TileData tile(texture, true);
+				AddToInventory(tile);
+				label->SetText(std::to_string(m_inventory[tile]));
+			});
+
+		m_editor_adder_gui.PackManual(remove_button, new_page);
+		m_editor_adder_gui.PackManual(label);
+		m_editor_adder_gui.PackManual(add_button);
+	}
 }

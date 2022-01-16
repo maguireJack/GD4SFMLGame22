@@ -6,7 +6,6 @@ enum class StateID
 	kMenu,
 	kGame,
 	kLevelSelect,
-	kLevelEditor,
 	kPause,
 	kSettings,
 	kGameOver

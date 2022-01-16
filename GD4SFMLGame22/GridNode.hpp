@@ -58,6 +58,7 @@ public:
 	void DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
 	void UpdateCurrent(sf::Time dt, CommandQueue& commands);
 
+	void SetEditorMode(bool editor_mode);
 	void LoadData(const std::string& path);
 	void SaveData();
 	void HandleEvent(const sf::Event& event, CommandQueue& commands);
@@ -67,6 +68,8 @@ private:
 	bool PickupTile();
 	bool DropTile();
 	void DropTileAt(sf::Vector2i cell_position);
+
+	void LoadEditor();
 
 private:
 	sf::RenderWindow& m_window;
@@ -91,7 +94,10 @@ private:
 	sf::RectangleShape m_background;
 	sf::Vector2f m_background_position;
 
+	std::string m_file_path;
+
 	bool m_editor_mode;
+	bool m_editor_loaded;
 	bool m_inventory_mode;
 
 	bool m_can_place;
