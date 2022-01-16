@@ -32,6 +32,7 @@ protected:
 	void HandleCollisions() override;
 	void BlockingCollision(CollisionLocation location);
 	void BouncyCollision(CollisionLocation location);
+	void VerticalMovementCollision(CollisionLocation location, TileNode* tile);
 
 private:
 	void DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) const override;

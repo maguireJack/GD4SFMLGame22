@@ -20,6 +20,8 @@ enum class Textures
 	kSlime_2x1,
 	kSlime_3x1,
 
+	kMetal_3x4_move_0x5,
+
 	kGrassTiles0,
 	kGrassTiles1,
 	kGrassTiles2,

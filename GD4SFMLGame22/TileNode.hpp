@@ -18,6 +18,8 @@ public:
 
 	unsigned GetCategory() const override;
 	sf::FloatRect GetBoundingRect() const override;
+	sf::Vector2f GetVelocity() const override;
+	float GetDeltaTimeInSeconds() const override;
 
 	bool IsSelected() const;
 	void Select();
@@ -29,12 +31,20 @@ public:
 
 	bool IsDestroyed() const override;
 
+// Effects
+public:
+	void ActivateVerticalMovement();
+
 private:
 	void DrawCurrent(sf::RenderTarget&, sf::RenderStates states) const override;
+	void UpdateCurrent(sf::Time dt, CommandQueue& commands) override;
 
 private:
 	TileData m_data;
 	bool m_selected;
 	bool m_destroy;
 	sf::Sprite m_sprite;
+
+	sf::Vector2f m_velocity;
+	float m_delta_time_in_seconds;
 };

@@ -2,5 +2,6 @@
 
 enum PlatformEffects
 {
-	Bouncy
+	Bouncy,
+	VerticalMovement,
 };

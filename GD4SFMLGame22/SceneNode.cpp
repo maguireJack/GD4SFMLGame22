@@ -42,6 +42,11 @@ void SceneNode::Update(sf::Time dt, CommandQueue& commands)
 	UpdateChildren(dt, commands);
 }
 
+float SceneNode::GetDeltaTimeInSeconds() const
+{
+	return 1;
+}
+
 sf::Vector2f SceneNode::GetWorldPosition() const
 {
 	return GetWorldTransform() * sf::Vector2f();
@@ -119,7 +124,7 @@ void SceneNode::HandleCollisions()
 
 void SceneNode::UpdateCurrent(sf::Time dt, CommandQueue& commands)
 {
-	//Do nothing by default
+	// Do Nothing
 }
 
 void SceneNode::UpdateChildren(sf::Time dt, CommandQueue& commands)

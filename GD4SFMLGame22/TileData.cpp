@@ -21,6 +21,16 @@ sf::Vector2i TileData::GetCellPosition() const
 	return m_cell_position;
 }
 
+sf::Vector2i TileData::GetCellOffset() const
+{
+	if (Table.count(m_texture))
+	{
+		return Table.at(m_texture).m_offset;
+	}
+
+	return { 0, 0 };
+}
+
 sf::Vector2i TileData::GetCellSize() const
 {
 	if (Table.count(m_texture))

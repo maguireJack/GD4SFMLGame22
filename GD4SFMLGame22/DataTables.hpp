@@ -12,6 +12,7 @@
 struct PlatformData
 {
 	sf::Vector2i m_cell_size;
+	sf::Vector2i m_offset;
 	std::unordered_set<PlatformEffects> m_effects;
 };
 

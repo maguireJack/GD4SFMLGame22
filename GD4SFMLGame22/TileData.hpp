@@ -12,6 +12,7 @@ public:
 
 	bool IsPickable() const;
 	sf::Vector2i GetCellPosition() const;
+	sf::Vector2i GetCellOffset() const;
 	sf::Vector2i GetCellSize() const;
 
 	void SetCellPosition(sf::Vector2i position);

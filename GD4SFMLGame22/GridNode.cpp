@@ -498,7 +498,7 @@ bool GridNode::PickupTile()
 		TileNode* tile = m_tile_map[m_mouse_cell_position];
 		if (!tile->IsSelected())
 		{
-			m_picked_up_position = m_mouse_cell_position;
+			m_picked_up_position = tile->Data().GetCellPosition();
 
 			tile->Select();
 			m_selected_tile = tile;

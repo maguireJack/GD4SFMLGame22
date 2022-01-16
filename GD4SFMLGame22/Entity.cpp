@@ -15,6 +15,7 @@ Entity::Entity(
 	, m_max_velocity(max_velocity)
 	, m_deceleration(deceleration)
 	, m_gravity(gravity)
+	, m_delta_time_in_seconds(0)
 	, m_is_marked_for_removal(false)
 {
 }
@@ -63,8 +64,15 @@ sf::Vector2f Entity::GetVelocity() const
 	return m_velocity;
 }
 
+float Entity::GetDeltaTimeInSeconds() const
+{
+	return m_delta_time_in_seconds;
+}
+
 void Entity::UpdateCurrent(sf::Time dt, CommandQueue& commands)
 {
+	m_delta_time_in_seconds = dt.asSeconds();
+
 	if (IsDestroyed())
 	{
 		m_is_marked_for_removal = true;
@@ -78,7 +86,7 @@ void Entity::UpdateCurrent(sf::Time dt, CommandQueue& commands)
 	ValidateVelocity();
 	HandleCollisions();
 
-	move(m_velocity);
+	move(m_velocity * dt.asSeconds());
 }
 
 void Entity::ApplyGravity(sf::Time dt) 

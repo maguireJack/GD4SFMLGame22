@@ -15,17 +15,21 @@ std::unordered_map<Textures, PlatformData> InitializePlatformData()
 	data[Textures::kSlime_3x1].m_cell_size = sf::Vector2i(3, 1);
 	data[Textures::kSlime_3x1].m_effects = { Bouncy };
 
+	data[Textures::kMetal_3x4_move_0x5].m_cell_size = sf::Vector2i(3, 5);
+	data[Textures::kMetal_3x4_move_0x5].m_offset = sf::Vector2i(0, 4);
+	data[Textures::kMetal_3x4_move_0x5].m_effects = { VerticalMovement };
+
 	return data;
 }
 
 std::vector<PlatformerCharacterData> InitializePlatformerCharacterData()
 {
 	std::vector<PlatformerCharacterData> data(static_cast<int>(PlatformerCharacterType::kPlatformerCount));
-	data[static_cast<int>(PlatformerCharacterType::kBruno)].m_jump_force = 2;
+	data[static_cast<int>(PlatformerCharacterType::kBruno)].m_jump_force = 140;
 	data[static_cast<int>(PlatformerCharacterType::kBruno)].m_acceleration = 1000;
-	data[static_cast<int>(PlatformerCharacterType::kBruno)].m_max_velocity = sf::Vector2f(1, 3);
+	data[static_cast<int>(PlatformerCharacterType::kBruno)].m_max_velocity = sf::Vector2f(100, 200);
 	data[static_cast<int>(PlatformerCharacterType::kBruno)].m_deceleration = 1000;
-	data[static_cast<int>(PlatformerCharacterType::kBruno)].m_gravity = 3;
+	data[static_cast<int>(PlatformerCharacterType::kBruno)].m_gravity = 200;
 	data[static_cast<int>(PlatformerCharacterType::kBruno)].m_coyote_time = 0.5f;
 	data[static_cast<int>(PlatformerCharacterType::kBruno)].m_health = 100;
 	data[static_cast<int>(PlatformerCharacterType::kBruno)].m_animation_data = PlatformerAnimationData{

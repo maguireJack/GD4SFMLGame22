@@ -23,6 +23,7 @@ public:
 	void AddDirection(sf::Vector2i direction);
 	void RemoveDirection(sf::Vector2i direction);
 	sf::Vector2f GetVelocity() const override;
+	float GetDeltaTimeInSeconds() const override;
 
 	int GetHitPoints() const;
 	sf::Vector2f GetDirectionUnit() const;
@@ -31,7 +32,7 @@ public:
 	void Damage(int points);
 	void Destroy();
 	void SetGravity(float gravity);
-	virtual bool IsDestroyed() const override;
+	bool IsDestroyed() const override;
 
 protected:
 	void UpdateCurrent(sf::Time dt, CommandQueue& commands) override;
@@ -52,6 +53,7 @@ private:
 	sf::Vector2f m_velocity;
 	std::unordered_set<sf::Vector2i, Vector2iHash> m_directions;
 	sf::Vector2f m_direction_unit;
+	float m_delta_time_in_seconds;
 
 	bool m_is_marked_for_removal;
 };

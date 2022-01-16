@@ -1,5 +1,6 @@
 #include "PlatformerCharacter.hpp"
 
+#include <iostream>
 #include <SFML/Graphics/RenderTarget.hpp>
 
 #include "Collision.hpp"
@@ -59,7 +60,16 @@ void PlatformerCharacter::Jump()
 	if (!IsJumping() && m_air_time <= m_coyote_time)
 	{
 		m_jumping = true;
-		SetVelocity(GetVelocity().x, -Table[static_cast<int>(m_type)].m_jump_force);
+		const sf::Vector2f velocity = GetVelocity();
+
+		if (velocity.y < 0) // if moving upwards, allow momentum jump
+		{
+			SetVelocity(GetVelocity().x, velocity.y - Table[static_cast<int>(m_type)].m_jump_force);
+		}
+		else
+		{
+			SetVelocity(GetVelocity().x, -Table[static_cast<int>(m_type)].m_jump_force);
+		}
 	}
 }
 
@@ -93,13 +103,20 @@ void PlatformerCharacter::HandleCollisions()
 			const auto tile = dynamic_cast<TileNode*>(node);
 			std::unordered_set<PlatformEffects> effects = tile->Data().GetEffects();
 
-			if (effects.count(Bouncy))
+			if (effects.empty())
 			{
-				BouncyCollision(location);
+				BlockingCollision(location);
 			}
 			else
 			{
-				BlockingCollision(location);
+				if (effects.count(Bouncy))
+				{
+					BouncyCollision(location);
+				}
+				if (effects.count(VerticalMovement))
+				{
+					VerticalMovementCollision(location, tile);
+				}
 			}
 		}
 
@@ -161,6 +178,20 @@ void PlatformerCharacter::BouncyCollision(CollisionLocation location)
 	}
 }
 
+void PlatformerCharacter::VerticalMovementCollision(CollisionLocation location, TileNode* tile)
+{
+	if (location == CollisionLocation::kBottom)
+	{
+		tile->ActivateVerticalMovement();
+		SetVelocity(GetVelocity().x, tile->GetVelocity().y);
+		ResetJump();
+	}
+	else
+	{
+		//BlockingCollision(location);
+	}
+}
+
 void PlatformerCharacter::DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	m_artist.DrawCurrent(target, states);
@@ -176,17 +207,15 @@ void PlatformerCharacter::UpdateCurrent(sf::Time dt, CommandQueue& commands)
 	UpdateAnimationState();
 	UpdateCamera(dt);
 	UpdateTexts();
+
+	std::cout << GetVelocity().x << std::endl;
 }
 
 void PlatformerCharacter::UpdateAnimationState()
 {
 	const sf::Vector2f velocity = GetVelocity();
 
-	if (Utility::Length(velocity) == 0.f)
-	{
-		m_artist.ChangeState(static_cast<int>(PlatformerAnimationState::kIdle));
-	}
-	else
+	if (velocity.x != 0.f)
 	{
 		m_artist.ChangeState(static_cast<int>(PlatformerAnimationState::kRun));
 
@@ -194,11 +223,14 @@ void PlatformerCharacter::UpdateAnimationState()
 		{
 			m_artist.Flipped(false);
 		}
-		else if(velocity.x < 0)
+		else if (velocity.x < 0)
 		{
 			m_artist.Flipped(true);
 		}
-		
+	}
+	else
+	{
+		m_artist.ChangeState(static_cast<int>(PlatformerAnimationState::kIdle));
 	}
 }
 

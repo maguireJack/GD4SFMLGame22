@@ -63,7 +63,7 @@ sf::FloatRect Collision::PredictMove(const sf::FloatRect& bounds, const sf::Vect
 sf::FloatRect Collision::PredictMove(const SceneNode& node)
 {
 	const sf::FloatRect bounds = node.GetBoundingRect();
-	const sf::Vector2f velocity = node.GetVelocity();
+	const sf::Vector2f velocity = node.GetVelocity() * node.GetDeltaTimeInSeconds();
 
 	return PredictMove(bounds, velocity);
 }

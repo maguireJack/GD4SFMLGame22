@@ -36,6 +36,7 @@ public:
 	virtual unsigned int GetCategory() const;
 	virtual sf::FloatRect GetBoundingRect() const;
 	virtual sf::Vector2f GetVelocity() const;
+	virtual float GetDeltaTimeInSeconds() const;
 
 	void PredictCollisionsWithScene(SceneNode& scene_graph, std::set<SceneNode*>& collisions);
 	void RemoveWrecks();

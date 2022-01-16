@@ -120,6 +120,8 @@ void Application::LoadTextures()
 	m_textures.Load(Textures::kSlime_2x1, "Media/Textures/SpecialPlatforms/slime_2x1.png");
 	m_textures.Load(Textures::kSlime_3x1, "Media/Textures/SpecialPlatforms/slime_3x1.png");
 
+	m_textures.Load(Textures::kMetal_3x4_move_0x5, "Media/Textures/SpecialPlatforms/metal_3x1.png");
+
 	LoadTexturesPattern(Textures::kJungle0, Textures::kJungle4, "Media/Textures/Jungle/jungle");
 	LoadTexturesPattern(Textures::kSky0, Textures::kSky4, "Media/Textures/Sky/sky");
 	LoadTexturesPattern(Textures::kGrassTiles0, Textures::kGrassTiles24, "Media/Textures/GrassTiles/tile");
