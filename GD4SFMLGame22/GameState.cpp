@@ -9,7 +9,8 @@ GameState::GameState(StateStack& stack, Context context)
 	, m_grid(*context.grid)
 {
 	// Play game theme
-	//context.music->Play(MusicThemes::kMissionTheme);
+	context.music->Play(MusicThemes::kMissionTheme);
+	
 }
 
 void GameState::Draw()
