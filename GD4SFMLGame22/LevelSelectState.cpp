@@ -25,9 +25,6 @@ LevelSelectState::LevelSelectState(StateStack& stack, Context context)
 		{
 			std::string path = entry.path().string().erase(entry.path().string().size() - 4);
 
-			//https://stackoverflow.com/questions/4072363/how-to-extract-digits-from-the-end-of-string/4072393
-			size_t last_index = path.find_last_not_of("0123456789");
-			std::string result = path.substr(last_index + 1);
 
 			auto level_image = std::make_shared<GUI::Texture>(path + ".png");
 			level_image->setScale(0.6f, 0.6f);
@@ -41,7 +38,7 @@ LevelSelectState::LevelSelectState(StateStack& stack, Context context)
 			play_button->setPosition(bounds.left, bounds.top + bounds.height + 10);
 			play_button->SetCallback([this, path]()
 				{
-					GetContext().grid->SetPathToLoad(path + ".sav");
+					GetContext().grid->SetPathToLoad(path);
 					GetContext().grid->SetEditMode(false);
 					RequestStackPop();
 					RequestStackPush(StateID::kGame);
@@ -53,7 +50,7 @@ LevelSelectState::LevelSelectState(StateStack& stack, Context context)
 			edit_button->setPosition(bounds.left + play_button->GetBoundingRect().width, bounds.top + bounds.height + 10);
 			edit_button->SetCallback([this, path]()
 				{
-					GetContext().grid->SetPathToLoad(path + ".sav");
+					GetContext().grid->SetPathToLoad(path);
 					GetContext().grid->SetEditMode(true);
 					RequestStackPop();
 					RequestStackPush(StateID::kGame);
@@ -67,6 +64,7 @@ LevelSelectState::LevelSelectState(StateStack& stack, Context context)
 				{
 					fs::remove(path + ".png");
 					fs::remove(path + ".sav");
+					fs::remove(path + ".inv");
 					RequestStackPop();
 					RequestStackPush(StateID::kLevelSelect);
 				});

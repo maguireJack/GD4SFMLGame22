@@ -35,6 +35,7 @@ GridNode::GridNode(
 	, m_editor_inventory_gui(window, fonts, camera, sf::FloatRect(0, 276, 576, 48), 0.5f)
 	, m_editor_adder_gui(window, fonts, camera, sf::FloatRect(0, 276, 576, 48), 0)
 	, m_inventory_gui(window, fonts, camera, sf::FloatRect(0, 276, 576, 48), 0.5f)
+	, m_inventory_labels_gui(window, fonts, camera, sf::FloatRect(0, 276, 576, 48), 0.5f)
 	, m_selected_button(nullptr)
 	, m_editor_mode(editor_mode)
 	, m_editor_loaded(false)
@@ -174,7 +175,7 @@ int GridNode::GetInventoryCount(const TileData& tile)
 	return 0;
 }
 
-void GridNode::SelectFromInventory(TileData& tile)
+void GridNode::SelectFromInventory(TileData tile)
 {
 	if (!IsHoldingTile() && m_inventory.count(tile))
 	{
@@ -206,10 +207,12 @@ void GridNode::RemoveFromInventory(const TileData& tile, int count)
 	if (m_inventory.count(tile))
 	{
 		m_inventory[tile] -= count;
+		m_selected_label->SetText(std::to_string(m_inventory[tile]));
 
 		if (m_inventory[tile] <= 0)
 		{
 			m_inventory.erase(tile);
+			m_selected_label->SetText("");
 		}
 	}
 }
@@ -246,23 +249,26 @@ const Camera& GridNode::GetCamera() const
 
 void GridNode::DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 {
-	sf::RectangleShape horizontal_line(sf::Vector2f(m_cell_size * m_horizontal_cells, m_line_width));
-	sf::RectangleShape vertical_line(sf::Vector2f(m_line_width, m_cell_size * m_vertical_cells));
-
-	sf::Color color(255, 255, 255, 60);
-	horizontal_line.setFillColor(color);
-	vertical_line.setFillColor(color);
-
-	for (int i = 0; i < m_vertical_cells; i++)
+	if (m_editor_mode)
 	{
-		horizontal_line.setPosition(sf::Vector2f(0, i * m_cell_size));
-		target.draw(horizontal_line, states);
-	}
+		sf::RectangleShape horizontal_line(sf::Vector2f(m_cell_size * m_horizontal_cells, m_line_width));
+		sf::RectangleShape vertical_line(sf::Vector2f(m_line_width, m_cell_size * m_vertical_cells));
 
-	for (int i = 0; i < m_horizontal_cells; i++)
-	{
-		vertical_line.setPosition(sf::Vector2f(i * m_cell_size, 0));
-		target.draw(vertical_line, states);
+		sf::Color color(255, 255, 255, 60);
+		horizontal_line.setFillColor(color);
+		vertical_line.setFillColor(color);
+
+		for (int i = 0; i < m_vertical_cells; i++)
+		{
+			horizontal_line.setPosition(sf::Vector2f(0, i * m_cell_size));
+			target.draw(horizontal_line, states);
+		}
+
+		for (int i = 0; i < m_horizontal_cells; i++)
+		{
+			vertical_line.setPosition(sf::Vector2f(i * m_cell_size, 0));
+			target.draw(vertical_line, states);
+		}
 	}
 
 	sf::RectangleShape square(sf::Vector2f(m_cell_size, m_cell_size));
@@ -298,6 +304,7 @@ void GridNode::DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) co
 	else
 	{
 		target.draw(m_inventory_gui, states);
+		target.draw(m_inventory_labels_gui, states);
 	}
 }
 
@@ -341,6 +348,7 @@ void GridNode::UpdateCurrent(sf::Time dt, CommandQueue& commands)
 	else
 	{
 		m_inventory_gui.setPosition(camera_position);
+		m_inventory_labels_gui.setPosition(camera_position);
 	}
 }
 
@@ -360,7 +368,7 @@ void GridNode::LoadData(const std::string& path)
 
 	std::ifstream save_data;
 	std::string unfiltered;
-	save_data.open(path);
+	save_data.open(path + ".sav");
 
 	while (std::getline(save_data, unfiltered))
 	{
@@ -377,12 +385,39 @@ void GridNode::LoadData(const std::string& path)
 
 		const int x = data[1];
 		const int y = data[2];
-		int textureID = data[3];
+		const int textureID = data[3];
 
 		std::unique_ptr<TileNode> tile_node(new TileNode(m_textures, GetSceneLayers(), static_cast<Textures>(textureID)));
 		tile_node->setPosition(static_cast<float>(16 * x), static_cast<float>(16 * y));
 
 		AddTileNode(std::move(tile_node));
+	}
+
+	save_data.close();
+	save_data.open(path + ".inv");
+
+	while (std::getline(save_data, unfiltered))
+	{
+		std::string split = ",";
+		int data[2];
+
+		for (int& i : data)
+		{
+			i = std::stoi(unfiltered.substr(0, unfiltered.find(split)));
+			unfiltered.erase(0, unfiltered.find(split));
+			unfiltered.erase(0, 1);
+			std::cout << unfiltered << std::endl;
+		}
+
+		const int textureID = data[0];
+		const int count = data[1];
+
+		AddToInventory(static_cast<Textures>(textureID), count);
+	}
+
+	if (!m_inventory.empty())
+	{
+		LoadInventoryGUI();
 	}
 }
 
@@ -392,13 +427,22 @@ void GridNode::SaveData()
 	save_data.open(m_file_path + ".sav", std::fstream::out);
 	std::unordered_set<sf::Vector2i, Vector2iHash> saved;
 
-	for (const auto& x : m_tile_map)
+	for (const auto& pair : m_tile_map)
 	{
-		if (!saved.count(x.second->Data().GetCellPosition()))
+		if (!saved.count(pair.second->Data().GetCellPosition()))
 		{
-			save_data << x.second->Data().ToSerial();
-			saved.emplace(x.second->Data().GetCellPosition());
+			save_data << pair.second->Data().ToSerial();
+			saved.emplace(pair.second->Data().GetCellPosition());
 		}
+	}
+
+	save_data.close();
+
+
+	save_data.open(m_file_path + ".inv", std::fstream::out);
+	for (const auto& pair : m_inventory)
+	{
+		save_data << static_cast<int>(pair.first.GetTexture()) << "," << pair.second << std::endl;
 	}
 
 	save_data.close();
@@ -471,25 +515,6 @@ void GridNode::HandleEvent(const sf::Event& event, CommandQueue& commands)
 				DropTileAt(m_picked_up_position);
 			}
 		}
-		/*else if (event.mouseButton.button == sf::Mouse::Right)
-		{
-			if (m_tile_map[m_mouse_cell_position])
-			{
-				if (m_selected_tile == nullptr) {
-					std::cout << "Hovering" << std::endl;
-					TileNode copied_tile(m_tile_map[m_mouse_cell_position]);
-
-					if (!copied_tile.GetTile()->IsSelected())
-					{
-						copied_tile.GetTile()->Select();
-						m_selected_tile = &copied_tile;
-					}
-				}
-
-			}
-		}
-		*/
-
 	}
 }
 
@@ -557,6 +582,35 @@ void GridNode::DropTileAt(sf::Vector2i cell_position)
 	m_selected_tile = nullptr;
 }
 
+void GridNode::LoadInventoryGUI()
+{
+	for (auto& pair : m_inventory)
+	{
+		Textures texture = pair.first.GetTexture();
+		TileData tile(texture);
+
+		auto label = std::make_shared<GUI::Label>("", m_fonts);
+
+		auto button = std::make_shared<GUI::TexturedButton>(m_fonts, m_textures, texture);
+		button->SetToggle(true);
+		button->setPosition(16, 292);
+		button->SetCallback([this, tile, button, label]()
+			{
+				SelectFromInventory(tile);
+				m_selected_button = button;
+				m_selected_label = label;
+			});
+
+		const bool new_page = m_inventory_gui.Pack(button, 16);
+
+		label->SetText(std::to_string(m_inventory[tile]));
+		label->setPosition(button->getPosition().x + button->GetBoundingRect().width / 2, 310);
+		label->setScale(0.5f, 0.5f);
+
+		m_inventory_labels_gui.PackManual(label, new_page);
+	}
+}
+
 void GridNode::LoadEditor()
 {
 	if (m_editor_loaded)
@@ -586,7 +640,6 @@ void GridNode::LoadEditor()
 		button->SetCallback([this, texture, button]()
 			{
 				SetNewTileSettings(texture);
-				//m_inventory_gui.DeactivateAllExcept(button);
 				m_selected_button = button;
 			});
 
@@ -601,16 +654,8 @@ void GridNode::LoadEditor()
 		remove_button->SetCallback([this, label, texture]()
 			{
 				TileData tile(texture, true);
+				m_selected_label = label;
 				RemoveFromInventory(tile);
-
-				if (m_inventory.count(tile))
-				{
-					label->SetText(std::to_string(m_inventory[tile]));
-				}
-				else
-				{
-					label->SetText("");
-				}
 			});
 
 		auto add_button = std::make_shared<GUI::TexturedButton>(m_fonts, m_textures, Textures::kAddButton);

@@ -43,8 +43,8 @@ void Grid::CreatePath()
 		stream = std::fstream(path);
 	} while (stream.good());
 
-	stream.open("Levels/level" + std::to_string(number), std::fstream::out);
-	m_path_to_load = path;
+	stream.open(path, std::fstream::out);
+	m_path_to_load = "Levels/level" + std::to_string(number);
 }
 
 void Grid::HandleEvent(const sf::Event& event, CommandQueue& commands) const

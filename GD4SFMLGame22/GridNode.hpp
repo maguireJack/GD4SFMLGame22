@@ -16,6 +16,8 @@
 #include <iostream>
 #include <fstream>
 
+#include "Label.hpp"
+
 class GridNode : public SceneNode
 {
 public:
@@ -45,7 +47,7 @@ public:
 	bool CellPickable(sf::Vector2i cell_position);
 
 	int GetInventoryCount(const TileData& tile);
-	void SelectFromInventory(TileData& tile);
+	void SelectFromInventory(TileData tile);
 	void AddToInventory(TileData& tile, int count = 1);
 	void AddToInventory(Textures texture, int count = 1);
 	void RemoveFromInventory(const TileData& tile, int count = 1);
@@ -70,6 +72,7 @@ private:
 	bool DropTile();
 	void DropTileAt(sf::Vector2i cell_position);
 
+	void LoadInventoryGUI();
 	void LoadEditor();
 
 private:
@@ -91,7 +94,9 @@ private:
 	GUI::ScrollableContainer m_editor_inventory_gui;
 	GUI::ScrollableContainer m_editor_adder_gui;
 	GUI::ScrollableContainer m_inventory_gui;
+	GUI::ScrollableContainer m_inventory_labels_gui;
 	std::shared_ptr<GUI::TexturedButton> m_selected_button;
+	std::shared_ptr<GUI::Label> m_selected_label;
 	sf::RectangleShape m_background;
 	sf::Vector2f m_background_position;
 
