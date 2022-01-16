@@ -15,6 +15,12 @@ GridNode& Grid::Node() const
 void Grid::SetNode(GridNode* grid_node)
 {
 	m_grid_node = grid_node;
+	m_grid_node->LoadData(m_path_to_load);
+}
+
+void Grid::SetPathToLoad(const std::string& path)
+{
+	m_path_to_load = path;
 }
 
 void Grid::HandleEvent(const sf::Event& event, CommandQueue& commands) const

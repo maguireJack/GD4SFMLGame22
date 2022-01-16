@@ -66,7 +66,7 @@ Textures TileData::GetTexture() const
 	return m_texture;
 }
 
-std::string TileData::ToSerial()
+std::string TileData::ToSerial() const
 {
 	std::stringstream ss;
 	ss << m_pickable << ',' << m_cell_position.x << ',' << m_cell_position.y << ',' << static_cast<int>(m_texture) << "\n";

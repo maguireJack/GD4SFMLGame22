@@ -31,8 +31,9 @@ GridNode::GridNode(
 	, m_vertical_cells(vertical_cells)
 	, m_cell_size(cell_size)
 	, m_line_width(line_width)
-	, m_editor_gui(window, fonts, camera, sf::FloatRect(0, 276, 576, 48), 0.5f)
-	, m_inventory_adder_gui(window, fonts, camera, sf::FloatRect(0, 276, 576, 48), 0)
+	, m_editor_gui(window, camera)
+	, m_editor_inventory_gui(window, fonts, camera, sf::FloatRect(0, 276, 576, 48), 0.5f)
+	, m_editor_adder_gui(window, fonts, camera, sf::FloatRect(0, 276, 576, 48), 0)
 	, m_inventory_gui(window, fonts, camera, sf::FloatRect(0, 276, 576, 48), 0.5f)
 	, m_selected_button(nullptr)
 	, m_editor_mode(editor_mode)
@@ -53,6 +54,17 @@ GridNode::GridNode(
 		return;
 	}
 
+	auto save_button = std::make_shared<GUI::Button>(textures, fonts, sounds);
+	save_button->setScale(0.5f, 0.5f);
+	save_button->setPosition(m_camera.getPosition().x + m_camera.GetBoundingRect().width - save_button->GetBoundingRect().width,  0);
+	save_button->SetText("Save");
+	save_button->SetCallback([this]()
+		{
+			this->SaveData();
+		});
+
+	m_editor_gui.Pack(save_button);
+
 	for (int texture_index = static_cast<int>(Textures::kWooden_2x1); texture_index <= static_cast<int>(Textures::kGrassTiles24); texture_index++)
 	{
 		auto texture = static_cast<Textures>(texture_index);
@@ -67,7 +79,7 @@ GridNode::GridNode(
 				m_selected_button = button;
 			});
 
-		const bool new_page = m_editor_gui.Pack(button, 16);
+		const bool new_page = m_editor_inventory_gui.Pack(button, 16);
 
 		auto label = std::make_shared<GUI::Label>("", m_fonts);
 		label->setPosition(button->getPosition().x + button->GetBoundingRect().width / 2, 310);
@@ -99,9 +111,9 @@ GridNode::GridNode(
 				label->SetText(std::to_string(m_inventory[tile]));
 			});
 
-		m_inventory_adder_gui.PackManual(remove_button, new_page);
-		m_inventory_adder_gui.PackManual(label);
-		m_inventory_adder_gui.PackManual(add_button);
+		m_editor_adder_gui.PackManual(remove_button, new_page);
+		m_editor_adder_gui.PackManual(label);
+		m_editor_adder_gui.PackManual(add_button);
 	}
 }
 
@@ -111,7 +123,7 @@ void GridNode::SetNewTileSettings(Textures texture)
 	{
 		if (m_editor_mode)
 		{
-			m_editor_gui.DeactivateAll();
+			m_editor_inventory_gui.DeactivateAll();
 		}
 		else
 		{
@@ -134,6 +146,7 @@ void GridNode::AddTileNode(std::unique_ptr<TileNode> tile_node)
 {
 	const sf::Vector2i cell_position = GetCellPosition(tile_node->getPosition());
 	const sf::Vector2i cell_size = tile_node->Data().GetCellSize();
+	tile_node->SetCellPosition(cell_position, 16);
 
 	for (int x = 0; x < cell_size.x; x++)
 	{
@@ -150,6 +163,7 @@ void GridNode::AddTileNode(std::unique_ptr<TileNode> tile_node)
 void GridNode::AddTileNode(TileNode* tile_node, sf::Vector2i cell_position)
 {
 	const sf::Vector2i cell_size = tile_node->Data().GetCellSize();
+	tile_node->SetCellPosition(cell_position, 16);
 
 	for (int x = 0; x < cell_size.x; x++)
 	{
@@ -344,7 +358,8 @@ void GridNode::DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) co
 	if (m_editor_mode)
 	{
 		target.draw(m_editor_gui, states);
-		target.draw(m_inventory_adder_gui, states);
+		target.draw(m_editor_inventory_gui, states);
+		target.draw(m_editor_adder_gui, states);
 	}
 	else
 	{
@@ -382,25 +397,80 @@ void GridNode::UpdateCurrent(sf::Time dt, CommandQueue& commands)
 
 	const sf::Vector2f camera_position = GetCamera().getPosition();
 	m_background.setPosition(camera_position + m_background_position);
-	m_editor_gui.setPosition(camera_position);
-	m_inventory_gui.setPosition(camera_position);
-	m_inventory_adder_gui.setPosition(camera_position);
+
+	if (m_editor_mode)
+	{
+		m_editor_gui.setPosition(camera_position);
+		m_editor_inventory_gui.setPosition(camera_position);
+		m_editor_adder_gui.setPosition(camera_position);
+	}
+	else
+	{
+		m_inventory_gui.setPosition(camera_position);
+	}
+}
+
+void GridNode::LoadData(const std::string& path)
+{
+	std::ifstream save_data;
+	std::string unfiltered;
+	save_data.open(path);
+
+	while (std::getline(save_data, unfiltered))
+	{
+		std::string split = ",";
+		int data[4];
+
+		for (int& i : data)
+		{
+			i = std::stoi(unfiltered.substr(0, unfiltered.find(split)));
+			unfiltered.erase(0, unfiltered.find(split));
+			unfiltered.erase(0, 1);
+			std::cout << unfiltered << std::endl;
+		}
+
+		const int x = data[1];
+		const int y = data[2];
+		int textureID = data[3];
+
+		std::unique_ptr<TileNode> tile_node(new TileNode(m_textures, GetSceneLayers(), static_cast<Textures>(textureID)));
+		tile_node->setPosition(static_cast<float>(16 * x), static_cast<float>(16 * y));
+
+		AddTileNode(std::move(tile_node));
+	}
+}
+
+void GridNode::SaveData()
+{
+	std::ofstream save_data;
+	save_data.open("Levels/test.sav", std::fstream::out);
+	std::unordered_set<sf::Vector2i, Vector2iHash> saved;
+
+	for (const auto& x : m_tile_map)
+	{
+		if (!saved.count(x.second->Data().GetCellPosition()))
+		{
+			save_data << x.second->Data().ToSerial();
+			saved.emplace(x.second->Data().GetCellPosition());
+		}
+	}
+
+	save_data.close();
+
+	sf::Texture texture = sf::Texture();
+	texture.create(1920, 1080);
+	texture.update(m_window);
+	sf::Image image = texture.copyToImage();
+	image.saveToFile("Levels/test.png");
 }
 
 void GridNode::HandleEvent(const sf::Event& event, CommandQueue& commands)
 {
-	std::ofstream save_data;
-	save_data.open("test.txt", std::fstream::out);
-
-	for (auto x : m_tile_map)
-	{
-		save_data << x.second->Data().ToSerial();
-	}
-
 	if (m_editor_mode)
 	{
 		m_editor_gui.HandleEvent(event);
-		m_inventory_adder_gui.HandleEvent(event);
+		m_editor_inventory_gui.HandleEvent(event);
+		m_editor_adder_gui.HandleEvent(event);
 	}
 	else
 	{
@@ -475,7 +545,6 @@ void GridNode::HandleEvent(const sf::Event& event, CommandQueue& commands)
 		*/
 
 	}
-	save_data.close();
 }
 
 bool GridNode::CreateTile()

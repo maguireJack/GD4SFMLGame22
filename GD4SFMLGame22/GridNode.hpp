@@ -58,6 +58,8 @@ public:
 	void DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
 	void UpdateCurrent(sf::Time dt, CommandQueue& commands);
 
+	void LoadData(const std::string& path);
+	void SaveData();
 	void HandleEvent(const sf::Event& event, CommandQueue& commands);
 
 private:
@@ -81,8 +83,9 @@ private:
 	std::unordered_map<sf::Vector2i, TileNode*, Vector2iHash> m_tile_map;
 	std::unordered_map<TileData, int, TileDataHash> m_inventory;
 
-	GUI::ScrollableContainer m_editor_gui;
-	GUI::ScrollableContainer m_inventory_adder_gui;
+	GUI::Container m_editor_gui;
+	GUI::ScrollableContainer m_editor_inventory_gui;
+	GUI::ScrollableContainer m_editor_adder_gui;
 	GUI::ScrollableContainer m_inventory_gui;
 	std::shared_ptr<GUI::TexturedButton> m_selected_button;
 	sf::RectangleShape m_background;

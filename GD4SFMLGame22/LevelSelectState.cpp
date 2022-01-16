@@ -7,6 +7,7 @@
 #include "Button.hpp"
 #include <filesystem>
 
+#include "Grid.hpp"
 #include "Texture.hpp"
 namespace fs = std::filesystem;
 
@@ -20,11 +21,11 @@ LevelSelectState::LevelSelectState(StateStack& stack, Context context)
 
 	for (const auto& entry : fs::directory_iterator("Levels/"))
 	{
-		if (entry.path().has_extension() && entry.path().extension() == ".png")
+		if (entry.path().has_extension() && entry.path().extension() == ".sav")
 		{
-			std::cout << entry.path() << std::endl;
+			std::string path = entry.path().string().erase(entry.path().string().size() - 4);
 
-			auto level_image = std::make_shared<GUI::Texture>(entry.path().string());
+			auto level_image = std::make_shared<GUI::Texture>(path + ".png");
 			level_image->setScale(0.6f, 0.6f);
 			level_image->setPosition(context.camera->GetBoundingRect().width / 2, (context.camera->GetBoundingRect().height - 200.f) / 2);
 
@@ -34,8 +35,9 @@ LevelSelectState::LevelSelectState(StateStack& stack, Context context)
 			play_button->SetText("Play");
 			play_button->scale(1.92f, 1.92f); // 1/3 of 1152 (1152 is 60% of 1920)
 			play_button->setPosition(bounds.left, bounds.top + bounds.height + 10);
-			play_button->SetCallback([this]()
+			play_button->SetCallback([this, path]()
 				{
+					GetContext().grid->SetPathToLoad(path + ".sav");
 					RequestStackPop();
 					RequestStackPush(StateID::kGame);
 				});

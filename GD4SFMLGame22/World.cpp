@@ -21,10 +21,11 @@ World::World(sf::RenderWindow& window, TextureHolder& textures, FontHolder& font
 {
 	m_scene_texture.create(m_window.getSize().x, m_window.getSize().y);
 
-	BuildScene();
 	m_camera.SetCenter(m_spawn_position);
 	m_camera.SetSize(384 * 1.5f, 216 * 1.5f);
 	m_camera.SetBoundsConstraint(m_world_bounds);
+
+	BuildScene();
 
 	// background height = 216 x2 backgrounds
 	// background width = 384 (set to repeated)
@@ -32,15 +33,6 @@ World::World(sf::RenderWindow& window, TextureHolder& textures, FontHolder& font
 
 void World::Update(sf::Time dt)
 {
-	//Scroll the world
-	/*m_camera.move(0, m_scrollspeed * dt.asSeconds());*/
-
-	/*m_player_aircraft->SetVelocity(0.f, 0.f);*/
-	/*m_scene_layers[static_cast<int>(Layers::kJungle2)]->move(-0.1f,0);
-	m_scene_layers[static_cast<int>(Layers::kJungle3)]->move(-0.2f,0);
-	m_scene_layers[static_cast<int>(Layers::kJungle4)]->move(-0.3f,0);
-	m_scene_layers[static_cast<int>(Layers::kJungle5)]->move(-0.4f,0);*/
-
 	//Forward commands to the scenegraph until the command queue is empty
 	while(!m_command_queue.IsEmpty())
 	{
@@ -69,12 +61,6 @@ void World::Draw()
 		m_window.setView(m_camera.GetView());
 		m_window.draw(m_scenegraph);
 	}
-
-	//sf::Texture texture = sf::Texture();
-	//texture.create(1920, 1080);
-	//texture.update(m_window);
-	//sf::Image image = texture.copyToImage();
-	//image.saveToFile("Levels/myLevel.png");
 }
 
 
@@ -157,35 +143,6 @@ void World::BuildScene()
 
 	m_grid.SetNode(grid_node.get());
 	m_scene_layers[static_cast<int>(Layers::kGrid)]->AttachChild(std::move(grid_node));
-
-	std::ifstream save_data;
-	std::string unfiltered;
-	save_data.open("test.txt");
-	while (std::getline(save_data, unfiltered)) {
-		int x;
-		int y;
-		int textureID;
-		std::string split = ",";
-		int data[4];
-		for (int i = 0; i < 4; ++i) {
-			data[i] = std::stoi(unfiltered.substr(0, unfiltered.find(split)));
-			unfiltered.erase(0, unfiltered.find(split));
-			unfiltered.erase(0, 1);
-			std::cout << unfiltered << std::endl;
-		}
-		x = data[1];
-		y = data[2];
-		textureID = data[3];
-
-		std::unique_ptr<TileNode> tile_node(new TileNode(m_textures, m_scene_layers, static_cast<Textures>(textureID)));
-		tile_node->setPosition(16 * x, 16 * y);
-		m_grid.Node().AddTileNode(std::move(tile_node));
-
-	}
-
-	std::unique_ptr<TileNode> tile_node(new TileNode(m_textures, m_scene_layers, Textures::kGrassTiles0));
-	tile_node->setPosition(16 * 8, 16 * 22);
-	m_grid.Node().AddTileNode(std::move(tile_node));
 
 	//Add player's character
 	std::unique_ptr<PlatformerCharacter> player(new PlatformerCharacter(m_scene_layers, PlatformerCharacterType::kBruno, m_camera, m_textures, m_fonts));

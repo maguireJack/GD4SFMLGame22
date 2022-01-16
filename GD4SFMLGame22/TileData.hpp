@@ -20,7 +20,7 @@ public:
 
 	std::unordered_set<PlatformEffects> GetEffects() const;
 	Textures GetTexture() const;
-	std::string ToSerial();
+	std::string ToSerial() const;
 
 	bool operator ==(const TileData& other) const;
 
