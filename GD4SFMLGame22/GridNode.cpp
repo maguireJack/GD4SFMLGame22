@@ -50,12 +50,12 @@ GridNode::GridNode(
 }
 
 /// <summary>
-/// Vilandas - Sets
+/// Vilandas - Set the new "CreateMode" tile, destroy any tiles currently held
 /// </summary>
 /// <param name="texture"></param>
 void GridNode::SetNewTileSettings(Textures texture)
 {
-	if (m_selected_tile != nullptr)
+	if (IsHoldingTile())
 	{
 		if (m_editor_mode)
 		{
@@ -73,11 +73,18 @@ void GridNode::SetNewTileSettings(Textures texture)
 	m_create_texture = texture;
 }
 
+/// <summary>
+/// Vilandas - If the texture m_create texture is kDefault, exit create tile mode
+/// </summary>
 void GridNode::ExitCreateMode()
 {
 	SetNewTileSettings(Textures::kDefault);
 }
 
+/// <summary>
+/// Vilandas/Jack - Apply the tile to it's relative cell position in the grid.
+/// </summary>
+/// <param name="tile_node"></param>
 void GridNode::AddTileNode(std::unique_ptr<TileNode> tile_node)
 {
 	const sf::Vector2i cell_position = GetCellPosition(tile_node->getPosition());
@@ -89,6 +96,7 @@ void GridNode::AddTileNode(std::unique_ptr<TileNode> tile_node)
 		m_coin_count++;
 	}
 
+	// For tiles that take up multiple cells
 	for (int x = 0; x < cell_size.x; x++)
 	{
 		for (int y = 0; y < cell_size.y; y++)
@@ -101,6 +109,11 @@ void GridNode::AddTileNode(std::unique_ptr<TileNode> tile_node)
 	GetSceneLayers()[static_cast<int>(Layers::kPlatforms)]->AttachChild(std::move(tile_node));
 }
 
+/// <summary>
+/// Jack/Vilandas - Apply the tile to the indicated cell position
+/// </summary>
+/// <param name="tile_node"></param>
+/// <param name="cell_position"></param>
 void GridNode::AddTileNode(TileNode* tile_node, sf::Vector2i cell_position)
 {
 	const sf::Vector2i cell_size = tile_node->Data().GetCellSize();
@@ -116,6 +129,10 @@ void GridNode::AddTileNode(TileNode* tile_node, sf::Vector2i cell_position)
 	}
 }
 
+/// <summary>
+/// Jack/Vilandas - Remove a tile from the grid
+/// </summary>
+/// <param name="tile_node"></param>
 void GridNode::RemoveTile(const TileNode* tile_node)
 {
 	const sf::Vector2i cell_position = tile_node->Data().GetCellPosition();
@@ -146,6 +163,12 @@ bool GridNode::IsInCreateMode() const
 	return m_create_texture != Textures::kDefault;
 }
 
+/// <summary>
+/// Vilandas - Checks if a tile will intersect another tile at the indicated cell position
+/// </summary>
+/// <param name="tile"></param>
+/// <param name="cell_position"></param>
+/// <returns></returns>
 bool GridNode::TileIntersectsTile(TileNode* tile, sf::Vector2i cell_position) const
 {
 	const sf::Vector2i cell_size = tile->Data().GetCellSize();
@@ -170,6 +193,11 @@ bool GridNode::CellContainsTile(sf::Vector2i cell_position) const
 	return m_tile_map.count(cell_position);
 }
 
+/// <summary>
+/// Jack/Vilandas
+/// </summary>
+/// <param name="cell_position"></param>
+/// <returns></returns>
 bool GridNode::CellPickable(sf::Vector2i cell_position)
 {
 	return CellContainsTile(cell_position)
@@ -177,6 +205,11 @@ bool GridNode::CellPickable(sf::Vector2i cell_position)
 		: false;
 }
 
+/// <summary>
+/// Vilandas
+/// </summary>
+/// <param name="tile"></param>
+/// <returns></returns>
 int GridNode::GetInventoryCount(const TileData& tile)
 {
 	if (m_inventory.count(tile))
@@ -186,6 +219,10 @@ int GridNode::GetInventoryCount(const TileData& tile)
 	return 0;
 }
 
+/// <summary>
+/// Vilandas
+/// </summary>
+/// <param name="tile"></param>
 void GridNode::SelectFromInventory(TileData tile)
 {
 	if (!IsHoldingTile() && m_inventory.count(tile))
@@ -195,6 +232,11 @@ void GridNode::SelectFromInventory(TileData tile)
 	}
 }
 
+/// <summary>
+/// Vilandas
+/// </summary>
+/// <param name="tile"></param>
+/// <param name="count"></param>
 void GridNode::AddToInventory(TileData& tile, int count)
 {
 	if (m_inventory.count(tile))
@@ -207,12 +249,22 @@ void GridNode::AddToInventory(TileData& tile, int count)
 	}
 }
 
+/// <summary>
+/// Vilandas
+/// </summary>
+/// <param name="texture"></param>
+/// <param name="count"></param>
 void GridNode::AddToInventory(Textures texture, int count)
 {
 	TileData tile(texture);
 	AddToInventory(tile, count);
 }
 
+/// <summary>
+/// Vilandas
+/// </summary>
+/// <param name="tile"></param>
+/// <param name="count"></param>
 void GridNode::RemoveFromInventory(const TileData& tile, int count)
 {
 	if (m_inventory.count(tile))
@@ -228,6 +280,11 @@ void GridNode::RemoveFromInventory(const TileData& tile, int count)
 	}
 }
 
+/// <summary>
+/// Jack/Vilandas - Convert a position to a cell position, accounting for transforms and camera zoom
+/// </summary>
+/// <param name="position"></param>
+/// <returns></returns>
 sf::Vector2i GridNode::GetCellPosition(sf::Vector2i position) const
 {
 	const sf::Vector2f pixel_position = m_window.mapPixelToCoords(position);
@@ -243,6 +300,10 @@ sf::Vector2i GridNode::GetCellPosition(sf::Vector2f position) const
 	return GetCellPosition(sf::Vector2i(position));
 }
 
+/// <summary>
+/// Jack/Vilandas - Converts the mouse position to its relative cell position
+/// </summary>
+/// <returns></returns>
 sf::Vector2i GridNode::MouseToCellPosition() const
 {
 	const sf::Vector2f pixel_position = m_window.mapPixelToCoords(sf::Mouse::getPosition(m_window), m_camera.GetView());
@@ -258,8 +319,14 @@ const Camera& GridNode::GetCamera() const
 	return m_camera;
 }
 
+/// <summary>
+/// Jack/Vilandas
+/// </summary>
+/// <param name="target"></param>
+/// <param name="states"></param>
 void GridNode::DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 {
+	//Draw grid lines
 	if (m_editor_mode)
 	{
 		sf::RectangleShape horizontal_line(sf::Vector2f(m_cell_size * m_horizontal_cells, m_line_width));
@@ -319,11 +386,16 @@ void GridNode::DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) co
 	}
 }
 
+/// <summary>
+/// Jack/Vilandas
+/// </summary>
+/// <param name="dt"></param>
+/// <param name="commands"></param>
 void GridNode::UpdateCurrent(sf::Time dt, CommandQueue& commands)
 {
 	m_mouse_cell_position = MouseToCellPosition();
 
-	if (m_selected_tile != nullptr)
+	if (IsHoldingTile())
 	{
 		m_selected_tile->SetCellPosition(m_mouse_cell_position, m_cell_size);
 
@@ -368,6 +440,10 @@ int GridNode::CoinCount() const
 	return m_coin_count;
 }
 
+/// <summary>
+/// Vilandas - Switch editing mode on or off (for level creation/editing)
+/// </summary>
+/// <param name="editor_mode"></param>
 void GridNode::SetEditorMode(bool editor_mode)
 {
 	m_editor_mode = editor_mode;
@@ -378,6 +454,12 @@ void GridNode::SetEditorMode(bool editor_mode)
 	}
 }
 
+/// <summary>
+/// Jack - Load data from .sav & .inv files to load the tile_map and the inventory
+///	.sav: pickup-able | x_cell | y_cell | TextureID
+///	.inv: TextureID | count
+/// </summary>
+/// <param name="path"></param>
 void GridNode::LoadData(const std::string& path)
 {
 	m_file_path = path;
@@ -445,6 +527,9 @@ void GridNode::LoadData(const std::string& path)
 	}
 }
 
+/// <summary>
+/// Jack - Save the tile_map, inventory and image of the level
+/// </summary>
 void GridNode::SaveData()
 {
 	std::ofstream save_data;
@@ -478,8 +563,14 @@ void GridNode::SaveData()
 	image.saveToFile(m_file_path + ".png");
 }
 
+/// <summary>
+/// Jack/Vilandas
+/// </summary>
+/// <param name="event"></param>
+/// <param name="commands"></param>
 void GridNode::HandleEvent(const sf::Event& event, CommandQueue& commands)
 {
+	//GUI events
 	if (m_editor_mode)
 	{
 		m_editor_gui.HandleEvent(event);
@@ -542,6 +633,10 @@ void GridNode::HandleEvent(const sf::Event& event, CommandQueue& commands)
 	}
 }
 
+/// <summary>
+/// Jack/Vilandas - Create a tile based off the m_create_texture and select it to follow the mouse
+/// </summary>
+/// <returns></returns>
 bool GridNode::CreateTile()
 {
 	if (!IsHoldingTile() && IsInCreateMode())
@@ -564,6 +659,10 @@ bool GridNode::CreateTile()
 	return false;
 }
 
+/// <summary>
+/// Jack/Vilandas - Attempt to pickup the tile at the current mouse position
+/// </summary>
+/// <returns></returns>
 bool GridNode::PickupTile()
 {
 	if (m_can_pickup)
@@ -583,6 +682,10 @@ bool GridNode::PickupTile()
 	return false;
 }
 
+/// <summary>
+/// Jack/Vilandas - Drop currently held tile at the mouse position
+/// </summary>
+/// <returns></returns>
 bool GridNode::DropTile()
 {
 	if (IsHoldingTile() && m_can_place)
@@ -597,6 +700,10 @@ bool GridNode::DropTile()
 	return false;
 }
 
+/// <summary>
+/// Jack/Vilandas - Drop currently held tile at the indicated cell position
+/// </summary>
+/// <param name="cell_position"></param>
 void GridNode::DropTileAt(sf::Vector2i cell_position)
 {
 	m_selected_tile->Deselect();
@@ -606,6 +713,9 @@ void GridNode::DropTileAt(sf::Vector2i cell_position)
 	m_selected_tile = nullptr;
 }
 
+/// <summary>
+/// Vilandas - Load tiles in Inventory to the GUI
+/// </summary>
 void GridNode::LoadInventoryGUI()
 {
 	for (auto& pair : m_inventory)
@@ -635,6 +745,9 @@ void GridNode::LoadInventoryGUI()
 	}
 }
 
+/// <summary>
+/// Vilandas - Load all tiles and other related gui items for use in editor mode
+/// </summary>
 void GridNode::LoadEditor()
 {
 	if (m_editor_loaded)
