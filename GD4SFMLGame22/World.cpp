@@ -17,7 +17,6 @@ World::World(sf::RenderWindow& window, TextureHolder& textures, FontHolder& font
 	, m_scenegraph(m_scene_layers)
 	, m_world_bounds(0.f, 0.f, 768, 432)
 	, m_spawn_position(384/2.f, 216.f + 216/2.f)
-	, m_scrollspeed(-50.f)
 	, m_player(nullptr)
 {
 	m_scene_texture.create(m_window.getSize().x, m_window.getSize().y);
@@ -70,6 +69,12 @@ void World::Draw()
 		m_window.setView(m_camera.GetView());
 		m_window.draw(m_scenegraph);
 	}
+
+	//sf::Texture texture = sf::Texture();
+	//texture.create(1920, 1080);
+	//texture.update(m_window);
+	//sf::Image image = texture.copyToImage();
+	//image.saveToFile("Levels/myLevel.png");
 }
 
 

@@ -71,7 +71,7 @@ namespace GUI
 		}
 		else if (event.type == sf::Event::MouseButtonReleased)
 		{
-			if (event.mouseButton.button == sf::Mouse::Left)
+			if (event.mouseButton.button == sf::Mouse::Left && HasSelection())
 			{
 				const sf::Vector2f mouse = m_window.mapPixelToCoords(sf::Mouse::getPosition(m_window), m_camera.GetView());
 				if (m_children[m_selected_child]->GetBoundingRect().contains(mouse.x, mouse.y))

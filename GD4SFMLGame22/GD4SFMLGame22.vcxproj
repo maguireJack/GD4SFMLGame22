@@ -89,6 +89,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Users\Jack\OneDrive - Dundalk Institute of Technology\Desktop\SFML-2.5.1-windows-vc15-32-bit\SFML-2.5.1\include;D:\AProgramming\C++\Repos\SFML_Starting\SFML-2.5.1\include;C:\Users\jmagu\Desktop\SFML-2.5.1-windows-vc15-32-bit\SFML-2.5.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -169,6 +170,7 @@
     <ClCompile Include="GridNode.cpp" />
     <ClCompile Include="Label.cpp" />
     <ClCompile Include="LevelEditorState.cpp" />
+    <ClCompile Include="LevelSelectState.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MenuState.cpp" />
     <ClCompile Include="MusicPlayer.cpp" />
@@ -186,6 +188,7 @@
     <ClCompile Include="State.cpp" />
     <ClCompile Include="StateStack.cpp" />
     <ClCompile Include="TextNode.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TexturedButton.cpp" />
     <ClCompile Include="TileData.cpp" />
     <ClCompile Include="TileNode.cpp" />
@@ -216,9 +219,11 @@
     <ClInclude Include="GameState.hpp" />
     <ClInclude Include="Grid.hpp" />
     <ClInclude Include="GridNode.hpp" />
+    <ClInclude Include="Texture.hpp" />
     <ClInclude Include="Label.hpp" />
     <ClInclude Include="Layers.hpp" />
     <ClInclude Include="LevelEditorState.hpp" />
+    <ClInclude Include="LevelSelectState.hpp" />
     <ClInclude Include="MenuState.hpp" />
     <ClInclude Include="MissionStatus.hpp" />
     <ClInclude Include="MusicPlayer.hpp" />

@@ -12,7 +12,7 @@ namespace GUI
 		typedef std::shared_ptr<ScrollableContainer> Ptr;
 
 	public:
-		ScrollableContainer(sf::RenderWindow& window, const FontHolder& fonts, Camera& camera, sf::FloatRect bounds, float text_scale);
+		ScrollableContainer(sf::RenderWindow& window, const FontHolder& fonts, Camera& camera, sf::FloatRect bounds, float text_scale = 1.f);
 		bool Pack(Component::Ptr component) override;
 		bool Pack(Component::Ptr component, float spacing);
 		void PackManual(Component::Ptr component, bool on_next_page = false);

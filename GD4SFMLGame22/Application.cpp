@@ -3,6 +3,7 @@
 #include "GameOverState.hpp"
 #include "GameState.hpp"
 #include "LevelEditorState.hpp"
+#include "LevelSelectState.hpp"
 #include "MenuState.hpp"
 #include "PauseState.hpp"
 #include "SettingsState.hpp"
@@ -141,6 +142,7 @@ void Application::RegisterStates()
 	m_stack.RegisterState<MenuState>(StateID::kMenu);
 	m_stack.RegisterState<GameOverState>(StateID::kGameOver);
 	m_stack.RegisterState<GameState>(StateID::kGame);
+	m_stack.RegisterState<LevelSelectState>(StateID::kLevelSelect);
 	m_stack.RegisterState<LevelEditorState>(StateID::kLevelEditor);
 	m_stack.RegisterState<PauseState>(StateID::kPause);
 	m_stack.RegisterState<SettingsState>(StateID::kSettings);

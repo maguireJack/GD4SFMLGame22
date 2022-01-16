@@ -8,16 +8,16 @@ class PauseState : public State
 {
 public:
 	PauseState(StateStack& stack, Context context);
-	~PauseState();
+	~PauseState() override;
 
-	virtual void		Draw();
-	virtual bool		Update(sf::Time dt);
-	virtual bool		HandleEvent(const sf::Event& event);
+	void Draw() override;
+	bool Update(sf::Time dt) override;
+	bool HandleEvent(const sf::Event& event) override;
 
 
 private:
-	sf::Sprite			m_background_sprite;
-	sf::Text			m_paused_text;
-	sf::Text			m_instruction_text;
+	sf::Sprite m_background_sprite;
+	sf::Text m_paused_text;
+	sf::Text m_instruction_text;
 };
 

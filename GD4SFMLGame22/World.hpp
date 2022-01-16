@@ -61,7 +61,6 @@ private:
 
 	sf::FloatRect m_world_bounds;
 	sf::Vector2f m_spawn_position;
-	float m_scrollspeed;
 	PlatformerCharacter* m_player;
 
 	BloomEffect m_bloom_effect;
