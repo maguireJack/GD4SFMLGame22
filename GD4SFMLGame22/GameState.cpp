@@ -22,11 +22,11 @@ bool GameState::Update(sf::Time dt)
 {
 	m_world.Update(dt);
 
-	//if (!m_world.HasAlivePlayer())
-	//{
-	//	m_player.SetMissionStatus(MissionStatus::kMissionFailure);
-	//	RequestStackPush(StateID::kGameOver);
-	//}
+	if (!m_world.HasAlivePlayer())
+	{
+		m_player.SetMissionStatus(MissionStatus::kMissionFailure);
+		RequestStackPush(StateID::kGameOver);
+	}
 	if (m_world.HasPlayerAchievedVictory())
 	{
 		m_player.SetMissionStatus(MissionStatus::kMissionSuccess);

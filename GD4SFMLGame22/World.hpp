@@ -34,6 +34,7 @@ public:
 	void Draw();
 	CommandQueue& GetCommandQueue();
 
+	bool HasAlivePlayer() const;
 	bool HasPlayerAchievedVictory() const;
 
 private:

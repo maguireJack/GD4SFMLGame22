@@ -3,6 +3,7 @@
 #include <iostream>
 #include <SFML/Graphics/RenderWindow.hpp>
 
+#include "Collision.hpp"
 #include "GridNode.hpp"
 #include "Utility.hpp"
 
@@ -16,7 +17,7 @@ World::World(sf::RenderWindow& window, TextureHolder& textures, FontHolder& font
 	, m_scene_layers()
 	, m_scenegraph(m_scene_layers)
 	, m_world_bounds(0.f, 0.f, 768, 432)
-	, m_spawn_position(384/2.f, 216.f + 216/2.f)
+	, m_spawn_position(100, 216)
 	, m_player(nullptr)
 {
 	m_scene_texture.create(m_window.getSize().x, m_window.getSize().y);
@@ -155,6 +156,15 @@ void World::BuildScene()
 CommandQueue& World::GetCommandQueue()
 {
 	return m_command_queue;
+}
+
+bool World::HasAlivePlayer() const
+{
+	if (!m_grid.Node().IsInEditMode())
+	{
+		return m_player->GetBoundingRect().intersects(m_world_bounds);
+	}
+	return false;
 }
 
 bool World::HasPlayerAchievedVictory() const
