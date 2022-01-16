@@ -45,8 +45,6 @@ Player::Player() : m_current_mission_status(MissionStatus::kMissionRunning)
 	//Set initial key bindings
 	m_key_binding[sf::Keyboard::A] = PlayerAction::kMoveLeft;
 	m_key_binding[sf::Keyboard::D] = PlayerAction::kMoveRight;
-	m_key_binding[sf::Keyboard::W] = PlayerAction::kMoveUp;
-	m_key_binding[sf::Keyboard::S] = PlayerAction::kMoveDown;
 	m_key_binding[sf::Keyboard::Space] = PlayerAction::kJump;
 
 	//Set initial action bindings
@@ -146,14 +144,10 @@ void Player::InitialiseActions()
 {
 	m_action_binding[PlayerAction::kMoveLeft].action = DerivedAction<Entity>(EntityDirectionAdder(-1, 0));
 	m_action_binding[PlayerAction::kMoveRight].action = DerivedAction<Entity>(EntityDirectionAdder(1, 0));
-	m_action_binding[PlayerAction::kMoveUp].action = DerivedAction<Entity>(EntityDirectionAdder(0, -1));
-	m_action_binding[PlayerAction::kMoveDown].action = DerivedAction<Entity>(EntityDirectionAdder(0, 1));
 	m_action_binding[PlayerAction::kJump].action = DerivedAction<PlatformerCharacter>(PlatformerJump());
 
 	m_on_release_action_binding[PlayerAction::kMoveLeft].action = DerivedAction<Entity>(EntityDirectionRemover(-1, 0));
 	m_on_release_action_binding[PlayerAction::kMoveRight].action = DerivedAction<Entity>(EntityDirectionRemover(1, 0));
-	m_on_release_action_binding[PlayerAction::kMoveUp].action = DerivedAction<Entity>(EntityDirectionRemover(0, -1));
-	m_on_release_action_binding[PlayerAction::kMoveDown].action = DerivedAction<Entity>(EntityDirectionRemover(0, 1));
 }
 
 bool Player::IsRealtimeAction(PlayerAction action)
@@ -162,8 +156,6 @@ bool Player::IsRealtimeAction(PlayerAction action)
 	{
 	case PlayerAction::kMoveLeft:
 	case PlayerAction::kMoveRight:
-	case PlayerAction::kMoveUp:
-	case PlayerAction::kMoveDown:
 		return true;
 	default:
 		return false;

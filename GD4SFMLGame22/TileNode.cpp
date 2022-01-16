@@ -3,7 +3,6 @@
 #include <iostream>
 #include <ostream>
 
-#include "Application.hpp"
 #include "Utility.hpp"
 
 TileNode::TileNode(

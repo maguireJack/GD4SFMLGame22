@@ -184,11 +184,11 @@ void PlatformerCharacter::BouncyCollision(CollisionLocation location)
 
 	if (static_cast<int>(location) & static_cast<int>(CollisionLocation::kXAxis))
 	{
-		SetVelocity(velocity.x * -1.f, velocity.y);
+		SetVelocity(velocity.x * -2.f, velocity.y);
 	}
 	else
 	{
-		SetVelocity(velocity.x, velocity.y * -1.f);
+		SetVelocity(velocity.x, velocity.y * -2.f);
 	}
 }
 

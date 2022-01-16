@@ -22,7 +22,6 @@ void AnimatedTileNode::DrawCurrent(sf::RenderTarget& target, sf::RenderStates st
 
 void AnimatedTileNode::UpdateCurrent(sf::Time dt, CommandQueue& commands)
 {
-	//TileNode::Update(dt, commands);
 	m_anim_artist.UpdateCurrent(dt);
 }
 
