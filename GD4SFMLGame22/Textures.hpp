@@ -14,6 +14,7 @@ enum class Textures
 	kBrunoRun,
 	kBrunoJump,
 
+
 	kWooden_2x1,
 	kWooden_3x1,
 
@@ -47,6 +48,8 @@ enum class Textures
 	kGrassTiles22,
 	kGrassTiles23,
 	kGrassTiles24,
+
+	kCoin,
 
 	kJungle0,
 	kJungle1,

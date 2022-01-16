@@ -19,6 +19,8 @@ std::unordered_map<Textures, PlatformData> InitializePlatformData()
 	data[Textures::kMetal_3x4_move_0x5].m_offset = sf::Vector2i(0, 4);
 	data[Textures::kMetal_3x4_move_0x5].m_effects = { VerticalMovement };
 
+	data[Textures::kCoin].m_cell_size = sf::Vector2i(1 , 1);
+
 	return data;
 }
 

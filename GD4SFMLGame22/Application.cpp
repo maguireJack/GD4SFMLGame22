@@ -113,6 +113,8 @@ void Application::LoadTextures()
 	m_textures.Load(Textures::kBrunoIdle, "Media/Textures/Bruno/Idle.png");
 	m_textures.Load(Textures::kBrunoRun, "Media/Textures/Bruno/Run.png");
 
+	m_textures.Load(Textures::kCoin, "Media/Textures/Coin-Sheet.png");
+
 	m_textures.Load(Textures::kWooden_2x1, "Media/Textures/SpecialPlatforms/wooden_2x1.png");
 	m_textures.Load(Textures::kWooden_3x1, "Media/Textures/SpecialPlatforms/wooden_3x1.png");
 

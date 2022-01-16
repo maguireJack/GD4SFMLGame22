@@ -152,6 +152,8 @@
   <ItemGroup>
     <ClCompile Include="AnimatedSprite.cpp" />
     <ClCompile Include="AnimatedSpriteArtist.cpp" />
+    <ClCompile Include="AnimatedTileNode.cpp" />
+    <ClCompile Include="AnimatedTileNode.hpp" />
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="BloomEffect.cpp" />
     <ClCompile Include="Button.cpp" />

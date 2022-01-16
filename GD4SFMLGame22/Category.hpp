@@ -10,5 +10,6 @@ namespace Category
 		kPlatform = 1 << 2,
 		kParticleSystem = 1 << 3,
 		kSoundEffect = 1 << 4,
+		kPickup = 1 << 5
 	};
 }

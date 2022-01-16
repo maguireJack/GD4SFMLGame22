@@ -7,6 +7,7 @@
 #include "Camera.hpp"
 #include "SceneNode.hpp"
 #include "ScrollableContainer.hpp"
+#include "AnimatedTileNode.hpp"
 #include "SoundPlayer.hpp"
 #include "TexturedButton.hpp"
 #include "TileDataHash.hpp"

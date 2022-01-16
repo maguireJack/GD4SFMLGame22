@@ -497,10 +497,19 @@ bool GridNode::CreateTile()
 {
 	if (!IsHoldingTile() && IsInCreateMode())
 	{
-		std::unique_ptr<TileNode> tile_node(new TileNode(m_textures, GetSceneLayers(), m_create_texture));
-		m_selected_tile = tile_node.get();
-		GetSceneLayers()[static_cast<int>(Layers::kPlatforms)]->AttachChild(std::move(tile_node));
-
+		if (m_create_texture == Textures::kCoin)
+		{
+			AnimationData data = {m_create_texture, 8, 8, 4, 1.f};
+			std::unique_ptr<AnimatedTileNode> tile_node(new AnimatedTileNode(m_textures, GetSceneLayers(), m_create_texture, data));
+			m_selected_tile = tile_node.get();	
+			GetSceneLayers()[static_cast<int>(Layers::kPlatforms)]->AttachChild(std::move(tile_node));
+		}
+		else {
+			std::unique_ptr<TileNode> tile_node(new TileNode(m_textures, GetSceneLayers(), m_create_texture));
+			m_selected_tile = tile_node.get();
+			GetSceneLayers()[static_cast<int>(Layers::kPlatforms)]->AttachChild(std::move(tile_node));
+		}
+		
 		return true;
 	}
 	return false;
@@ -567,7 +576,7 @@ void GridNode::LoadEditor()
 
 	m_editor_gui.Pack(save_button);
 
-	for (int texture_index = static_cast<int>(Textures::kWooden_2x1); texture_index <= static_cast<int>(Textures::kGrassTiles24); texture_index++)
+	for (int texture_index = static_cast<int>(Textures::kWooden_2x1); texture_index <= static_cast<int>(Textures::kCoin); texture_index++)
 	{
 		auto texture = static_cast<Textures>(texture_index);
 

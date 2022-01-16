@@ -133,6 +133,12 @@
     <ClCompile Include="Texture.cpp">
       <Filter>Source Files\GUI</Filter>
     </ClCompile>
+    <ClCompile Include="AnimatedTileNode.hpp">
+      <Filter>Header Files\Nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimatedTileNode.cpp">
+      <Filter>Source Files\Nodes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.hpp">
