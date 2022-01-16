@@ -73,3 +73,4 @@ void TileNode::DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) co
 {
 	target.draw(m_sprite, states);
 }
+

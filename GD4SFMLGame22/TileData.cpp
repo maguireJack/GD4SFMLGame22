@@ -56,6 +56,13 @@ Textures TileData::GetTexture() const
 	return m_texture;
 }
 
+std::string TileData::ToSerial()
+{
+	std::stringstream ss;
+	ss << m_pickable << ',' << m_cell_position.x << ',' << m_cell_position.y << ',' << static_cast<int>(m_texture) << "\n";
+	return ss.str();
+}
+
 bool TileData::operator==(const TileData& other) const
 {
 	return m_texture == other.m_texture;

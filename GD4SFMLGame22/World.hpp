@@ -10,6 +10,7 @@
 #include <SFML/Graphics/Texture.hpp>
 
 #include <array>
+#include <string>
 
 #include "BloomEffect.hpp"
 #include "Camera.hpp"

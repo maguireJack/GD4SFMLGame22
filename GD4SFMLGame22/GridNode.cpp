@@ -389,6 +389,14 @@ void GridNode::UpdateCurrent(sf::Time dt, CommandQueue& commands)
 
 void GridNode::HandleEvent(const sf::Event& event, CommandQueue& commands)
 {
+	std::ofstream save_data;
+	save_data.open("test.txt", std::fstream::out);
+
+	for (auto x : m_tile_map)
+	{
+		save_data << x.second->Data().ToSerial();
+	}
+
 	if (m_editor_mode)
 	{
 		m_editor_gui.HandleEvent(event);
@@ -465,7 +473,9 @@ void GridNode::HandleEvent(const sf::Event& event, CommandQueue& commands)
 			}
 		}
 		*/
+
 	}
+	save_data.close();
 }
 
 bool GridNode::CreateTile()

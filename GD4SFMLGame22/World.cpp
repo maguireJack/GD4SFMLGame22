@@ -158,6 +158,31 @@ void World::BuildScene()
 	m_grid.SetNode(grid_node.get());
 	m_scene_layers[static_cast<int>(Layers::kGrid)]->AttachChild(std::move(grid_node));
 
+	std::ifstream save_data;
+	std::string unfiltered;
+	save_data.open("test.txt");
+	while (std::getline(save_data, unfiltered)) {
+		int x;
+		int y;
+		int textureID;
+		std::string split = ",";
+		int data[4];
+		for (int i = 0; i < 4; ++i) {
+			data[i] = std::stoi(unfiltered.substr(0, unfiltered.find(split)));
+			unfiltered.erase(0, unfiltered.find(split));
+			unfiltered.erase(0, 1);
+			std::cout << unfiltered << std::endl;
+		}
+		x = data[1];
+		y = data[2];
+		textureID = data[3];
+
+		std::unique_ptr<TileNode> tile_node(new TileNode(m_textures, m_scene_layers, static_cast<Textures>(textureID)));
+		tile_node->setPosition(16 * x, 16 * y);
+		m_grid.Node().AddTileNode(std::move(tile_node));
+
+	}
+
 	std::unique_ptr<TileNode> tile_node(new TileNode(m_textures, m_scene_layers, Textures::kGrassTiles0));
 	tile_node->setPosition(16 * 8, 16 * 22);
 	m_grid.Node().AddTileNode(std::move(tile_node));

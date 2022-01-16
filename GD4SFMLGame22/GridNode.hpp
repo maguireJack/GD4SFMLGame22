@@ -12,6 +12,8 @@
 #include "TileDataHash.hpp"
 #include "TileNode.hpp"
 #include "Vector2iHash.hpp"
+#include <iostream>
+#include <fstream>
 
 class GridNode : public SceneNode
 {

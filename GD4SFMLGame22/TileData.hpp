@@ -3,6 +3,7 @@
 
 #include "DataTables.hpp"
 #include "Textures.hpp"
+#include <sstream>
 
 class TileData
 {
@@ -18,6 +19,7 @@ public:
 
 	std::unordered_set<PlatformEffects> GetEffects() const;
 	Textures GetTexture() const;
+	std::string ToSerial();
 
 	bool operator ==(const TileData& other) const;
 
