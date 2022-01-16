@@ -158,6 +158,10 @@ CommandQueue& World::GetCommandQueue()
 	return m_command_queue;
 }
 
+/// <summary>
+/// Checks if the player is within the world bounds
+/// </summary>
+/// <returns></returns>
 bool World::HasAlivePlayer() const
 {
 	if (!m_grid.Node().IsInEditMode())
@@ -167,6 +171,10 @@ bool World::HasAlivePlayer() const
 	return true;
 }
 
+/// <summary>
+/// Checks if player has collected all coins in the level
+/// </summary>
+/// <returns></returns>
 bool World::HasPlayerAchievedVictory() const
 {
 	if (!m_grid.Node().IsInEditMode())
@@ -180,28 +188,4 @@ sf::IntRect World::GetBackgroundRect(sf::Texture& texture) const
 {
 	texture.setRepeated(true);
 	return { 0, 0, static_cast<int>(m_world_bounds.width), static_cast<int>(texture.getSize().y) };
-}
-
-void World::DestroyEntitiesOutsideView()
-{
-	//Command command;
-	//command.category = Category::Type::kEnemyAircraft | Category::Type::kProjectile;
-	//command.action = DerivedAction<Entity>([this](Entity& e, sf::Time)
-	//{
-	//	//Does the object intersect with the battlefield
-	//	if (!GetBattlefieldBounds().intersects(e.GetBoundingRect()))
-	//	{
-	//		std::cout << "Destroying the entity" << std::endl;
-	//		e.Destroy();
-	//	}
-	//});
-	//m_command_queue.Push(command);
-}
-
-void World::UpdateSounds()
-{
-	// Set listener's position to player position
-	//m_sounds.SetListenerPosition(m_player_aircraft->GetWorldPosition());
-	// Remove unused sounds
-	//m_sounds.RemoveStoppedSounds();
 }

@@ -9,6 +9,8 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Text.hpp>
 
+//D00218436 Vilandas Morrissey
+//D00219343 Jack Maguire
 namespace GUI
 {
 	class TexturedButton : public Component

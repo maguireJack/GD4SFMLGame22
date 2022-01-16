@@ -5,6 +5,9 @@
 #include "Textures.hpp"
 #include <sstream>
 
+//D00218436 Vilandas Morrissey
+//D00219343 Jack Maguire
+
 class TileData
 {
 public:

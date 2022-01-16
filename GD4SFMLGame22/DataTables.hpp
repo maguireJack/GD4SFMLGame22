@@ -9,6 +9,9 @@
 #include "PlatformEffects.hpp"
 #include "ResourceIdentifiers.hpp"
 
+//D00218436 Vilandas Morrissey
+//D00219343 Jack Maguire
+
 struct PlatformData
 {
 	sf::Vector2i m_cell_size;

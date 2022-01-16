@@ -3,6 +3,9 @@
 
 #include "GridNode.hpp"
 
+//D00218436 Vilandas Morrissey
+//D00219343 Jack Maguire
+
 class Grid
 {
 public:

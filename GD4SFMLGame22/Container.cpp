@@ -50,6 +50,10 @@ namespace GUI
 		return false;
 	}
 
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="event"></param>
 	void Container::HandleEvent(const sf::Event& event)
 	{
 		if(HasSelection() && m_children[m_selected_child]->IsActive())

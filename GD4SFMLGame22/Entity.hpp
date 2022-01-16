@@ -5,6 +5,9 @@
 #include "SceneNode.hpp"
 #include "Vector2iHash.hpp"
 
+//D00218436 Vilandas Morrissey
+//D00219343 Jack Maguire
+
 class Entity : public SceneNode
 {
 public:

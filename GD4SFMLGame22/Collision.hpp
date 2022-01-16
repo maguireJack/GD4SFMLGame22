@@ -4,6 +4,9 @@
 #include "CollisionLocation.hpp"
 #include "Entity.hpp"
 
+//D00218436 Vilandas Morrissey
+//D00219343 Jack Maguire
+
 class Collision
 {
 public:

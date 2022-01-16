@@ -2,6 +2,9 @@
 #include <SFML/Graphics/Transformable.hpp>
 #include <SFML/Graphics/View.hpp>
 
+//D00218436 Vilandas Morrissey
+//D00219343 Jack Maguire
+
 class Camera : public sf::Transformable
 {
 public:

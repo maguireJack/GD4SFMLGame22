@@ -25,6 +25,8 @@ namespace sf
 	class RenderWindow;
 }
 
+//D00218436 Vilandas Morrissey
+//D00219343 Jack Maguire
 
 class World : private sf::NonCopyable
 {
@@ -41,9 +43,6 @@ private:
 	void BuildScene();
 
 	sf::IntRect GetBackgroundRect(sf::Texture& texture) const;
-
-	void DestroyEntitiesOutsideView();
-	void UpdateSounds();
 
 private:
 	struct SpawnPoint

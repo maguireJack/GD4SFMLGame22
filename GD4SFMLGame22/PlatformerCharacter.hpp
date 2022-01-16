@@ -11,6 +11,9 @@
 #include "TileNode.hpp"
 #include "SoundPlayer.hpp"
 
+//D00218436 Vilandas Morrissey
+//D00219343 Jack Maguire
+
 class PlatformerCharacter : public Entity
 {
 public:

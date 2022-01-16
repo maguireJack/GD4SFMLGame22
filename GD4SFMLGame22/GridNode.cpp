@@ -49,6 +49,10 @@ GridNode::GridNode(
 	m_background_position = sf::Vector2f(0, 276);
 }
 
+/// <summary>
+/// Vilandas - Sets
+/// </summary>
+/// <param name="texture"></param>
 void GridNode::SetNewTileSettings(Textures texture)
 {
 	if (m_selected_tile != nullptr)

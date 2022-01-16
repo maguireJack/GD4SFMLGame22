@@ -2,6 +2,9 @@
 #include <memory>
 #include <SFML/System/Vector2.hpp>
 
+//D00218436 Vilandas Morrissey
+//D00219343 Jack Maguire
+
 /// <summary>
 /// A hash function used to hash a vector2 of integers.
 ///	Implementation modified from boost hash_combine

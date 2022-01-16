@@ -2,6 +2,9 @@
 #include "TileNode.hpp"
 #include "AnimatedSpriteArtist.hpp"
 
+//D00218436 Vilandas Morrissey
+//D00219343 Jack Maguire
+
 class AnimatedTileNode : public TileNode
 {
 public:

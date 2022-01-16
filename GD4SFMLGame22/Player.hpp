@@ -8,6 +8,9 @@
 #include "MissionStatus.hpp"
 #include "PlayerAction.hpp"
 
+//D00218436 Vilandas Morrissey
+//D00219343 Jack Maguire
+
 class Player
 {
 public:
