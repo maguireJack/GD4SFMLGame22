@@ -9,6 +9,7 @@
 #include "ResourceIdentifiers.hpp"
 #include "TextNode.hpp"
 #include "TileNode.hpp"
+#include "SoundPlayer.hpp"
 
 class PlatformerCharacter : public Entity
 {
@@ -18,7 +19,8 @@ public:
 		PlatformerCharacterType type,
 		Camera& camera,
 		const TextureHolder& textures,
-		const FontHolder& fonts);
+		const FontHolder& fonts,
+		SoundPlayer& sounds);
 
 	unsigned GetCategory() const override;
 	sf::FloatRect GetBoundingRect() const override;
@@ -47,6 +49,7 @@ private:
 	Camera& m_camera;
 	AnimatedSpriteArtist m_artist;
 	TextNode* m_health_display;
+	SoundPlayer& m_sounds;
 	bool m_jumping;
 	bool m_camera_move_constraint;
 	float m_coyote_time;

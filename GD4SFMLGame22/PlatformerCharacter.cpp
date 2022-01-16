@@ -21,9 +21,9 @@ PlatformerCharacter::PlatformerCharacter(
 	const std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)>& scene_layers, 
 	PlatformerCharacterType type,
 	Camera& camera,
-	const TextureHolder&
-	textures,
-	const FontHolder& fonts)
+	const TextureHolder& textures,
+	const FontHolder& fonts,
+	SoundPlayer& sounds)
 	: Entity(
 		scene_layers,
 		Table[static_cast<int>(type)].m_health,
@@ -39,6 +39,7 @@ PlatformerCharacter::PlatformerCharacter(
 	, m_camera_move_constraint(false)
 	, m_coyote_time(Table[static_cast<int>(type)].m_coyote_time)
 	, m_air_time(0)
+	, m_sounds(sounds)
 {
 	std::unique_ptr<TextNode> health_display(new TextNode(scene_layers, fonts, ""));
 	m_health_display = health_display.get();
@@ -118,6 +119,12 @@ void PlatformerCharacter::HandleCollisions()
 					VerticalMovementCollision(location, tile);
 				}
 			}
+		}
+		if (Category::kPickup & node->GetCategory()) 
+		{
+			m_sounds.Play(SoundEffect::kCollectPickup);
+			auto coin = dynamic_cast<TileNode*>(node);
+			coin->Destroy();
 		}
 
 	}
